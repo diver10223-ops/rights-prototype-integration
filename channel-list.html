@@ -77,17 +77,22 @@
               <h1 class="mk-page-title">渠道管理</h1>
               <p class="mk-page-subtitle">管理权益投放渠道，支持渠道查询、渠道列表展示，及渠道开启与关闭（对接各个渠道）</p>
             </div>
-            <button class="mk-btn mk-btn-primary" onclick="openCreate()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              新增渠道
-            </button>
           </div>
 
-          <!-- 统计条 -->
-          <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 12px; padding-left: 4px;">
-            <span style="font-size: 13px; color: #8c95a6;">渠道总数：<b id="total-count">6</b></span>
-            <span style="font-size: 13px; color: #52c41a;">已开启：<b id="enabled-count">5</b></span>
-            <span style="font-size: 13px; color: #8c95a6;">已关闭：<b id="disabled-count">1</b></span>
+          <!-- 指标卡片 -->
+          <div class="channel-metric-grid">
+            <div class="mk-stat-card channel-metric-card">
+              <span class="mk-stat-label">渠道总数</span>
+              <strong class="mk-stat-value" id="total-count">6</strong>
+            </div>
+            <div class="mk-stat-card channel-metric-card">
+              <span class="mk-stat-label">已开启</span>
+              <strong class="mk-stat-value channel-metric-value--enabled" id="enabled-count">5</strong>
+            </div>
+            <div class="mk-stat-card channel-metric-card">
+              <span class="mk-stat-label">已关闭</span>
+              <strong class="mk-stat-value channel-metric-value--disabled" id="disabled-count">1</strong>
+            </div>
           </div>
 
           <!-- 查询面板 -->
@@ -131,6 +136,13 @@
                 查询
               </button>
             </div>
+          </div>
+
+          <div class="channel-list-toolbar">
+            <button class="mk-btn mk-btn-primary" onclick="openCreate()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              新增渠道
+            </button>
           </div>
 
           <!-- 列表 -->

@@ -2156,6 +2156,7 @@ body {
 .mk-function-intro {
   flex: 0 0 auto;
   margin: 0 0 16px;
+  padding-left: 1em;
 }
 
 .mk-function-name {
@@ -2170,6 +2171,33 @@ body {
   color: #64748b;
   font-size: 11px;
   line-height: 1.6;
+}
+
+/* 渠道管理：指标、筛选、列表操作和数据列表按页面信息层级排列。 */
+.channel-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.channel-metric-card {
+  min-height: 88px;
+  justify-content: center;
+}
+
+.channel-metric-value--enabled {
+  color: #16a34a;
+}
+
+.channel-metric-value--disabled {
+  color: #8c95a6;
+}
+
+.channel-list-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0 8px;
 }
 
 .mk-page-header--actions-only {
