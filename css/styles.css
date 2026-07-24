@@ -2302,6 +2302,95 @@ body {
   background: #fafbfc !important;
 }
 
+/* 使用 el-input__inner 的旧页面筛选控件兼容。
+   统一到 activity-management.html 的 32px 控件和自适应筛选网格。 */
+.mk-search-panel .mk-search-form {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: end !important;
+  margin: 0 !important;
+}
+
+.mk-search-panel .form-row {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px !important;
+}
+
+.mk-search-panel .form-label {
+  display: block;
+  margin: 0 !important;
+  color: #4a5568 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+}
+
+.mk-search-panel .el-input__inner {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 32px !important;
+  padding: 0 10px !important;
+  border: 1px solid #e8ecf0 !important;
+  border-radius: 6px !important;
+  outline: none !important;
+  background: #ffffff !important;
+  color: #4a5568 !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  line-height: 30px !important;
+  box-shadow: none !important;
+}
+
+.mk-search-panel select.el-input__inner {
+  padding-right: 28px !important;
+  cursor: pointer;
+}
+
+.mk-search-panel .el-input__inner::placeholder {
+  color: #b0b8c4 !important;
+}
+
+.mk-search-panel .el-input__inner:hover {
+  border-color: #b0b8c4 !important;
+}
+
+.mk-search-panel .el-input__inner:focus {
+  border-color: #1677ff !important;
+  box-shadow: none !important;
+}
+
+.mk-search-panel .form-row > div[style*="display:flex"] {
+  width: 100%;
+  min-width: 0;
+}
+
+.mk-search-panel .form-row > div[style*="display:flex"] .el-input__inner {
+  flex: 1 1 0;
+}
+
+.mk-search-panel .form-actions {
+  display: flex;
+  min-height: 32px;
+  align-items: center !important;
+  justify-content: flex-end;
+  gap: 8px !important;
+}
+
+@media (max-width: 1180px) {
+  .mk-search-panel .mk-search-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .mk-search-panel .mk-search-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
 /* ======================================================
    时间快捷按钮
    ====================================================== */
