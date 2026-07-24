@@ -110,10 +110,6 @@
               <h1 class="mk-page-title">权益报表</h1>
               <p class="mk-page-subtitle">全行/机构权益报表，支持按日、月、年统计查看和下载</p>
             </div>
-            <button class="mk-btn mk-btn-default" onclick="showToast('报表下载中，请稍候')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              下载报表
-            </button>
           </div>
 
           <!-- 筛选区 -->
@@ -162,7 +158,13 @@
           <!-- 报表列表 -->
           <div class="mk-list-panel">
             <div class="mk-list-header">
-              <span class="mk-list-title" id="report-title">全行日报表</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="mk-list-title" id="report-title">全行日报表</span>
+                <button class="mk-btn mk-btn-default" onclick="showToast('报表下载中，请稍候')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  下载报表
+                </button>
+              </div>
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 13px; color: #8c95a6;">共 <b id="row-count">7</b> 条</span>
                 <button class="mk-btn mk-btn-default" onclick="showToast('Excel导出中，请稍候')">

@@ -18,6 +18,10 @@
       color: white;
       font-size: 11px;
       font-weight: 600;
+      margin-inline: auto;
+      min-width: 120px;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.14);
+      transition: width 0.2s ease;
     }
     .funnel-arrow {
       display: flex;
@@ -36,6 +40,75 @@
       align-items: center;
       justify-content: center;
       min-height: 160px;
+    }
+    .overview-trend-chart {
+      min-height: 220px;
+      padding: 14px 16px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+    .overview-trend-chart svg {
+      display: block;
+      width: 100%;
+      height: 155px;
+    }
+    .overview-chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 10px;
+    }
+    .overview-chart-legend i {
+      display: inline-block;
+      width: 18px;
+      height: 3px;
+      margin-right: 5px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+    .overview-mini-bars {
+      height: 120px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      gap: 8px;
+      padding: 12px 14px 22px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: repeating-linear-gradient(to top, #f8fafc 0, #f8fafc 1px, transparent 1px, transparent 28px);
+      overflow: hidden;
+    }
+    .overview-mini-bars span {
+      width: 11%;
+      max-width: 22px;
+      border-radius: 4px 4px 0 0;
+      background: linear-gradient(180deg, #3b82f6, #93c5fd);
+    }
+    .overview-donut {
+      width: 112px;
+      height: 112px;
+      margin: 4px auto;
+      border-radius: 50%;
+      background: conic-gradient(#3b82f6 0 53%, #8b5cf6 53% 78%, #10b981 78% 94%, #f59e0b 94% 100%);
+      position: relative;
+      box-shadow: 0 5px 16px rgba(59, 130, 246, 0.12);
+    }
+    .overview-donut::after {
+      content: "¥168万";
+      position: absolute;
+      inset: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #fff;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 700;
     }
     /* 健康标签 */
     .health-excellent { background: #dcfce7; color: #166534; }
@@ -306,31 +379,27 @@
           </div>
           
           <!-- 图表区域 -->
-          <div class="chart-placeholder mb-4" style="min-height: 180px;">
-            <svg class="w-10 h-10 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4v16h16"/>
+          <div class="overview-trend-chart mb-4">
+            <svg viewBox="0 0 760 160" preserveAspectRatio="none" aria-label="权益领取和使用趋势">
+              <defs>
+                <linearGradient id="overviewArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3b82f6" stop-opacity=".22"/>
+                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <g stroke="#e2e8f0" stroke-width="1"><path d="M36 20H744M36 58H744M36 96H744M36 134H744"/></g>
+              <path d="M36 125L125 112L214 118L303 83L392 91L481 55L570 66L659 34L744 45L744 134L36 134Z" fill="url(#overviewArea)"/>
+              <polyline points="36,125 125,112 214,118 303,83 392,91 481,55 570,66 659,34 744,45" fill="none" stroke="#3b82f6" stroke-width="3"/>
+              <polyline points="36,136 125,128 214,130 303,106 392,112 481,82 570,91 659,62 744,70" fill="none" stroke="#10b981" stroke-width="3"/>
+              <polyline points="36,119 125,105 214,111 303,91 392,96 481,69 570,75 659,48 744,55" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <polyline points="36,140 125,134 214,135 303,119 392,122 481,98 570,103 659,78 744,85" fill="none" stroke="#f59e0b" stroke-width="2"/>
             </svg>
-            <span class="text-[11px] text-slate-400">趋势图表展示区域</span>
-            <div class="flex gap-6 mt-3">
-              <div class="text-center">
-                <div class="w-3 h-3 bg-blue-500 rounded-full mx-auto mb-1"></div>
-                <span class="text-[10px] text-slate-500">领取权益数量</span>
-              </div>
-              <div class="text-center">
-                <div class="w-3 h-3 bg-emerald-500 rounded-full mx-auto mb-1"></div>
-                <span class="text-[10px] text-slate-500">使用权益数量</span>
-              </div>
-              <div class="text-center">
-                <div class="w-3 h-3 bg-purple-500 rounded-full mx-auto mb-1"></div>
-                <span class="text-[10px] text-slate-500">领取人数</span>
-              </div>
-              <div class="text-center">
-                <div class="w-3 h-3 bg-amber-500 rounded-full mx-auto mb-1"></div>
-                <span class="text-[10px] text-slate-500">使用人数</span>
-              </div>
-            </div>
-            <div class="flex gap-4 mt-3">
-              <span class="text-[9px] px-2 py-0.5 bg-purple-100 text-purple-700 rounded">6.1 活动上线</span>
+            <div class="overview-chart-legend">
+              <span><i style="background:#3b82f6"></i>领取权益数量</span>
+              <span><i style="background:#10b981"></i>使用权益数量</span>
+              <span><i style="background:#8b5cf6"></i>领取人数</span>
+              <span><i style="background:#f59e0b"></i>使用人数</span>
+              <span class="text-purple-700">6.1 活动上线</span>
             </div>
           </div>
           
@@ -639,11 +708,10 @@
                 <span class="text-[11px] font-semibold text-slate-700">库存消耗趋势</span>
                 <span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-600 rounded">3项预警</span>
               </div>
-              <div class="chart-placeholder" style="min-height: 120px;">
-                <svg class="w-6 h-6 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                <span class="text-[10px] text-slate-400">库存消耗图表</span>
+              <div class="overview-mini-bars" aria-label="库存消耗趋势">
+                <span style="height:42%"></span><span style="height:55%"></span><span style="height:48%"></span>
+                <span style="height:68%"></span><span style="height:74%"></span><span style="height:63%"></span>
+                <span style="height:82%"></span>
               </div>
               <div class="mt-2 space-y-1">
                 <div class="flex items-center justify-between text-[10px]">
@@ -710,12 +778,7 @@
               <div class="flex items-center justify-between mb-2">
                 <span class="text-[11px] font-semibold text-slate-700">权益资源核销成本</span>
               </div>
-              <div class="chart-placeholder" style="min-height: 120px;">
-                <svg class="w-6 h-6 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
-                </svg>
-                <span class="text-[10px] text-slate-400">核销成本饼图</span>
-              </div>
+              <div class="overview-donut" aria-label="权益资源核销成本占比"></div>
               <div class="mt-2 space-y-2">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
