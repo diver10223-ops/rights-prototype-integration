@@ -136,7 +136,11 @@ const PAGE_META = {
   "reconcile-physical.html": { title: "实物奖品核销对账", desc: "查询并核对实物奖品领取、发货及签收记录" },
   "reconcile-settlement.html": { title: "权益成本结算", desc: "汇总权益核销成本并管理供应商结算记录" },
   "redemption.html": { title: "权益核销", desc: "查询权益核销记录、核销状态及相关业务明细" },
-  "redemptionnew.html": { title: "权益核销new", desc: "集中查询各类权益核销与总对账数据" },
+  "redemptionnew.html": {
+    title: "权益核销总对账",
+    desc: "统一查询行内、第三方、实物全品类权益核销对账记录，支持多维度筛选导出",
+    aliases: ["权益核销new"]
+  },
   "operation-customers.html": { title: "客户列表", desc: "查询客户基础信息、权益持有及运营触达情况" },
   "operation-blacklist.html": { title: "权益黑名单", desc: "维护权益领取与使用限制名单及生效规则" },
   "operation-recovery.html": { title: "权益回收", desc: "处理已发权益的回收申请、执行结果与记录" },
@@ -550,7 +554,9 @@ function escapeHTML(value) {
 
 function hideLegacyPageIntro(pageRoot, meta) {
   var names = [meta.title].concat(meta.aliases || []);
-  var candidates = Array.prototype.slice.call(pageRoot.children, 0, 3);
+  // 旧标题只可能位于页面内容的第一个直接子节点。
+  // 不向后扫描，避免把列表标题误识别为页面标题。
+  var candidates = Array.prototype.slice.call(pageRoot.children, 0, 1);
 
   for (var ci = 0; ci < candidates.length; ci++) {
     var candidate = candidates[ci];
@@ -588,7 +594,11 @@ function renderFunctionIntro() {
   var meta = PAGE_META[getCurrentPagePath()];
   if (!meta) return;
 
-  var pageRoot = document.querySelector('.content > .am-page, .content > .mk-page, .content');
+  // 分组选择器会优先返回文档中更靠前的 .content，因此按优先级逐一查询。
+  var pageRoot =
+    document.querySelector('.content > .am-page') ||
+    document.querySelector('.content > .mk-page') ||
+    document.querySelector('.content');
   if (!pageRoot || pageRoot.querySelector(':scope > .mk-function-intro')) return;
 
   hideLegacyPageIntro(pageRoot, meta);
