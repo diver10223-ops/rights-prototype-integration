@@ -459,8 +459,53 @@ function renderPageTabs() {
   tabBar.innerHTML = html;
 }
 
+// ========== 旧版页面外壳兼容 ==========
+// nav.js 菜单中的部分页面仍使用 app-container/main-content/top-header/page-content。
+// 在不修改页面业务内容的前提下，将这些旧版外壳升级为视觉基准页使用的 layout-v2。
+function normalizeLegacyLayout() {
+  var app = document.querySelector('.app-container');
+  if (!app) return;
+
+  app.classList.remove('app-container');
+  app.classList.add('app', 'layout-v2');
+
+  var main = app.querySelector('.main-content');
+  if (!main) return;
+  main.classList.remove('main-content');
+  main.classList.add('main');
+
+  var oldHeader = main.querySelector('.top-header');
+  var oldTabs = main.querySelector('.tab-bar');
+  var insertBeforeNode = oldHeader || oldTabs || main.firstChild;
+
+  var topShell = document.createElement('div');
+  topShell.className = 'top-shell';
+
+  var header = document.createElement('header');
+  header.id = 'header';
+  header.className = 'app-header';
+
+  var pageTabs = document.createElement('div');
+  pageTabs.id = 'pageTabs';
+  pageTabs.className = 'page-tabs empty';
+
+  topShell.appendChild(header);
+  topShell.appendChild(pageTabs);
+  main.insertBefore(topShell, insertBeforeNode);
+
+  if (oldHeader) oldHeader.remove();
+  if (oldTabs) oldTabs.remove();
+
+  var pageContent = main.querySelector('.page-content');
+  if (pageContent) {
+    pageContent.classList.remove('page-content');
+    pageContent.classList.add('content');
+  }
+}
+
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
+  normalizeLegacyLayout();
   renderSidebar();
   renderHeader();
   syncCurrentTab();
