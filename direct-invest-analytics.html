@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>权益直投数据分析 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../../assets/css/common.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面标题 -->
+      <div class="mb-5">
+        <h2 class="text-sm font-bold text-slate-800">权益直投发放数据分析</h2>
+        <p class="text-[10px] text-slate-400 mt-1">权益全历程数据（发放、使用、核销）及成本核算数据统计，支持多维度活动筛选与分析</p>
+      </div>
+
+      <!-- 01 筛选区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">01</span>
+              <span class="text-[11px] font-medium text-slate-700">筛选区</span>
+            </div>
+            <p class="text-[10px] text-slate-400">按活动类型、时间段、场景类型、部门、客群过滤活动</p>
+          </div>
+          <div class="flex flex-wrap gap-4 items-end mt-3">
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">统计日期</label>
+              <input type="date" value="2026-06-01" class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-36 focus:outline-none focus:border-blue-400" />
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">至</label>
+              <input type="date" value="2026-06-30" class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-36 focus:outline-none focus:border-blue-400" />
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">活动类型</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部类型</option>
+                <option>权益直投</option>
+                <option>权益包直投</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">场景类型</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部场景</option>
+                <option>开户有礼</option>
+                <option>代发薪</option>
+                <option>存贷联动</option>
+                <option>节日营销</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">归属部门</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部部门</option>
+                <option>零售金融部</option>
+                <option>公司业务部</option>
+                <option>对公业务部</option>
+                <option>私人银行部</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">客群</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部客群</option>
+                <option>新客户</option>
+                <option>代发客户</option>
+                <option>企业客户</option>
+                <option>VIP客户</option>
+              </select>
+            </div>
+            <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-medium">查询</button>
+            <button class="px-4 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 核心指标区 -->
+      <div class="mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">02</span>
+          <span class="text-[11px] font-medium text-slate-700">核心指标区</span>
+        </div>
+        <p class="text-[10px] text-slate-400">权益全历程核心指标：发放、使用、核销与成本核算</p>
+      </div>
+      <div class="grid grid-cols-8 gap-3 mb-5">
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">活动数</div>
+          <div class="text-base font-bold text-slate-700">40</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">发放次数</div>
+          <div class="text-base font-bold text-blue-600">85,230</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">领取人数</div>
+          <div class="text-base font-bold text-slate-700">52,386</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">使用次数</div>
+          <div class="text-base font-bold text-emerald-600">38,520</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">核销次数</div>
+          <div class="text-base font-bold text-amber-600">32,156</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">使用率</div>
+          <div class="text-base font-bold text-purple-600">45.2%</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">权益成本</div>
+          <div class="text-base font-bold text-red-600">¥ 1.28M</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-3">
+          <div class="text-[10px] text-slate-400 mb-1">ROI</div>
+          <div class="text-base font-bold text-blue-600">3.85</div>
+        </div>
+      </div>
+
+      <!-- 03 活动列表 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03</span>
+              <span class="text-[11px] font-medium text-slate-700">活动数据明细区</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <p class="text-[10px] text-slate-400">展示活动的全历程数据及成本核算</p>
+              <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">
+                <i class="fas fa-download mr-1"></i>导出
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-3 text-left font-medium">活动编号</th>
+              <th class="py-2.5 px-3 text-left font-medium">活动名称</th>
+              <th class="py-2.5 px-3 text-left font-medium">场景</th>
+              <th class="py-2.5 px-3 text-left font-medium">部门</th>
+              <th class="py-2.5 px-3 text-left font-medium">客群</th>
+              <th class="py-2.5 px-3 text-right font-medium">发放次数</th>
+              <th class="py-2.5 px-3 text-right font-medium">领取人数</th>
+              <th class="py-2.5 px-3 text-right font-medium">使用次数</th>
+              <th class="py-2.5 px-3 text-right font-medium">核销次数</th>
+              <th class="py-2.5 px-3 text-right font-medium">权益成本</th>
+              <th class="py-2.5 px-3 text-right font-medium">ROI</th>
+              <th class="py-2.5 px-3 text-left font-medium">状态</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">DT_202607001</td>
+              <td class="py-3 px-3 font-medium text-slate-700">新客开户权益直投</td>
+              <td class="py-3 px-3 text-slate-600">开户有礼</td>
+              <td class="py-3 px-3 text-slate-600">零售金融部</td>
+              <td class="py-3 px-3 text-slate-600">新客户</td>
+              <td class="py-3 px-3 text-right">12,580</td>
+              <td class="py-3 px-3 text-right">8,256</td>
+              <td class="py-3 px-3 text-right">6,520</td>
+              <td class="py-3 px-3 text-right">5,820</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 158,500</td>
+              <td class="py-3 px-3 text-right font-medium">4.2</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">进行中</span></td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">DT_202607002</td>
+              <td class="py-3 px-3 font-medium text-slate-700">代发薪客户福利直投</td>
+              <td class="py-3 px-3 text-slate-600">代发薪</td>
+              <td class="py-3 px-3 text-slate-600">公司业务部</td>
+              <td class="py-3 px-3 text-slate-600">代发客户</td>
+              <td class="py-3 px-3 text-right">25,680</td>
+              <td class="py-3 px-3 text-right">15,830</td>
+              <td class="py-3 px-3 text-right">12,560</td>
+              <td class="py-3 px-3 text-right">10,580</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 286,500</td>
+              <td class="py-3 px-3 text-right font-medium">3.8</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">进行中</span></td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">DT_202607003</td>
+              <td class="py-3 px-3 font-medium text-slate-700">存贷联动企业激励</td>
+              <td class="py-3 px-3 text-slate-600">存贷联动</td>
+              <td class="py-3 px-3 text-slate-600">对公业务部</td>
+              <td class="py-3 px-3 text-slate-600">企业客户</td>
+              <td class="py-3 px-3 text-right">8,560</td>
+              <td class="py-3 px-3 text-right">5,628</td>
+              <td class="py-3 px-3 text-right">3,820</td>
+              <td class="py-3 px-3 text-right">2,950</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 209,040</td>
+              <td class="py-3 px-3 text-right font-medium">3.2</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">已暂停</span></td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">DT_202607004</td>
+              <td class="py-3 px-3 font-medium text-slate-700">VIP客户权益包直投</td>
+              <td class="py-3 px-3 text-slate-600">节日营销</td>
+              <td class="py-3 px-3 text-slate-600">私人银行部</td>
+              <td class="py-3 px-3 text-slate-600">VIP客户</td>
+              <td class="py-3 px-3 text-right">3,250</td>
+              <td class="py-3 px-3 text-right">1,256</td>
+              <td class="py-3 px-3 text-right">980</td>
+              <td class="py-3 px-3 text-right">820</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 173,440</td>
+              <td class="py-3 px-3 text-right font-medium">5.6</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">待发布</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- 分页 -->
+        <div class="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400">共 40 条数据</div>
+          <div class="flex items-center gap-1">
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-400 cursor-not-allowed" disabled>上一页</button>
+            <button class="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">1</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">2</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">3</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">下一页</button>
+          </div>
+        </div>
+      </div>
+
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/nav.js"></script>
+
+</body>
+</html>

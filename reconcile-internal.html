@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行内权益核销对账 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <button class="header-icon-btn" title="设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页面标题 -->
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">行内权益核销对账</h1>
+              <p class="mk-page-subtitle">查询行内卡券权益的全生命周期流水记录</p>
+            </div>
+            <button class="mk-btn mk-btn-default" onclick="showToast('流水导出中，请稍候')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出流水
+            </button>
+          </div>
+
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <!-- 快捷时间 -->
+            <div class="flex gap-2 mb-4" id="time-presets">
+              <button class="mk-time-btn active" onclick="setTimePreset(this, '今日')">今日</button>
+              <button class="mk-time-btn" onclick="setTimePreset(this, '近7天')">近7天</button>
+              <button class="mk-time-btn" onclick="setTimePreset(this, '近30天')">近30天</button>
+              <button class="mk-time-btn" onclick="setTimePreset(this, '近3个月')">近3个月</button>
+              <button class="mk-time-btn" onclick="setTimePreset(this, '近一年')">近一年</button>
+            </div>
+
+            <!-- 基础查询 -->
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">用户ID</label>
+                <div class="mk-input-wrap">
+                  <svg class="mk-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input class="mk-input mk-input-prefix" placeholder="精准查询" id="userId">
+                </div>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">操作类型</label>
+                <select class="mk-select" id="operation">
+                  <option>全部</option>
+                  <option>领取</option>
+                  <option>使用</option>
+                  <option>到期作废</option>
+                  <option>退款</option>
+                  <option>使用冲正</option>
+                  <option>退款冲正</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">开始时间</label>
+                <input class="mk-input" type="date" id="dateStart">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">结束时间</label>
+                <input class="mk-input" type="date" id="dateEnd">
+              </div>
+            </div>
+
+            <!-- 高级查询折叠 -->
+            <button class="flex items-center gap-1 text-sm mt-2 mb-1" style="color: #1677ff; background: none; border: none; cursor: pointer;" onclick="toggleAdvanced()">
+              <svg id="advanced-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+              高级查询
+            </button>
+            <div id="advanced-panel" style="display: none;">
+              <div class="mk-search-grid pt-3 border-t border-border">
+                <div class="mk-form-item">
+                  <label class="mk-label">流水ID</label>
+                  <input class="mk-input" placeholder="请输入流水ID" id="flowId">
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">权益使用渠道</label>
+                  <select class="mk-select" id="channel">
+                    <option>全部</option>
+                    <option>手机银行</option>
+                    <option>网上银行</option>
+                  </select>
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">权益使用业务</label>
+                  <select class="mk-select" id="business">
+                    <option>全部</option>
+                    <option>个人存款</option>
+                    <option>个人贷款</option>
+                    <option>个人理财</option>
+                    <option>保险</option>
+                    <option>纸黄金</option>
+                    <option>注册开户</option>
+                    <option>自助缴费</option>
+                  </select>
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">发行机构</label>
+                  <select class="mk-select" id="issuerOrg">
+                    <option>请选择发行机构</option>
+                    <option>零售银行部</option>
+                    <option>信用卡中心</option>
+                    <option>公司金融部</option>
+                  </select>
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">权益类型</label>
+                  <select class="mk-select" id="equityType">
+                    <option>全部</option>
+                    <option>抵扣券</option>
+                    <option>折扣券</option>
+                    <option>兑换券</option>
+                    <option>满减券</option>
+                  </select>
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">权益名称</label>
+                  <select class="mk-select" id="equityName">
+                    <option>全部</option>
+                    <option>满100减20券</option>
+                    <option>信用卡年费折扣券</option>
+                    <option>贷款利率折扣券</option>
+                  </select>
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">状态</label>
+                  <select class="mk-select" id="status">
+                    <option>全部</option>
+                    <option>成功</option>
+                    <option>失败</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="mk-search-actions mt-3">
+              <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              <button class="mk-btn mk-btn-primary" onclick="handleQuery()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 统计卡片 -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">今日领取笔数</div>
+              <div class="mk-stat-value" style="color: #1677ff;">3,245</div>
+            </div>
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">今日使用笔数</div>
+              <div class="mk-stat-value" style="color: #52c41a;">1,892</div>
+            </div>
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">今日占用预算</div>
+              <div class="mk-stat-value" style="color: #faad14;">¥52,800</div>
+            </div>
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">今日作废笔数</div>
+              <div class="mk-stat-value" style="color: #ff4d4f;">128</div>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">流水记录</span>
+              <div class="mk-list-actions">
+                <span class="text-sm text-secondary">共 <b>6</b> 条</span>
+                <button class="mk-btn mk-btn-default text-sm" style="padding: 0 10px; height: 28px;" onclick="showToast('下载中，请稍候')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" id="flow-table">
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>时间</th>
+                    <th>用户ID</th>
+                    <th>流水ID</th>
+                    <th>操作</th>
+                    <th>发行机构</th>
+                    <th>权益类型</th>
+                    <th>权益名称</th>
+                    <th>数量</th>
+                    <th>占用预算</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                  </tr>
+                </thead>
+                <tbody id="flow-tbody">
+                </tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span class="text-sm text-secondary">共 6 条</span>
+              <div class="mk-pagination-btns">
+                <button class="mk-page-btn active">1</button>
+                <button class="mk-page-btn">2</button>
+                <button class="mk-page-btn">3</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" class="mk-toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const mockFlows = [
+      { id: '1', time: '2024-06-20 10:23:45', userId: 'U100001', flowId: 'FL2024062001', operation: '领取', department: '零售银行部', equityType: '满减券', equityName: '满100减20券', quantity: 1, budget: '¥20.00', status: '成功', remark: '618活动领取' },
+      { id: '2', time: '2024-06-20 11:15:30', userId: 'U100002', flowId: 'FL2024062002', operation: '使用', department: '信用卡中心', equityType: '折扣券', equityName: '信用卡年费折扣券', quantity: 1, budget: '¥200.00', status: '成功', remark: '年费减免核销' },
+      { id: '3', time: '2024-06-20 14:02:10', userId: 'U100003', flowId: 'FL2024062003', operation: '领取', department: '零售银行部', equityType: '抵扣券', equityName: '现金抵扣50元券', quantity: 2, budget: '¥100.00', status: '成功', remark: '' },
+      { id: '4', time: '2024-06-20 15:30:00', userId: 'U100004', flowId: 'FL2024062004', operation: '到期作废', department: '公司金融部', equityType: '折扣券', equityName: '贷款利率折扣券', quantity: 1, budget: '¥0.00', status: '成功', remark: '超期未使用' },
+      { id: '5', time: '2024-06-20 16:45:22', userId: 'U100005', flowId: 'FL2024062005', operation: '使用', department: '零售银行部', equityType: '兑换券', equityName: '兑换券', quantity: 1, budget: '¥0.00', status: '失败', remark: '余额不足' },
+      { id: '6', time: '2024-06-20 17:00:05', userId: 'U100001', flowId: 'FL2024062006', operation: '退款', department: '零售银行部', equityType: '满减券', equityName: '满100减20券', quantity: 1, budget: '¥20.00', status: '成功', remark: '订单退款冲正' },
+    ];
+
+    // 渲染表格
+    function renderTable() {
+      const tbody = document.getElementById('flow-tbody');
+      tbody.innerHTML = mockFlows.map((flow, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td class="text-muted-foreground">${flow.time}</td>
+          <td>${flow.userId}</td>
+          <td class="text-muted-foreground text-xs">${flow.flowId}</td>
+          <td><span class="${getOpClass(flow.operation)}">${flow.operation}</span></td>
+          <td>${flow.department}</td>
+          <td>${flow.equityType}</td>
+          <td class="font-medium">${flow.equityName}</td>
+          <td>${flow.quantity}</td>
+          <td class="font-medium">${flow.budget}</td>
+          <td><span class="${getStatusClass(flow.status)}">${flow.status}</span></td>
+          <td class="text-muted-foreground">${flow.remark || '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function getStatusClass(status) {
+      return status === '成功' ? 'mk-badge mk-badge-success' : 'mk-badge mk-badge-danger';
+    }
+
+    function getOpClass(op) {
+      if (op === '领取') return 'mk-badge mk-badge-primary';
+      if (op === '使用') return 'mk-badge mk-badge-success';
+      if (op === '到期作废') return 'mk-badge mk-badge-default';
+      if (op === '退款' || op === '使用冲正' || op === '退款冲正') return 'mk-badge mk-badge-warning';
+      return 'mk-badge mk-badge-default';
+    }
+
+    // Toast提示
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    // 时间预设选择
+    function setTimePreset(btn, preset) {
+      document.querySelectorAll('#time-presets .mk-time-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // 切换高级查询
+    function toggleAdvanced() {
+      const panel = document.getElementById('advanced-panel');
+      const arrow = document.getElementById('advanced-arrow');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+      } else {
+        panel.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('userId').value = '';
+      document.getElementById('operation').value = '全部';
+      document.getElementById('dateStart').value = '';
+      document.getElementById('dateEnd').value = '';
+      document.getElementById('flowId').value = '';
+      document.getElementById('channel').value = '全部';
+      document.getElementById('business').value = '全部';
+      document.getElementById('issuerOrg').value = '请选择发行机构';
+      document.getElementById('equityType').value = '全部';
+      document.getElementById('equityName').value = '全部';
+      document.getElementById('status').value = '全部';
+      document.querySelectorAll('#time-presets .mk-time-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('#time-presets .mk-time-btn').classList.add('active');
+    }
+
+    // 查询
+    function handleQuery() {
+      showToast('查询成功');
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

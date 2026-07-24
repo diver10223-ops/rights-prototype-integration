@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>权益核销管理 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+ <link rel="stylesheet" href="css/styles1.css">
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <!-- 中部主体 -->
+  <div class="main">
+
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面目标 -->
+      <!-- 页面目标 已简化融入页面 -->
+
+      <!-- 统计卡片 -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="bg-white border border-slate-200 rounded-lg p-3 text-center">
+          <span class="text-[10px] text-slate-500 block">总记录数</span><span class="text-lg font-bold text-slate-900">1,247</span>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
+          <span class="text-[10px] text-emerald-600 block">已成功</span><span class="text-lg font-bold text-emerald-700">1,189</span>
+        </div>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+          <span class="text-[10px] text-red-600 block">异常挂死</span><span class="text-lg font-bold text-red-700">12</span>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+          <span class="text-[10px] text-blue-600 block">结算中</span><span class="text-lg font-bold text-blue-700">28</span>
+        </div>
+        <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+          <span class="text-[10px] text-orange-600 block">退单/冲正</span><span class="text-lg font-bold text-orange-700">18</span>
+        </div>
+      </div>
+
+      <!-- 搜索筛选 -->
+      <div class="mk-search-panel">
+  <div class="mk-panel-header"><div class="mk-panel-title">搜索与筛选</div></div>
+  <div class="flex flex-wrap gap-3 items-end"><input type="text" placeholder="核销编号..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-36 focus:outline-none focus:border-blue-400" />
+          <input type="text" placeholder="企业名称..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-40 focus:outline-none focus:border-blue-400" />
+          <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-28 focus:outline-none focus:border-blue-400">
+            <option>全部状态</option><option>已成功</option><option>异常挂死</option><option>结算中</option><option>退单</option>
+          </select>
+          <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+            <option>对账状态</option><option>对账无差错</option><option>待对账</option><option>对账差异</option><option>手工核销</option>
+          </select>
+          <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold cursor-pointer">&#128269; 搜索</button>
+          <button onclick="this.closest('div').querySelectorAll('input,select').forEach(el=>el.value='')" class="px-4 py-1.5 border border-slate-300 hover:bg-slate-50 rounded text-[10px] font-bold cursor-pointer">&#8635; 重置</button></div>
+</div>
+
+      <!-- 核销记录表 -->
+      <div class="mk-list-panel">
+  <div class="mk-panel-header"><div class="mk-panel-title">核销记录列表</div></div>
+  <div><div class="pt-6 overflow-x-auto">
+          <table class="mk-compact-table">
+            <thead><tr>
+              <th class="py-2.5 px-2">核销编号</th><th class="py-2.5 px-2">企业名称</th><th class="py-2.5 px-2">权益名称</th><th class="py-2.5 px-2 text-right">数量</th><th class="py-2.5 px-2 text-right">金额</th><th class="py-2.5 px-2">核销时间</th><th class="py-2.5 px-2">供应商</th><th class="py-2.5 px-2">状态</th><th class="py-2.5 px-2">对账状态</th>
+            </tr></thead>
+            <tbody class="divide-y divide-slate-100 text-slate-600">
+              <tr class="hover:bg-blue-50/20 transition-colors">
+                <td class="py-2.5 px-2 font-mono text-[10px]">V202605001</td>
+                <td class="py-2.5 px-2 font-semibold text-slate-800">上海申通地铁集团</td>
+                <td class="py-2.5 px-2">微信50元代金券</td>
+                <td class="py-2.5 px-2 text-right">1</td>
+                <td class="py-2.5 px-2 text-right font-mono">&yen;50</td>
+                <td class="py-2.5 px-2 font-mono text-[10px]">06-22 11:24</td>
+                <td class="py-2.5 px-2 text-[10px]">微信支付商户中心</td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">已成功</span></td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600">无差错</span></td>
+              </tr>
+              <tr class="hover:bg-blue-50/20 transition-colors">
+                <td class="py-2.5 px-2 font-mono text-[10px]">V202605002</td>
+                <td class="py-2.5 px-2 font-semibold text-slate-800">腾讯科技（上海）</td>
+                <td class="py-2.5 px-2">年费100元减免券</td>
+                <td class="py-2.5 px-2 text-right">2</td>
+                <td class="py-2.5 px-2 text-right font-mono">&yen;200</td>
+                <td class="py-2.5 px-2 font-mono text-[10px]">06-22 10:45</td>
+                <td class="py-2.5 px-2 text-[10px]">易诚商行计财部</td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">已成功</span></td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600">无差错</span></td>
+              </tr>
+              <tr class="hover:bg-blue-50/20 transition-colors bg-red-50/30">
+                <td class="py-2.5 px-2 font-mono text-[10px]">V202605003</td>
+                <td class="py-2.5 px-2 font-semibold text-slate-800">拼多多（上海）</td>
+                <td class="py-2.5 px-2">定制拉杆箱实物</td>
+                <td class="py-2.5 px-2 text-right">1</td>
+                <td class="py-2.5 px-2 text-right font-mono">&yen;388</td>
+                <td class="py-2.5 px-2 font-mono text-[10px]">06-21 17:30</td>
+                <td class="py-2.5 px-2 text-[10px]">美德物化供应商</td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">异常挂死</span></td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-red-600">自动挂起</span></td>
+              </tr>
+              <tr class="hover:bg-blue-50/20 transition-colors">
+                <td class="py-2.5 px-2 font-mono text-[10px]">V202605004</td>
+                <td class="py-2.5 px-2 font-semibold text-slate-800">上海蔚来汽车销售</td>
+                <td class="py-2.5 px-2">微企普惠贷利息抵扣券</td>
+                <td class="py-2.5 px-2 text-right">1</td>
+                <td class="py-2.5 px-2 text-right font-mono">--</td>
+                <td class="py-2.5 px-2 font-mono text-[10px]">06-22 09:15</td>
+                <td class="py-2.5 px-2 text-[10px]">易诚普惠金融部</td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">结算中</span></td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">待对账</span></td>
+              </tr>
+              <tr class="hover:bg-blue-50/20 transition-colors">
+                <td class="py-2.5 px-2 font-mono text-[10px]">V202605005</td>
+                <td class="py-2.5 px-2 font-semibold text-slate-800">浙江某制造有限公司</td>
+                <td class="py-2.5 px-2">微信50元代金券</td>
+                <td class="py-2.5 px-2 text-right">3</td>
+                <td class="py-2.5 px-2 text-right font-mono">&yen;150</td>
+                <td class="py-2.5 px-2 font-mono text-[10px]">06-20 14:20</td>
+                <td class="py-2.5 px-2 text-[10px]">微信支付商户中心</td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-700 font-semibold">退单</span></td>
+                <td class="py-2.5 px-2"><span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">手工补平</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+          <span class="text-[10px] text-slate-400">共 1,247 条记录，当前第 1/250 页</span>
+          <div class="flex gap-1">
+            <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-400 cursor-not-allowed">&laquo;</button>
+            <button class="px-2.5 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">1</button>
+            <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-600 hover:bg-slate-50 cursor-pointer">2</button>
+            <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-600 hover:bg-slate-50 cursor-pointer">3</button>
+            <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-600 hover:bg-slate-50 cursor-pointer">&raquo;</button>
+          </div>
+        </div></div>
+</div>
+
+    
+      </div>
+    </div>
+  </div>
+  <!-- 底部 Footer -->
+</div>
+<script src="js/nav.js"></script>
+
+</body>
+</html>

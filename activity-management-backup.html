@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>权益直投活动 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
+    .am-page { padding: 12px; background: #f0f2f5; min-height: calc(100vh - 92px); }
+    .am-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 8px; }
+    .am-metric { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
+    .am-metric .ico { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .am-metric .label { font-size: 12px; color: #8c95a6; }
+    .am-metric .value { font-size: 22px; font-weight: 700; color: #1a1a2e; line-height: 1.2; }
+    .am-metric .sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .am-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+    .am-status .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .am-status.running { background: #d1fae5; color: #047857; }
+    .am-status.running .dot { background: #10b981; box-shadow: 0 0 0 0 rgba(16,185,153,.6); animation: amPulse 1.4s infinite; }
+    .am-status.pending { background: #e0f2fe; color: #075985; }
+    .am-status.paused { background: #fef3c7; color: #92400e; }
+    .am-status.closed { background: #f1f5f9; color: #475569; }
+    @keyframes amPulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,153,.6); } 70% { box-shadow: 0 0 0 6px rgba(16,185,153,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,153,0); } }
+    .am-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .am-tag.blue { background: #e6f4ff; color: #1677ff; }
+    .am-tag.gray { background: #f1f5f9; color: #475569; }
+    .am-link { color: #1677ff; cursor: pointer; font-size: 12px; }
+    .am-link:hover { text-decoration: underline; }
+    .am-link.danger { color: #dc2626; }
+    .am-link.warn { color: #d97706; }
+    .am-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .am-table th { background: #fafbfc; color: #8c95a6; font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8ecf0; }
+    .am-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #4a5568; vertical-align: middle; }
+    .am-table tr:hover td { background: #fafbfc; }
+    .am-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .am-section-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .am-search-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 12px; align-items: end; }
+    .am-field label { display: block; font-size: 12px; color: #4a5568; margin-bottom: 4px; }
+    .am-field .ipt, .am-field select { width: 100%; height: 32px; border: 1px solid #e8ecf0; border-radius: 6px; padding: 0 10px; font-size: 13px; color: #4a5568; background: #fff; outline: none; }
+    .am-field .ipt:focus, .am-field select:focus { border-color: #1677ff; }
+    .am-btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #e8ecf0; background: #fff; color: #4a5568; }
+    .am-btn:hover { color: #1677ff; border-color: #1677ff; }
+    .am-btn.primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .am-btn.primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .am-btn.danger { color: #dc2626; border-color: #fecaca; background: #fff; }
+    .am-btn.danger:hover { background: #fef2f2; border-color: #fca5a5; }
+    .am-btn.lg { height: 36px; padding: 0 20px; }
+    /* 弹窗 */
+    .am-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .am-modal-overlay.show { display: flex; }
+    .am-modal { background: #fff; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-width: 92vw; max-height: 90vh; display: flex; flex-direction: column; }
+    .am-modal-head { padding: 14px 20px; border-bottom: 1px solid #e8ecf0; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #1a1a2e; }
+    .am-modal-close { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; color: #94a3b8; }
+    .am-modal-close:hover { background: #f1f5f9; color: #475569; }
+    .am-modal-body { padding: 20px; overflow: auto; }
+    .am-modal-foot { padding: 12px 20px; border-top: 1px solid #e8ecf0; display: flex; justify-content: flex-end; gap: 8px; }
+    /* 漏斗 */
+    .funnel { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 0; }
+    .funnel-step { position: relative; height: 56px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 13px; clip-path: polygon(8% 0, 92% 0, 84% 100%, 16% 100%); }
+    .funnel-step.s1 { width: 100%; background: linear-gradient(90deg, #1677ff, #4096ff); }
+    .funnel-step.s2 { width: 88%; background: linear-gradient(90deg, #36cfc9, #5cdbd3); }
+    .funnel-step.s3 { width: 76%; background: linear-gradient(90deg, #faad14, #ffc53d); }
+    .funnel-step.s4 { width: 64%; background: linear-gradient(90deg, #f5222d, #ff4d4f); }
+    .funnel-meta { display: flex; justify-content: space-between; width: 100%; font-size: 11px; color: #94a3b8; padding: 0 4px; }
+    .funnel-meta b { color: #1a1a2e; font-size: 13px; }
+    /* 标签胶囊 */
+    .am-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #e6f4ff; color: #1677ff; border-radius: 9999px; font-size: 11px; margin: 2px; }
+    .am-pill .x { cursor: pointer; color: #1677ff; }
+    .am-pill .x:hover { color: #0958d9; }
+    /* Toast */
+    .am-toast { position: fixed; top: 80px; right: 24px; padding: 10px 16px; border-radius: 6px; font-size: 13px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.15); z-index: 1100; opacity: 0; transform: translateX(20px); transition: all .25s; }
+    .am-toast.show { opacity: 1; transform: translateX(0); }
+    .am-toast.success { background: #10b981; }
+    .am-toast.error { background: #ef4444; }
+    .am-toast.warn { background: #f59e0b; }
+    .am-radio { display: inline-flex; align-items: center; gap: 4px; margin-right: 16px; font-size: 13px; color: #4a5568; cursor: pointer; }
+    .am-radio input { cursor: pointer; }
+    .am-checkbox { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; font-size: 13px; color: #4a5568; cursor: pointer; }
+    .am-help { padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; border-radius: 6px; font-size: 12px; }
+    /* 5模块化结�?*/
+    .am-section-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 8px; margin-bottom: 16px; padding: 16px 18px; }
+    .am-section-head { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #1a1a2e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #e8ecf0; }
+    .am-section-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #1677ff; color: #fff; font-size: 12px; font-weight: 600; }
+    /* 目标多选卡 */
+    .am-goal-card { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; color: #4a5568; cursor: pointer; background: #fafbfc; }
+    .am-goal-card:hover { border-color: #1677ff; background: #f0f7ff; }
+    .am-goal-card input:checked + * { color: #1677ff; }
+    .am-goal-card:has(input:checked) { background: #e6f4ff; border-color: #1677ff; color: #1677ff; }
+    /* 模式选择�?*/
+    .am-mode-card { display: block; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; color: #4a5568; cursor: pointer; background: #fafbfc; }
+    .am-mode-card:has(input:checked) { background: #e6f4ff; border-color: #1677ff; color: #1677ff; }
+    /* 客群标签�?*/
+    .am-tag-box { min-height: 36px; padding: 6px; border: 1px dashed #e2e8f0; border-radius: 6px; background: #fafbfc; }
+    /* 权益卡（多选展示） */
+    .am-benefit-card { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fafbfc; font-size: 12px; }
+    .am-benefit-card .x { cursor: pointer; color: #94a3b8; }
+    .am-benefit-card .x:hover { color: #ef4444; }
+    /* ====== 权益/奖项包设�?- 3.0 样式 ====== */
+    /* 空状�?*/
+    .am-benefit-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 110px; padding: 18px 12px; border: 1px dashed #cbd5e1; border-radius: 6px; background: #f8fafc; color: #94a3b8; font-size: 13px; }
+    /* 权益卡片 */
+    .am-bcard { border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; margin-bottom: 10px; overflow: hidden; }
+    .am-bcard-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-bottom: 1px solid #eef2f7; }
+    .am-bcard-title { font-size: 13px; font-weight: 600; color: #334155; }
+    .am-bcard-subtype { display: inline-block; padding: 1px 6px; font-size: 10px; border-radius: 3px; background: #f5f3ff; color: #6d28d9; }
+    .am-bcard-del { background: transparent; border: none; cursor: pointer; color: #94a3b8; font-size: 14px; padding: 2px 6px; }
+    .am-bcard-del:hover { color: #ef4444; }
+    .am-bcard-body { display: grid; grid-template-columns: 1.4fr 1fr 1.3fr; gap: 14px; padding: 12px; }
+    .am-bcard-col { min-width: 0; }
+    .am-bcard-label { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+    .am-bcard-namebox { position: relative; padding: 6px 56px 6px 10px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; font-size: 12px; color: #9a3412; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 32px; display: flex; align-items: center; }
+    .am-bcard-count { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #c2410c; }
+    /* 步进�?*/
+    .am-stepper { display: flex; align-items: center; gap: 0; }
+    .am-stepper button { width: 28px; height: 32px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 14px; color: #475569; }
+    .am-stepper button:first-child { border-radius: 6px 0 0 6px; }
+    .am-stepper button:last-child { border-radius: 0 6px 6px 0; }
+    .am-stepper button:hover { background: #f1f5f9; color: #1677ff; }
+    .am-stepper input { width: 56px; height: 32px; text-align: center; border: 1px solid #e2e8f0; border-left: 0; border-right: 0; border-radius: 0; outline: none; font-size: 13px; -moz-appearance: textfield; }
+    .am-stepper input::-webkit-outer-spin-button, .am-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* 有效�?*/
+    .am-bcard-valid { display: flex; align-items: center; gap: 6px; }
+    .am-bcard-sel { height: 32px !important; width: 90px; padding: 0 6px; font-size: 12px; }
+    .am-bcard-num { width: 50px !important; height: 32px; text-align: center; padding: 0; }
+    .am-bcard-unit { font-size: 12px; color: #64748b; }
+    /* 数据看板 */
+    .am-tab-btn { padding: 8px 16px; font-size: 13px; color: #4a5568; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; }
+    .am-tab-btn:hover { color: #1677ff; }
+    .am-tab-btn.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
+    .dash-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 8px; padding: 14px 16px; }
+    .dash-metric { background: linear-gradient(135deg, #f8fafc, #f0f7ff); border: 1px solid #e8ecf0; border-radius: 8px; padding: 12px 16px; }
+    .dash-metric .v { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+    .dash-metric .l { font-size: 12px; color: #64748b; margin-top: 4px; }
+    /* 漏斗�?*/
+    .funnel-bar { position: relative; height: 36px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+    .funnel-bar .fill { height: 100%; display: flex; align-items: center; padding: 0 12px; color: #fff; font-size: 12px; font-weight: 600; transition: all 0.5s ease; }
+    /* 核销规则微标�?*/
+    .rule-chip { display: inline-block; padding: 2px 8px; background: #f1f5f9; color: #475569; border-radius: 9999px; font-size: 10px; margin: 2px 4px 2px 0; border: 1px solid #e2e8f0; }
+    /* 状态徽�?*/
+    .exec-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
+    .exec-status.done { background: #d1fae5; color: #065f46; }
+    .exec-status.done .dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 4px #10b981; animation: pulse 1.5s infinite; }
+    .exec-status.planned { background: #fef3c7; color: #92400e; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  </style>
+</head>
+<body>
+<div class="app layout-v2">
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    <div class="top-shell">
+      <header id="header" class="app-header"></header>
+      <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+    <div class="content">
+      <div class="am-page">
+        <!-- 页头 -->
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-[14px] font-bold text-slate-800">权益直投活动</div>
+            <div class="text-[11px] text-slate-500 mt-1">面向运营人员，创建、启动、编辑、监控和下架具体的营销直投活动，把"客群名单"�?权益商品"进行绑定</div>
+          </div>
+        </div>
+
+        <!-- 顶部核心指标�?-->
+        <div class="am-card mb-3">
+          <div class="grid grid-cols-4">
+            <div class="am-metric border-r border-slate-100">
+              <div class="ico" style="background:#e6f4ff;color:#1677ff">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              </div>
+              <div>
+                <div class="label">累计配置活动�?/div>
+                <div class="value" id="metricTotal">24<span class="text-[12px] text-slate-400 ml-1">�?/span></div>
+                <div class="sub">含历史所有状�?/div>
+              </div>
+            </div>
+            <div class="am-metric border-r border-slate-100">
+              <div class="ico" style="background:#d1fae5;color:#10b981">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div class="label">运行中活�?/div>
+                <div class="value" id="metricRunning">12<span class="text-[12px] text-slate-400 ml-1">�?/span></div>
+                <div class="sub">当前正在生效</div>
+              </div>
+            </div>
+            <div class="am-metric border-r border-slate-100">
+              <div class="ico" style="background:#fef3c7;color:#d97706">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <div class="label">累计覆盖客户�?/div>
+                <div class="value">85,230<span class="text-[12px] text-slate-400 ml-1">�?/span></div>
+                <div class="sub">去重后对公客�?/div>
+              </div>
+            </div>
+            <div class="am-metric">
+              <div class="ico" style="background:#fce7f3;color:#be185d">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <div class="label">活动平均核销�?/div>
+                <div class="value">45.2<span class="text-[12px] text-slate-400">%</span></div>
+                <div class="sub">已核销/已发�?/div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 搜索与过滤条 -->
+        <div class="am-card p-4 mb-3">
+          <div class="am-search-grid">
+            <div class="am-field">
+              <label>活动名称/活动编码</label>
+              <input id="fltKeyword" class="ipt" placeholder="输入活动名称或编�? />
+            </div>
+            <div class="am-field">
+              <label>场景分类</label>
+              <select id="fltScene" class="ipt">
+                <option value="">全部</option>
+                <option>新客开�?/option>
+                <option>资金沉淀</option>
+                <option>普惠贷款联动</option>
+                <option>高管节日营销</option>
+              </select>
+            </div>
+            <div class="am-field">
+              <label>运行状�?/label>
+              <select id="fltStatus" class="ipt">
+                <option value="">全部</option>
+                <option value="running">进行�?/option>
+                <option value="pending">待发�?/option>
+                <option value="paused">已暂�?/option>
+                <option value="closed">已下�?/option>
+              </select>
+            </div>
+            <div class="flex gap-2">
+              <button class="am-btn primary" onclick="applyFilter()">查询</button>
+              <button class="am-btn" onclick="resetFilter()">重置</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 活动列表 -->
+        <div class="am-card">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="am-section-title">活动列表</div>
+            <button class="am-btn primary" onclick="openCreateModal()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              新建权益直投活动
+            </button>
+          </div>
+          <div class="overflow-auto">
+            <table class="am-table">
+              <thead>
+                <tr>
+                  <th style="width:120px">活动编码</th>
+                  <th>活动名称</th>
+                  <th>关联直投场景</th>
+                  <th>直投方式</th>
+                  <th>关联客群 / 白名�?/th>
+                  <th>核心营销权益</th>
+                  <th>推广时间�?/th>
+                  <th>活动状�?/th>
+                  <th style="width:240px" class="text-center">操作</th>
+                </tr>
+              </thead>
+              <tbody id="activityTbody"></tbody>
+            </table>
+          </div>
+          <div class="px-4 py-3 border-t border-slate-100 flex items-center justify-between text-[12px] text-slate-500">
+            <div>�?<span class="text-slate-700 font-semibold" id="totalCount">0</span> �?/div>
+            <div class="flex items-center gap-2">
+              <button class="am-btn" style="height:28px;padding:0 10px">上一�?/button>
+              <span class="px-2">1 / 1</span>
+              <button class="am-btn" style="height:28px;padding:0 10px">下一�?/button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============== 全流程执行数据及指标看板（点�?查看"后展开�?============== -->
+        <div id="activityDashboard" class="am-card" style="display:none">
+          <!-- Header（活动全局概要�?-->
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between" style="background:linear-gradient(135deg,#f0f7ff 0%,#e6f4ff 100%)">
+            <div class="flex items-center gap-3">
+              <span class="am-section-title" id="dashActName">活动名称</span>
+              <span class="text-[12px] text-slate-500" id="dashActScene"></span>
+              <span id="dashActStatus" class="am-status running"><span class="dot"></span>运行�?/span>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="text-[12px] text-slate-500">当前累计覆盖总人�?/div>
+              <div class="text-[18px] font-bold text-blue-600" id="dashActReach">0</div>
+              <button class="am-btn" onclick="closeDashboard()">收起看板 �?/button>
+            </div>
+          </div>
+
+          <!-- TabBar -->
+          <div class="px-4 pt-3 flex gap-1 border-b border-slate-100" id="dashTabs">
+            <button class="am-tab-btn active" data-tab="config" onclick="switchDashTab('config', this)">配置明细</button>
+            <button class="am-tab-btn" data-tab="delivery" onclick="switchDashTab('delivery', this)">触达渠道方案</button>
+            <button class="am-tab-btn" data-tab="users" onclick="switchDashTab('users', this)">覆盖用户名单</button>
+            <button class="am-tab-btn" data-tab="benefit" onclick="switchDashTab('benefit', this)">权益发放分析</button>
+            <button class="am-tab-btn" data-tab="effect" onclick="switchDashTab('effect', this)">执行效果分析</button>
+          </div>
+
+          <!-- Content Area -->
+          <div class="p-4" id="dashContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗1.1 新建/编辑活动 ============== -->
+<div id="modalActivity" class="am-modal-overlay">
+  <div class="am-modal" style="width:768px;height:88vh;max-height:88vh">
+    <!-- Header（固顶） -->
+    <div class="am-modal-head" style="flex-shrink:0">
+      <span id="modalActivityTitle">新建权益直投活动</span>
+      <div class="am-modal-close" onclick="closeModal('modalActivity')">�?/div>
+    </div>
+
+    <!-- Body（滚动） -->
+    <div class="am-modal-body" style="overflow-y:auto;flex:1;padding:0">
+      <div style="max-width:768px;margin:0 auto;padding:20px 24px 8px">
+        <input type="hidden" id="actEditingId" />
+
+        <!-- ========== 模块1：活动基本信�?========== -->
+        <div class="am-section-card">
+          <div class="am-section-head"><span class="am-section-num">1</span>活动基本信息</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="am-field">
+              <label>活动编号</label>
+              <input id="actCode" class="ipt" disabled value="系统自动生成" />
+            </div>
+            <div class="am-field">
+              <label>活动名称 <span class="text-rose-500">*</span></label>
+              <input id="actName" class="ipt" maxlength="50" placeholder="50字以�? />
+            </div>
+            <div class="am-field">
+              <label>归属场景 <span class="text-rose-500">*</span></label>
+              <select id="actScene" class="ipt">
+                <option value="">请选择</option>
+                <option>开户有�?/option>
+                <option>代发薪专�?/option>
+                <option>存贷联动</option>
+                <option>节日营销</option>
+                <option>资金沉淀</option>
+              </select>
+            </div>
+            <div class="am-field">
+              <label>归属部门 <span class="text-rose-500">*</span></label>
+              <select id="actDept" class="ipt">
+                <option value="">请选择</option>
+                <option>零售金融�?/option>
+                <option>公司业务�?/option>
+                <option>普惠金融�?/option>
+                <option>私人银行�?/option>
+                <option>国际业务�?/option>
+                <option>机构业务�?/option>
+              </select>
+            </div>
+            <div class="am-field">
+              <label>开始时�?<span class="text-rose-500">*</span></label>
+              <input id="actStart" type="date" class="ipt" />
+            </div>
+            <div class="am-field">
+              <label>结束时间 <span class="text-rose-500">*</span></label>
+              <input id="actEnd" type="date" class="ipt" />
+            </div>
+            <div class="am-field col-span-2">
+              <label>活动预算（元�?<span class="text-rose-500">*</span></label>
+              <input id="actBudget" type="number" min="0" class="ipt" placeholder="纯数�? style="color:#1677ff;font-weight:600" />
+            </div>
+          </div>
+          <div class="am-field mt-3">
+            <label>营销目标（多选） <span class="text-rose-500">*</span></label>
+            <div id="actGoalBox" class="grid grid-cols-3 gap-2">
+              <label class="am-goal-card" data-goal="新客转化"><input type="checkbox" />新客转化</label>
+              <label class="am-goal-card" data-goal="AUM提升"><input type="checkbox" />AUM提升</label>
+              <label class="am-goal-card" data-goal="资金留存"><input type="checkbox" />资金留存</label>
+              <label class="am-goal-card" data-goal="产品销�?><input type="checkbox" />产品销�?/label>
+              <label class="am-goal-card" data-goal="活跃度提�?><input type="checkbox" />活跃度提�?/label>
+              <label class="am-goal-card" data-goal="客户留存"><input type="checkbox" />客户留存</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 模块2：投放与领取规则设置 ========== -->
+        <div class="am-section-card">
+          <div class="am-section-head"><span class="am-section-num">2</span>投放与领取规则设�?/div>
+
+          <!-- 模式选择 -->
+          <div class="am-field mb-3">
+            <label>规则模式 <span class="text-rose-500">*</span></label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="am-mode-card"><input type="radio" name="actMode" value="template" onchange="onModeChange()" /> <b>引用规则模板</b><span class="block text-[11px] text-slate-400 mt-1">引用系统中已配置的规则，下方配置项将自动锁定</span></label>
+              <label class="am-mode-card"><input type="radio" name="actMode" value="custom" checked onchange="onModeChange()" /> <b>自定义规�?/b><span class="block text-[11px] text-slate-400 mt-1">手动配置客群、触发、领取等所有规则细�?/span></label>
+            </div>
+          </div>
+
+          <!-- 规则模板下拉（仅 TEMPLATE 显示�?-->
+          <div id="actTemplateBox" class="am-field mb-3" style="display:none">
+            <label>选择规则模板 <span class="text-rose-500">*</span></label>
+            <select id="actRuleTpl" class="ipt" onchange="onTplChange()">
+              <option value="">请选择</option>
+              <option value="RULE_001">RULE_001 - 新人首次登录直投规则</option>
+              <option value="RULE_002">RULE_002 - 高管节日营销派发规则</option>
+              <option value="RULE_003">RULE_003 - 代发薪入账实时派�?/option>
+              <option value="RULE_004">RULE_004 - 对公新户24h触发</option>
+            </select>
+            <div id="actTplMeta" class="am-help mt-2" style="display:none"></div>
+          </div>
+
+          <!-- 自定义规则配置区（仅 CUSTOM 可编辑） -->
+          <div id="actCustomBox">
+            <!-- 发送类�?-->
+            <div class="am-field mb-3">
+              <label>发送类�?/label>
+              <div>
+                <label class="am-radio"><input type="radio" name="actSendType" value="tag" checked /> 按标签（默认�?/label>
+                <label class="am-radio"><input type="radio" name="actSendType" value="sys" /> 关联系统提供（接口动态传入）</label>
+              </div>
+            </div>
+
+            <!-- 客群配置 -->
+            <div class="am-field mb-3">
+              <label>客群配置 <span class="text-rose-500">*</span></label>
+              <div class="flex gap-2">
+                <button class="am-btn" onclick="openGroupModal()">选择客群</button>
+                <button class="am-btn" onclick="clearGroups()">清空客群</button>
+              </div>
+              <div id="actGroupList" class="am-tag-box mt-2"></div>
+            </div>
+
+            <!-- 触发条件 -->
+            <div class="am-field mb-3">
+              <label>启用触发条件</label>
+              <div>
+                <label class="am-radio"><input type="radio" name="actTrigger" value="no" checked onchange="onTriggerChange()" /> 否（常规周期/一次性下发）</label>
+                <label class="am-radio"><input type="radio" name="actTrigger" value="yes" onchange="onTriggerChange()" /> 是（事件/场景触发自动直投�?/label>
+              </div>
+              <div id="actTriggerSub" style="display:none" class="mt-2 p-3 bg-slate-50 border border-slate-200 rounded">
+                <div class="am-field mb-2">
+                  <label>触发事件 <span class="text-rose-500">*</span></label>
+                  <select id="actTriggerEvent" class="ipt" onchange="onTriggerEventChange()">
+                    <option value="">请选择</option>
+                    <option value="open1">对公新开户成�?/option>
+                    <option value="trade">单笔交易金额满额</option>
+                    <option value="salary">代发薪入账成�?/option>
+                    <option value="refer">推荐新企业完成认�?/option>
+                    <option value="bindmb">手机银行首次绑定对公账户</option>
+                  </select>
+                </div>
+                <div class="am-field" id="actTriggerRuleField">
+                  <label>触发限制 / 参数规则 <span class="text-rose-500">*</span></label>
+                  <input id="actTriggerRule" class="ipt" placeholder="如：交易金额 >= 10000.00 �? />
+                </div>
+                <div class="am-help">提示约束：启用触发规则后，领取方式将强制锁定�?自动发放"，不可修改�?/div>
+              </div>
+            </div>
+
+            <!-- 领取方式 -->
+            <div class="am-field mb-3">
+              <label>领取方式</label>
+              <div>
+                <label class="am-radio" id="actClaimManualLbl"><input type="radio" name="actClaim" value="manual" checked onchange="onClaimChange()" /> 手动领取（客户登录主动点击）</label>
+                <label class="am-radio" id="actClaimAutoLbl"><input type="radio" name="actClaim" value="auto" onchange="onClaimChange()" /> 自动发放（系统自动进卡包�?/label>
+              </div>
+              <div id="actClaimLockedWarn" class="am-help" style="display:none;margin-top:6px">�?已启用事件触发，领取方式强制锁定�?自动发放"</div>
+
+              <!-- 手动领取子配�?-->
+              <div id="actManualSub" class="mt-2 p-3 bg-slate-50 border border-slate-200 rounded">
+                <div class="am-field mb-2">
+                  <label>领取截止时间</label>
+                  <div>
+                    <label class="am-radio"><input type="radio" name="actClaimPeriod" value="today" checked onchange="onPeriodChange()" /> 当日有效</label>
+                    <label class="am-radio"><input type="radio" name="actClaimPeriod" value="period" onchange="onPeriodChange()" /> 按活动期</label>
+                    <label class="am-radio"><input type="radio" name="actClaimPeriod" value="custom" onchange="onPeriodChange()" /> 自定�?/label>
+                  </div>
+                  <div id="actPeriodCustom" class="mt-2" style="display:none">
+                    <input id="actPeriodCustomTxt" class="ipt" placeholder="如：发放�?天内有效，过期自动作�? />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="am-field">
+                    <label>每人每日限领（次�?/label>
+                    <input id="actDailyLimit" type="number" min="0" class="ipt" value="1" />
+                  </div>
+                  <div class="am-field">
+                    <label>活动周期内总限领（次）</label>
+                    <input id="actTotalLimit" type="number" min="0" class="ipt" value="1" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 自动发放子配�?-->
+              <div id="actAutoSub" class="mt-2 p-3 bg-slate-50 border border-slate-200 rounded" style="display:none">
+                <div class="am-field mb-2">
+                  <label>自动发放类型</label>
+                  <div>
+                    <label class="am-radio"><input type="radio" name="actAutoMode" value="once" checked onchange="onAutoModeChange()" /> 一次性发�?/label>
+                    <label class="am-radio"><input type="radio" name="actAutoMode" value="cycle" onchange="onAutoModeChange()" /> 周期性循环发�?/label>
+                  </div>
+                </div>
+                <!-- 一次性：日期+时间 OR 事件触发立即发放 -->
+                <div id="actAutoOnce" class="am-field">
+                  <label id="actAutoOnceLbl">触发时间</label>
+                  <input id="actAutoOnceTime" type="datetime-local" class="ipt" value="2026-07-06T09:00" />
+                  <div class="text-[11px] text-slate-400 mt-1" id="actAutoOnceHint">活动开始后立即发放</div>
+                </div>
+                <!-- 周期�?-->
+                <div id="actAutoCycle" class="grid grid-cols-2 gap-2" style="display:none">
+                  <div class="am-field">
+                    <label>发放频率</label>
+                    <select class="ipt">
+                      <option>每天</option>
+                      <option>每周</option>
+                      <option>每月</option>
+                    </select>
+                  </div>
+                  <div class="am-field">
+                    <label>执行时间</label>
+                    <input type="time" class="ipt" value="09:00" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 模块3：权�?奖项包设�?========== -->
+        <div class="am-section-card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="am-section-num">3</span>
+              <span class="font-semibold text-slate-700">权益 / 奖项包设�?/span>
+              <span class="text-[11px] text-slate-400">（支持多选）</span>
+            </div>
+            <button class="am-btn primary" onclick="openBenefitModal()">+ 选择权益 / 权益�?/button>
+          </div>
+
+          <!-- 已选权益列�?-->
+          <div id="actBenefitList"></div>
+
+          <!-- 每日配额上限 -->
+          <div class="am-field flex items-center gap-3 mt-3 pt-3 border-t border-slate-100">
+            <label class="whitespace-nowrap mb-0">活动每天配额上限 <span class="text-rose-500">*</span></label>
+            <input id="actDailyQuota" type="number" min="0" class="ipt" style="width:140px" value="1000" />
+            <span class="text-[11px] text-slate-400">（每日各奖项发放累计总份数上限，防超发控制）</span>
+          </div>
+        </div>
+
+        <!-- ========== 模块4：投放计划设置（多波次多渠道�?========== -->
+        <div class="am-section-card">
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <div class="am-section-head" style="border-bottom:none;padding-bottom:0;margin-bottom:4px"><span class="am-section-num">4</span>投放计划设置（多波次多渠道）</div>
+              <div class="text-[12px] text-slate-500">支持一次性创建多个不同时间与渠道的对公触达与直投通知计划</div>
+            </div>
+            <button class="am-btn primary" onclick="addWave()">+ 添加投放计划</button>
+          </div>
+          <div id="actWaveList" class="space-y-3"></div>
+        </div>
+
+        <!-- ========== 模块5：活动描�?========== -->
+        <div class="am-section-card">
+          <div class="am-section-head"><span class="am-section-num">5</span>活动描述（备注）</div>
+          <div class="am-field">
+            <textarea id="actDesc" class="ipt" rows="2" placeholder="非必填，用于运营备注或内部审核说�?></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer（固底） -->
+    <div class="am-modal-foot" style="flex-shrink:0">
+      <button class="am-btn" onclick="closeModal('modalActivity')">取消</button>
+      <button class="am-btn primary lg" onclick="saveActivity()">保存并上�?/button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗1.2 活动监控漏斗分析 ============== -->
+<div id="modalFunnel" class="am-modal-overlay">
+  <div class="am-modal" style="width:880px">
+    <div class="am-modal-head">
+      <span id="funnelTitle">【活动监控明细�?- 活动名称</span>
+      <div class="am-modal-close" onclick="closeModal('modalFunnel')">�?/div>
+    </div>
+    <div class="am-modal-body" style="max-height:75vh">
+      <!-- 漏斗 -->
+      <div class="am-section-title mb-2">实时转化漏斗</div>
+      <div class="funnel">
+        <div class="funnel-step s1">第一�?- 覆盖目标客户�?span class="ml-2" id="f1v">25,000�?/span></div>
+        <div class="funnel-meta"><span>覆盖目标客户</span><span>100.0%</span></div>
+        <div class="funnel-step s2">第二�?- 权益成功直投�?span class="ml-2" id="f2v">24,150�?/span></div>
+        <div class="funnel-meta"><span>权益成功直投</span><span>96.6%</span></div>
+        <div class="funnel-step s3">第三�?- 客户成功领取�?span class="ml-2" id="f3v">18,250�?/span></div>
+        <div class="funnel-meta"><span>客户成功领取 · 领取�?75.5%</span><span>73.0%</span></div>
+        <div class="funnel-step s4">第四�?- 成功转化开户数�?span class="ml-2" id="f4v">12,500�?/span></div>
+        <div class="funnel-meta"><span>成功转化开�?· 最终转化率 68.4%</span><span>50.0%</span></div>
+      </div>
+
+      <!-- 话术 -->
+      <div class="mt-5">
+        <div class="am-section-title mb-2">触达话术与内容预�?/div>
+        <div class="border border-slate-200 rounded p-3 text-[12px] text-slate-600 bg-slate-50 leading-6">
+          【中国工商银行】尊敬的客户，由于您本月成功开立Ⅰ类结算户，特向您发放50元开户专享理财折扣券，已实时存入您的对公卡包。登录企业手机银行即可一键激活使用，详询95588�?        </div>
+      </div>
+
+      <!-- 日志 -->
+      <div class="mt-5">
+        <div class="am-section-title mb-2">实时发送日志流明细</div>
+        <div class="border border-slate-200 rounded overflow-hidden">
+          <table class="am-table">
+            <thead>
+              <tr>
+                <th>时间�?/th>
+                <th>企业名称</th>
+                <th>企业识别�?/th>
+                <th>直投通道</th>
+                <th>当前阶段</th>
+                <th>执行结果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="am-mono">10:23:18.245</td><td>北京***科技有限公司</td><td>91110108MA****X34K</td><td>企业手机银行Push</td><td><span class="am-tag blue">已转�?/span></td><td><span class="am-status running"><span class="dot"></span>核销成功</span></td></tr>
+              <tr><td class="am-mono">10:23:17.118</td><td>上海***贸易有限公司</td><td>91310115MA****T2XJ</td><td>企业网银弹窗</td><td><span class="am-tag blue">已领�?/span></td><td><span class="am-status running"><span class="dot"></span>发送成功并回执</span></td></tr>
+              <tr><td class="am-mono">10:23:15.902</td><td>深圳***信息技�?/td><td>91440300MA****F8N6</td><td>短信通道</td><td><span class="am-tag gray">已触�?/span></td><td><span class="am-status running"><span class="dot"></span>发送成功并回执</span></td></tr>
+              <tr><td class="am-mono">10:23:14.376</td><td>广州***供应�?/td><td>91440101MA****P2K9</td><td>企业手机银行Push</td><td><span class="am-tag gray">已触�?/span></td><td><span class="am-status running"><span class="dot"></span>发送成功并回执</span></td></tr>
+              <tr><td class="am-mono">10:23:12.881</td><td>杭州***网络科技</td><td>91330106MA****Q4M3</td><td>企业网银弹窗</td><td><span class="am-tag gray">直投�?/span></td><td><span class="am-status pending">处理�?/span></td></tr>
+              <tr><td class="am-mono">10:23:11.504</td><td>成都***实业</td><td>91510104MA****L7H2</td><td>短信通道</td><td><span class="am-tag gray">已触�?/span></td><td><span class="am-status running"><span class="dot"></span>发送成功并回执</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="am-modal-foot">
+      <button class="am-btn primary lg" onclick="closeModal('modalFunnel')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗 选择客群（公用） ============== -->
+<div id="modalGroup" class="am-modal-overlay">
+  <div class="am-modal" style="width:780px">
+    <div class="am-modal-head">
+      <span>选择发放目标客群</span>
+      <div class="am-modal-close" onclick="closeModal('modalGroup')">�?/div>
+    </div>
+    <div class="am-modal-body" style="max-height:70vh">
+      <div class="flex items-center gap-2 mb-3 border-b border-slate-200">
+        <button class="am-tab active" data-tab="tag" onclick="switchGroupTab(this,'tag')">标签客群</button>
+        <button class="am-tab" data-tab="white" onclick="switchGroupTab(this,'white')">白名单客�?/button>
+      </div>
+      <style>.am-tab{padding:8px 14px;font-size:13px;color:#64748b;border-bottom:2px solid transparent;cursor:pointer}.am-tab.active{color:#1677ff;border-bottom-color:#1677ff;font-weight:600}</style>
+      <div class="am-field mb-3">
+        <input class="ipt" placeholder="输入客群名称/描述" oninput="filterGroup(this.value)" />
+      </div>
+      <div class="border border-slate-200 rounded overflow-hidden">
+        <table class="am-table">
+          <thead>
+            <tr>
+              <th style="width:40px"><input type="checkbox" id="groupAll" onclick="toggleAllGroups(this)" /></th>
+              <th>客群名称</th>
+              <th>客群类型</th>
+              <th>覆盖企业�?/th>
+              <th>最近同�?/th>
+            </tr>
+          </thead>
+          <tbody id="groupTbody"></tbody>
+        </table>
+      </div>
+      <div class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded">
+        <div class="text-[12px] text-slate-500 mb-2" id="groupSummary">标签客群 (已选择 0 �?:</div>
+        <div id="groupPills" class="min-h-[28px]"></div>
+      </div>
+    </div>
+    <div class="am-modal-foot">
+      <button class="am-btn" onclick="closeModal('modalGroup')">取消</button>
+      <button class="am-btn primary lg" onclick="confirmGroups()">确认选择</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗 选择权益（公用） ============== -->
+<div id="modalBenefit" class="am-modal-overlay">
+  <div class="am-modal" style="width:780px">
+    <div class="am-modal-head">
+      <span>选择权益</span>
+      <div class="am-modal-close" onclick="closeModal('modalBenefit')">�?/div>
+    </div>
+    <div class="am-modal-body" style="max-height:calc(90vh - 140px);overflow-y:auto">
+      <!-- 筛选区：左侧下�?+ 搜索�?-->
+      <div class="flex items-center gap-2 mb-3">
+        <div class="relative">
+          <select id="benefitTypeSelect" class="ipt" style="width:140px;padding-right:24px" onchange="switchBenefitTab(this.value)">
+            <option value="all">全部权益</option>
+            <option value="coupon">卡券 / 折扣�?/option>
+            <option value="pack">权益�?/option>
+          </select>
+        </div>
+        <div class="flex-1 relative">
+          <input id="benefitSearchInput" class="ipt" placeholder="搜索权益名称" style="padding-right:36px" oninput="filterBenefit(this.value)" />
+          <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+      </div>
+
+      <!-- 权益列表 -->
+      <div class="border border-slate-200 rounded overflow-hidden">
+        <table class="am-table">
+          <thead>
+            <tr>
+              <th style="width:40px">选择</th>
+              <th style="width:90px">权益ID</th>
+              <th>权益名称</th>
+              <th style="width:120px">权益类型</th>
+              <th style="width:120px;text-align:right">当前库存数量</th>
+            </tr>
+          </thead>
+          <tbody id="benefitTbody"></tbody>
+        </table>
+      </div>
+
+      <!-- 分页 -->
+      <div class="flex items-center justify-between mt-3 text-[12px]">
+        <div class="text-slate-500">�?<span id="benefitTotalCount">0</span> 条数�?/div>
+        <div class="flex items-center gap-1" id="benefitPager"></div>
+        <div class="flex items-center gap-2 text-slate-500">
+          <span>前往</span>
+          <input type="number" min="1" id="benefitGoto" class="ipt" style="width:50px;height:26px;text-align:center" value="1" />
+          <span>�?/span>
+          <select class="ipt" style="width:80px;height:26px;padding:0 8px" onchange="changeBenefitPageSize(this.value)">
+            <option value="5">5�?�?/option>
+            <option value="10">10�?�?/option>
+            <option value="20">20�?�?/option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="am-modal-foot" style="background:#fff;border-top:1px solid #e8ecf0;flex-shrink:0">
+      <button class="am-btn" onclick="closeModal('modalBenefit')">取消</button>
+      <button class="am-btn primary lg" onclick="confirmBenefit()">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="am-toast"></div>
+
+<script>
+/* ========== 数据模拟 ========== */
+const activities = [
+  { id:'ACT_2026070101', name:'新客开户理财首单立�?, scene:'开户有�?, dept:'零售金融�?, mode:'template', ruleTpl:'RULE_001', ruleName:'新人首次登录直投规则', groupList:['验证多波�?-一类户包含最�?�?], benefitList:[{id:'5003',name:'微信10元立减金',category:'coupon',typeLabel:'卡券',stock:12500,qty:1,validType:'after',validDays:30}], start:'2026-07-01', end:'2026-09-30', status:'running', budget:500000, dailyQuota:1500, goals:['新客转化','AUM提升'] },
+  { id:'ACT_2026070102', name:'代发薪专享理财满�?, scene:'代发薪专�?, dept:'普惠金融�?, mode:'custom', ruleTpl:'', ruleName:'', groupList:['2026核心代发薪客�?], benefitList:[{id:'5006',name:'理财200-50满减�?,category:'coupon',typeLabel:'折扣�?,stock:6300,qty:1,validType:'after',validDays:7},{id:'5007',name:'理财100-30满减�?,category:'coupon',typeLabel:'折扣�?,stock:9800,qty:1,validType:'after',validDays:7}], start:'2026-07-05', end:'2026-10-31', status:'running', budget:800000, dailyQuota:2000, goals:['资金留存','产品销�?] },
+  { id:'ACT_2026070103', name:'高管节日专属权益礼包', scene:'节日营销', dept:'私人银行�?, mode:'template', ruleTpl:'RULE_002', ruleName:'高管节日营销派发规则', groupList:['对公高管VIP白名�?], benefitList:[{id:'5010',name:'高端酒店自助餐券',category:'coupon',typeLabel:'卡券',stock:650,qty:1,validType:'fixed',validDays:90}], start:'2026-07-08', end:'2026-07-20', status:'paused', budget:300000, dailyQuota:200, goals:['客户留存'] },
+  { id:'ACT_2026070104', name:'普惠小微开户红�?, scene:'开户有�?, dept:'普惠金融�?, mode:'custom', ruleTpl:'', ruleName:'', groupList:['普惠小微重点拓展名单'], benefitList:[{id:'5005',name:'微信50元代金券',category:'coupon',typeLabel:'折扣�?,stock:4500,qty:1,validType:'after',validDays:15}], start:'2026-07-10', end:'2026-12-31', status:'pending', budget:200000, dailyQuota:800, goals:['新客转化','活跃度提�?] },
+  { id:'ACT_2026070105', name:'对公活期留存活动', scene:'资金沉淀', dept:'公司业务�?, mode:'custom', ruleTpl:'', ruleName:'', groupList:['结算户月�?�?企业'], benefitList:[{id:'5008',name:'结算费减免券(50�?',category:'coupon',typeLabel:'卡券',stock:380,qty:1,validType:'fixed',validDays:60},{id:'5009',name:'结算费减免券(100�?',category:'coupon',typeLabel:'卡券',stock:120,qty:1,validType:'fixed',validDays:60}], start:'2026-06-01', end:'2026-06-30', status:'closed', budget:150000, dailyQuota:500, goals:['资金留存'] },
+  { id:'ACT_2026070106', name:'贷款联动开户立�?, scene:'存贷联动', dept:'公司业务�?, mode:'template', ruleTpl:'RULE_004', ruleName:'对公新户24h触发', groupList:['对公贷款预审客户'], benefitList:[{id:'5004',name:'微信20元立减金',category:'coupon',typeLabel:'卡券',stock:8200,qty:1,validType:'after',validDays:30}], start:'2026-07-12', end:'2026-09-15', status:'running', budget:400000, dailyQuota:1000, goals:['产品销�?,'AUM提升'] }
+];
+
+const groupPool = [
+  { name:'验证多波�?-一类户包含最�?�?, type:'标签生成', cnt:'1,245 �?, sync:'2026-07-13 09:00' },
+  { name:'2026核心授信客户�?, type:'白名单导�?, cnt:'820 �?, sync:'2026-07-12 18:30' },
+  { name:'对公高管VIP白名�?, type:'白名单导�?, cnt:'186 �?, sync:'2026-07-10 14:22' },
+  { name:'普惠小微重点拓展名单', type:'白名单导�?, cnt:'2,330 �?, sync:'2026-07-11 11:05' },
+  { name:'代发薪重点活跃户', type:'标签生成', cnt:'5,612 �?, sync:'2026-07-13 08:00' },
+  { name:'结算户月�?�?企业', type:'标签生成', cnt:'3,108 �?, sync:'2026-07-12 09:00' },
+  { name:'对公贷款预审客户', type:'标签生成', cnt:'967 �?, sync:'2026-07-13 07:30' },
+  { name:'AUM提升目标企业�?, type:'标签生成', cnt:'4,250 �?, sync:'2026-07-12 22:00' }
+];
+
+const benefits = [
+  // 卡券 / 折扣�?  { id:'5001', name:'高端商旅至臻礼包(季度返现)', category:'coupon', typeLabel:'权益�?, stock:120 },
+  { id:'5002', name:'小微企业开户专属福利包',     category:'coupon', typeLabel:'权益�?, stock:500 },
+  { id:'5003', name:'微信10元立减金',             category:'coupon', typeLabel:'卡券',   stock:12500 },
+  { id:'5004', name:'微信20元立减金',             category:'coupon', typeLabel:'卡券',   stock:8200 },
+  { id:'5005', name:'微信50元代金券',             category:'coupon', typeLabel:'折扣�?, stock:4500 },
+  { id:'5006', name:'理财200-50满减�?,           category:'coupon', typeLabel:'折扣�?, stock:6300 },
+  { id:'5007', name:'理财100-30满减�?,           category:'coupon', typeLabel:'折扣�?, stock:9800 },
+  { id:'5008', name:'结算费减免券(50�?',         category:'coupon', typeLabel:'卡券',   stock:380 },
+  { id:'5009', name:'结算费减免券(100�?',        category:'coupon', typeLabel:'卡券',   stock:120 },
+  { id:'5010', name:'高端酒店自助餐券',           category:'coupon', typeLabel:'卡券',   stock:650 },
+  // 权益�?  { id:'6001', name:'代发薪专享理财红包包',       category:'pack',   typeLabel:'权益�?, stock:2200 },
+  { id:'6002', name:'私行客户高端体检�?,         category:'pack',   typeLabel:'权益�?, stock:480 },
+  { id:'6003', name:'小微开年成长激励包',         category:'pack',   typeLabel:'权益�?, stock:3000 },
+  { id:'6004', name:'对公跨境结算增值包',         category:'pack',   typeLabel:'权益�?, stock:760 },
+  { id:'6005', name:'新客开户理财首单礼�?,       category:'pack',   typeLabel:'权益�?, stock:1800 },
+  { id:'6006', name:'代发工资单位专属福利�?,     category:'pack',   typeLabel:'权益�?, stock:940 },
+  { id:'6007', name:'小微企业结算优惠�?,         category:'pack',   typeLabel:'权益�?, stock:1560 },
+  { id:'6008', name:'对公高管 VIP 节日礼包',      category:'pack',   typeLabel:'权益�?, stock:186 },
+  { id:'6009', name:'结算户月留存激励包',         category:'pack',   typeLabel:'权益�?, stock:3108 },
+  { id:'6010', name:'贷款联动权益礼包',           category:'pack',   typeLabel:'权益�?, stock:967 }
+];
+
+/* ========== 看板 Mock 数据 ========== */
+// 不同活动对应不同的渠道方�?用户名单/奖项效能（按活动 ID 索引�?const dashData = {
+  'ACT_2026070101': {
+    reach: 1245,
+    plans: { total: 4, target: 18500, convert: 8420 },
+    waves: [
+      { name:'首轮触达-短信通知', channel:'短信公众�?, time:'2026-07-01 09:00', target:1245, status:'done', convert:1180 },
+      { name:'公众号模板消�?, channel:'微信公众�?立减�?, time:'2026-07-02 10:30', target:1245, status:'done', convert:1056 },
+      { name:'App Push 唤醒', channel:'手机银行 App', time:'2026-07-05 19:00', target:1245, status:'done', convert:780 },
+      { name:'未领取客户追加提�?, channel:'短信公众�?, time:'2026-07-08 14:00', target:380, status:'done', convert:120 }
+    ],
+    users: [
+      { id:'CUS-2026001', name:'�?�?, group:'一类户新开�?, level:'金牌客户', branch:'上海分行', phone:'138****1234', channel:'短信', reach:'已触�?, settle:'已到账待使用' },
+      { id:'CUS-2026002', name:'�?�?, group:'一类户新开�?, level:'白金对公客户', branch:'深圳分行', phone:'139****5678', channel:'公众�?, reach:'已触�?, settle:'用户已核销使用' },
+      { id:'CUS-2026003', name:'�?�?, group:'一类户新开�?, level:'普通客�?, branch:'北京分行', phone:'136****9012', channel:'App Push', reach:'待触�?, settle:'未到�? },
+      { id:'CUS-2026004', name:'�?�?, group:'一类户新开�?, level:'金牌客户', branch:'广州分行', phone:'135****3456', channel:'短信', reach:'已触�?, settle:'已到账待使用' },
+      { id:'CUS-2026005', name:'�?�?, group:'一类户新开�?, level:'白金对公客户', branch:'杭州分行', phone:'188****7890', channel:'公众�?, reach:'已触�?, settle:'用户已核销使用' }
+    ],
+    funnel: { plan:100, reach:94.8, deliver:88.2, claim:75.6, used:64.3 },
+    benefits_perf: [
+      { name:'微信10元立减金', type:'微信立减�?, quota:5000, used:3680, rate:73.6 },
+      { name:'理财200-50满减�?, type:'理财满减', quota:2000, used:1280, rate:64.0 },
+      { name:'微信20元立减金', type:'微信立减�?, quota:3000, used:2156, rate:71.9 }
+    ],
+    effect: { goal:'新客转化', conv:1520, rate:15.2, cpa:32.5, roi:'1:12.8' }
+  },
+  'ACT_2026070102': {
+    reach: 5612,
+    plans: { total: 5, target: 42000, convert: 18560 },
+    waves: [
+      { name:'短信-代发到账通知', channel:'短信公众�?, time:'2026-07-05 08:30', target:5612, status:'done', convert:5200 },
+      { name:'企微-客户经理推�?, channel:'企微消息', time:'2026-07-05 09:00', target:5612, status:'done', convert:4800 },
+      { name:'App 内弹�?, channel:'手机银行 App', time:'2026-07-06 10:00', target:5612, status:'done', convert:3950 },
+      { name:'二次触达', channel:'短信公众�?, time:'2026-07-10 14:00', target:2800, status:'done', convert:1850 },
+      { name:'理财到期客户预热', channel:'微信公众�?立减�?, time:'2026-07-25 09:00', target:1500, status:'planned', convert:0 }
+    ],
+    users: [
+      { id:'CUS-3021001', name:'�?发A', group:'2026核心代发薪客�?, level:'白金对公客户', branch:'上海分行', phone:'139****1111', channel:'短信', reach:'已触�?, settle:'用户已核销使用' },
+      { id:'CUS-3021002', name:'�?发B', group:'2026核心代发薪客�?, level:'金牌客户', branch:'深圳分行', phone:'138****2222', channel:'企微', reach:'已触�?, settle:'已到账待使用' },
+      { id:'CUS-3021003', name:'�?发C', group:'2026核心代发薪客�?, level:'普通客�?, branch:'北京分行', phone:'137****3333', channel:'App', reach:'已触�?, settle:'用户已核销使用' }
+    ],
+    funnel: { plan:100, reach:96.2, deliver:92.5, claim:82.1, used:68.4 },
+    benefits_perf: [
+      { name:'理财200-50满减�?, type:'理财满减', quota:8000, used:6320, rate:79.0 },
+      { name:'理财100-30满减�?, type:'理财满减', quota:6000, used:4560, rate:76.0 }
+    ],
+    effect: { goal:'资金留存', conv:3850, rate:68.6, cpa:18.2, roi:'1:18.5' }
+  }
+};
+// 默认数据兜底
+const defaultDashData = {
+  reach: 0,
+  plans: { total: 0, target: 0, convert: 0 },
+  waves: [],
+  users: [],
+  funnel: { plan:100, reach:0, deliver:0, claim:0, used:0 },
+  benefits_perf: [],
+  effect: { goal:'-', conv:0, rate:0, cpa:0, roi:'1:0' }
+};
+let currentDashAct = null;
+
+/* ========== 状�?========== */
+let selectedGroups = [];
+let selectedBenefits = []; // [{id, name, category, typeLabel, stock, qty, validType:'after'|'fixed', validDays}]
+let currentGroupTab = 'tag';
+let currentBenefitTab = 'all';
+let benefitPage = 1;
+let benefitPageSize = 5;
+let editingAct = null;
+
+/* ========== 工具 ========== */
+function $(id){ return document.getElementById(id); }
+function showToast(msg, type){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'am-toast ' + (type || 'success') + ' show';
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
+
+function statusLabel(s){
+  return { running:'进行�?, pending:'待发�?, paused:'已暂�?, closed:'已下�? }[s] || s;
+}
+
+function renderTable(){
+  const kw = ($('fltKeyword').value || '').trim();
+  const sc = $('fltScene').value;
+  const st = $('fltStatus').value;
+  const rows = activities.filter(a => {
+    if (kw && !(a.name.includes(kw) || a.id.includes(kw))) return false;
+    if (sc && a.scene !== sc) return false;
+    if (st && a.status !== st) return false;
+    return true;
+  });
+  $('totalCount').textContent = rows.length;
+  const html = rows.map(a => {
+    const ruleCell = a.mode === 'template'
+      ? `<span class="am-tag blue">引用规则</span> <span class="text-slate-600">${a.ruleName || a.ruleTpl || '-'}</span>`
+      : `<span class="am-tag gray">手动配置发放</span>`;
+    const benefitArr = (a.benefitList || []).map(x => typeof x === 'string' ? x : (x.name || ''));
+    const benefitText = benefitArr.length
+      ? (benefitArr.length > 2 ? benefitArr.slice(0,2).join('�?) + ` �?{benefitArr.length}项` : benefitArr.join('�?))
+      : (a.benefit || '-');
+    const groupText = a.groupList && a.groupList.length
+      ? (a.groupList.length > 1 ? a.groupList[0] + ` �?{a.groupList.length}个` : a.groupList[0])
+      : (a.group || '-');
+    return `<tr>
+      <td class="am-mono text-slate-600">${a.id}</td>
+      <td class="font-medium text-slate-700">${a.name}</td>
+      <td>${a.scene}<div class="text-[10px] text-slate-400">${a.dept || ''}</div></td>
+      <td>${ruleCell}</td>
+      <td>${groupText}</td>
+      <td>${benefitText}</td>
+      <td class="text-slate-500">${a.start} <span class="text-slate-300">�?/span> ${a.end}</td>
+      <td><span class="am-status ${a.status}"><span class="dot"></span>${statusLabel(a.status)}</span></td>
+      <td class="text-center">
+        <span class="am-link" onclick="openDashboard('${a.id}','${a.name}')">查看</span>
+        <span class="am-link ml-2" onclick="openEditModal('${a.id}')">编辑</span>
+        <span class="am-link warn ml-2" onclick="toggleStatus('${a.id}')">${a.status==='running'?'暂停活动':a.status==='paused'?'恢复活动':(a.status==='pending'?'上架活动':'下架活动')}</span>
+        <span class="am-link danger ml-2" onclick="deleteAct('${a.id}')">删除</span>
+      </td>
+    </tr>`;
+  }).join('');
+  $('activityTbody').innerHTML = html || '<tr><td colspan="9" class="text-center text-slate-400 py-8">暂无数据</td></tr>';
+}
+
+function applyFilter(){ renderTable(); }
+function resetFilter(){ $('fltKeyword').value=''; $('fltScene').value=''; $('fltStatus').value=''; renderTable(); }
+
+/* ========== 新建 / 编辑 ========== */
+// 模块状�?let actWaves = []; // 投放计划 [{id, name, channel, sendTime, mode, template, custom}]
+
+function openCreateModal(){
+  editingAct = null;
+  $('modalActivityTitle').textContent = '新建权益直投活动';
+  $('actEditingId').value = '';
+  $('actCode').value = '系统自动生成';
+  $('actName').value = '';
+  $('actScene').value = '';
+  $('actDept').value = '';
+  $('actStart').value = '';
+  $('actEnd').value = '';
+  $('actBudget').value = '';
+  $('actDesc').value = '';
+  $('actDailyQuota').value = '1000';
+  // 营销目标多�?  document.querySelectorAll('#actGoalBox input[type=checkbox]').forEach(c => c.checked = false);
+  // 模式重置
+  document.querySelector('input[name="actMode"][value="custom"]').checked = true;
+  $('actRuleTpl').value = '';
+  $('actTplMeta').style.display = 'none';
+  document.querySelector('input[name="actSendType"][value="tag"]').checked = true;
+  document.querySelector('input[name="actTrigger"][value="no"]').checked = true;
+  $('actTriggerEvent').value = '';
+  $('actTriggerRule').value = '';
+  document.querySelector('input[name="actClaim"][value="manual"]').checked = true;
+  document.querySelector('input[name="actClaimPeriod"][value="today"]').checked = true;
+  $('actPeriodCustomTxt').value = '';
+  $('actDailyLimit').value = '1';
+  $('actTotalLimit').value = '1';
+  document.querySelector('input[name="actAutoMode"][value="once"]').checked = true;
+  $('actAutoOnceTime').value = '2026-07-06T09:00';
+  // 客群 + 权益
+  selectedGroups = [];
+  selectedBenefits = [];
+  renderGroupPills();
+  renderBenefitList();
+  // 多波�?  actWaves = [{ id: 'W'+Date.now(), name:'', channel:'', sendTime:'', mode:'template', template:'' }];
+  renderWaves();
+  onModeChange();
+  onTriggerChange();
+  onClaimChange();
+  onPeriodChange();
+  onAutoModeChange();
+  openModal('modalActivity');
+}
+
+function openEditModal(id){
+  const a = activities.find(x => x.id === id);
+  if (!a) return;
+  if (a.status === 'running') {
+    if (!confirm('该活动正在进行中，需先暂停才能编辑。是否继续？')) return;
+  }
+  editingAct = a;
+  $('modalActivityTitle').textContent = '编辑权益直投活动';
+  $('actEditingId').value = a.id;
+  $('actCode').value = a.id;
+  $('actName').value = a.name;
+  $('actScene').value = a.scene || '';
+  $('actDept').value = a.dept || '';
+  $('actStart').value = a.start || '';
+  $('actEnd').value = a.end || '';
+  $('actBudget').value = a.budget || '';
+  $('actDesc').value = a.desc || '';
+  $('actDailyQuota').value = a.dailyQuota || 1000;
+  // 营销目标
+  document.querySelectorAll('#actGoalBox input[type=checkbox]').forEach(c => {
+    c.checked = (a.goals || []).includes(c.parentElement.dataset.goal);
+  });
+  // 模式
+  if (a.mode === 'template') {
+    document.querySelector('input[name="actMode"][value="template"]').checked = true;
+    $('actRuleTpl').value = a.ruleTpl || '';
+    onTplChange();
+  } else {
+    document.querySelector('input[name="actMode"][value="custom"]').checked = true;
+    $('actRuleTpl').value = '';
+  }
+  // 自定义字�?  document.querySelector('input[name="actSendType"][value="'+(a.sendType||'tag')+'"]').checked = true;
+  document.querySelector('input[name="actTrigger"][value="'+(a.trigger==='yes'?'yes':'no')+'"]').checked = true;
+  $('actTriggerEvent').value = a.triggerEvent || '';
+  $('actTriggerRule').value = a.triggerRule || '';
+  document.querySelector('input[name="actClaim"][value="'+(a.claimType||'manual')+'"]').checked = true;
+  document.querySelector('input[name="actClaimPeriod"][value="'+(a.claimPeriod||'today')+'"]').checked = true;
+  $('actPeriodCustomTxt').value = a.claimCustom || '';
+  $('actDailyLimit').value = a.dailyLimit || 1;
+  $('actTotalLimit').value = a.totalLimit || 1;
+  document.querySelector('input[name="actAutoMode"][value="'+(a.autoMode||'once')+'"]').checked = true;
+  $('actAutoOnceTime').value = a.autoOnceTime || '2026-07-06T09:00';
+  // 客群 + 权益
+  selectedGroups = a.groupList || (a.group ? [a.group] : []);
+  // 兼容旧数据：可能是字符串数组或对象数�?  if (Array.isArray(a.benefitList) && a.benefitList.length) {
+    selectedBenefits = a.benefitList.map(item => {
+      if (typeof item === 'string') {
+        // 旧数据：字符串名，查表转换为对象
+        const b = benefits.find(x => x.name === item) || { id:'-', name:item, category:'coupon', typeLabel:'卡券', stock:0 };
+        return { ...b, qty:1, validType:'after', validDays:1 };
+      }
+      return { qty:1, validType:'after', validDays:1, ...item };
+    });
+  } else if (a.benefit) {
+    const b = benefits.find(x => x.name === a.benefit) || { id:'-', name:a.benefit, category:'coupon', typeLabel:'卡券', stock:0 };
+    selectedBenefits = [{ ...b, qty:1, validType:'after', validDays:1 }];
+  } else {
+    selectedBenefits = [];
+  }
+  renderGroupPills();
+  renderBenefitList();
+  // 多波�?  actWaves = a.waves && a.waves.length ? a.waves : [{ id: 'W'+Date.now(), name:'', channel:'', sendTime:'', mode:'template', template:'' }];
+  renderWaves();
+  onModeChange();
+  onTriggerChange();
+  onClaimChange();
+  onPeriodChange();
+  onAutoModeChange();
+  openModal('modalActivity');
+}
+
+// 模式切换（TEMPLATE 锁定所有自定义项；CUSTOM 解锁�?function onModeChange(){
+  const v = document.querySelector('input[name="actMode"]:checked').value;
+  $('actTemplateBox').style.display = v === 'template' ? 'block' : 'none';
+  const customBox = $('actCustomBox');
+  if (v === 'template') {
+    customBox.style.opacity = '0.5';
+    customBox.style.pointerEvents = 'none';
+    customBox.querySelectorAll('input,select,button').forEach(el => { if (el.id !== 'actRuleTpl' && el.id !== '') el.disabled = true; });
+  } else {
+    customBox.style.opacity = '1';
+    customBox.style.pointerEvents = 'auto';
+    customBox.querySelectorAll('input,select,button').forEach(el => el.disabled = false);
+    onTriggerChange(); // 重新应用触发器锁�?  }
+}
+
+// 模板下拉
+function onTplChange(){
+  const v = $('actRuleTpl').value;
+  if (v) {
+    const m = {
+      'RULE_001': '触发方式: 新户24h内实�? 领取: 自动发放; 客群: 新开户对公客�?,
+      'RULE_002': '触发方式: 定时派发; 领取: 手动领取; 客群: 高管节日名单',
+      'RULE_003': '触发方式: 事件触发; 领取: 自动发放; 客群: 代发薪入账企�?,
+      'RULE_004': '触发方式: 新户24h内实�? 领取: 自动发放; 客群: 对公新户'
+    }[v] || '已锁定下方所有规则配置项';
+    $('actTplMeta').style.display = 'block';
+    $('actTplMeta').innerHTML = `📌 <b>${v}</b> 模板锁定配置�?{m}。下方客群、触发、领取等配置项已置灰不可修改。`;
+  } else {
+    $('actTplMeta').style.display = 'none';
+  }
+}
+
+// 触发条件切换
+function onTriggerChange(){
+  const v = document.querySelector('input[name="actTrigger"]:checked').value;
+  $('actTriggerSub').style.display = v === 'yes' ? 'block' : 'none';
+  if (v === 'yes') {
+    // 强制锁定领取方式 = 自动发放
+    document.querySelector('input[name="actClaim"][value="auto"]').checked = true;
+    document.querySelector('input[name="actClaim"][value="manual"]').disabled = true;
+    document.querySelector('input[name="actClaim"][value="auto"]').disabled = true;
+    $('actClaimManualLbl').style.opacity = '0.5';
+    $('actClaimAutoLbl').style.opacity = '1';
+    $('actClaimLockedWarn').style.display = 'block';
+    onClaimChange();
+    onAutoModeChange();
+  } else {
+    document.querySelector('input[name="actClaim"][value="manual"]').disabled = false;
+    document.querySelector('input[name="actClaim"][value="auto"]').disabled = false;
+    $('actClaimManualLbl').style.opacity = '1';
+    $('actClaimAutoLbl').style.opacity = '1';
+    $('actClaimLockedWarn').style.display = 'none';
+  }
+}
+
+// 触发事件联动参数规则
+function onTriggerEventChange(){
+  const v = $('actTriggerEvent').value;
+  const map = {
+    'open1': { lbl: '开户机构范�?, ph: '如：仅限 XX 分行' },
+    'trade': { lbl: '单笔交易金额（元�?, ph: '如：交易金额 >= 10000.00 �? },
+    'salary': { lbl: '代发金额下限（元�?, ph: '如：代发金额 >= 5000 �? },
+    'refer': { lbl: '推荐企业行业', ph: '如：仅限制造业' },
+    'bindmb': { lbl: '绑定客户类型', ph: '如：仅限对公法人' }
+  };
+  const cfg = map[v];
+  if (cfg) {
+    $('actTriggerRuleField').querySelector('label').innerHTML = cfg.lbl + ' <span class="text-rose-500">*</span>';
+    $('actTriggerRule').placeholder = cfg.ph;
+  }
+}
+
+// 领取方式切换
+function onClaimChange(){
+  const v = document.querySelector('input[name="actClaim"]:checked').value;
+  if (v === 'manual') {
+    $('actManualSub').style.display = 'block';
+    $('actAutoSub').style.display = 'none';
+  } else {
+    $('actManualSub').style.display = 'none';
+    $('actAutoSub').style.display = 'block';
+    onAutoModeChange();
+  }
+}
+
+// 领取截止时间切换（手动领取子配置�?function onPeriodChange(){
+  const v = document.querySelector('input[name="actClaimPeriod"]:checked').value;
+  $('actPeriodCustom').style.display = v === 'custom' ? 'block' : 'none';
+}
+
+// 自动发放子类型切�?function onAutoModeChange(){
+  const v = document.querySelector('input[name="actAutoMode"]:checked').value;
+  $('actAutoOnce').style.display = v === 'once' ? 'block' : 'none';
+  $('actAutoCycle').style.display = v === 'cycle' ? 'block' : 'none';
+  if (v === 'once') {
+    // 联动触发条件显示文案
+    const trigger = document.querySelector('input[name="actTrigger"]:checked').value;
+    if (trigger === 'yes') {
+      $('actAutoOnceLbl').textContent = '发放时间（事件触发模式）';
+      $('actAutoOnceHint').textContent = '事件触发：事件触发立即发放（无须选择具体时间�?;
+      $('actAutoOnceTime').value = '';
+      $('actAutoOnceTime').disabled = true;
+      $('actAutoOnceTime').style.background = '#f8fafc';
+    } else {
+      $('actAutoOnceLbl').textContent = '发放时间';
+      $('actAutoOnceHint').textContent = '非事件触发：活动开始后立即发放';
+      $('actAutoOnceTime').disabled = false;
+      $('actAutoOnceTime').style.background = '#fff';
+      if (!$('actAutoOnceTime').value) $('actAutoOnceTime').value = '2026-07-06T09:00';
+    }
+  }
+}
+
+// 多波�?function addWave(){
+  actWaves.push({ id: 'W'+Date.now(), name:'', channel:'', sendTime:'', mode:'template', template:'' });
+  renderWaves();
+}
+function removeWave(wid){
+  actWaves = actWaves.filter(w => w.id !== wid);
+  renderWaves();
+}
+function renderWaves(){
+  $('actWaveList').innerHTML = actWaves.map((w, idx) => {
+    const channelOpts = [
+      { val:'微信公众�?, desc:'（覆盖度高、时效性极佳）' },
+      { val:'短信',        desc:'（到达率高、即时性强�? },
+      { val:'系统消息',    desc:'（APP 内通知�? },
+      { val:'App Push',    desc:'（移动端推送）' },
+      { val:'邮件',        desc:'（正式通知、留存回溯）' },
+      { val:'企微消息',    desc:'（企业微信触达）' }
+    ];
+    const channelSelect = channelOpts.map(c =>
+      `<option value="${c.val}" ${w.channel===c.val?'selected':''}>${c.val} ${c.desc}</option>`
+    ).join('');
+    const templateOpts = [
+      { val:'',            label:'请选择内容模板' },
+      { val:'TPL_001',     label:'【新客专享】开户尊享直投通知模板' },
+      { val:'TPL_002',     label:'【理财专享】高净值客户产品到期通知模板' },
+      { val:'TPL_003',     label:'【代发薪】工资到账福利提醒模�? },
+      { val:'TPL_004',     label:'【节日营销】高端客户节日关怀模板' },
+      { val:'TPL_005',     label:'【资金留存】对公活期留存激励模�? }
+    ];
+    const templateSelect = templateOpts.map(t =>
+      `<option value="${t.val}" ${w.template===t.val?'selected':''}>${t.label}</option>`
+    ).join('');
+    const isTemplate = w.mode === 'template';
+    return `<div class="border border-slate-200 rounded p-3 bg-white">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="am-section-num" style="background:#1677ff">#${idx+1}</span>
+          <input type="text" class="ipt" style="width:240px;height:30px" placeholder="投放波次计划名称" value="${w.name||''}" oninput="actWaves.find(x=>x.id==='${w.id}').name=this.value" />
+        </div>
+        <button class="am-btn danger" style="padding:2px 10px;font-size:12px" onclick="removeWave('${w.id}')">🗑 删除此计�?/button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="am-field">
+          <label>营销投放渠道 <span class="text-rose-500">*</span></label>
+          <select class="ipt" onchange="actWaves.find(x=>x.id==='${w.id}').channel=this.value">
+            <option value="">请选择投放渠道</option>
+            ${channelSelect}
+          </select>
+        </div>
+        <div class="am-field">
+          <label>下发执行日期时间 <span class="text-rose-500">*</span></label>
+          <input type="datetime-local" class="ipt" value="${w.sendTime||''}" onchange="actWaves.find(x=>x.id==='${w.id}').sendTime=this.value" />
+        </div>
+      </div>
+      <div class="am-field mb-2">
+        <label>发送内容模�?<span class="text-rose-500">*</span></label>
+        <div class="flex items-center gap-4 pt-1">
+          <label class="am-radio"><input type="radio" name="waveMode_${w.id}" value="template" ${isTemplate?'checked':''} onchange="onWaveModeChange('${w.id}','template')" /> 使用模板发送内�?/label>
+          <label class="am-radio"><input type="radio" name="waveMode_${w.id}" value="custom" ${!isTemplate?'checked':''} onchange="onWaveModeChange('${w.id}','custom')" /> 自定义发送内�?/label>
+        </div>
+      </div>
+      <div class="am-field mb-2" id="waveTplBox_${w.id}" style="display:${isTemplate?'block':'none'}">
+        <label>选择内容模板 <span class="text-rose-500">*</span></label>
+        <select class="ipt" onchange="actWaves.find(x=>x.id==='${w.id}').template=this.value">
+          ${templateSelect}
+        </select>
+      </div>
+      <div class="am-field" id="wavePreviewBox_${w.id}" style="display:${isTemplate?'block':'none'}">
+        <label class="flex items-center gap-1"><svg class="w-3.5 h-3.5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> 发送内容效果预�?/label>
+        <div class="border border-blue-200 bg-blue-50/40 rounded p-3 text-[12px] text-slate-600 leading-relaxed">
+          【工商银行】尊敬的客户，恭喜您符合我行对新开户礼遇！您的专属话费立减�?微信支付立减金已发放到账，请�?0天内登录手机银行查看使用�?        </div>
+      </div>
+      <div class="am-field" id="waveCustomBox_${w.id}" style="display:${!isTemplate?'block':'none'}">
+        <label>自定义发送内�?<span class="text-rose-500">*</span></label>
+        <textarea class="ipt" rows="3" placeholder="请输入自定义发送内容（支持变量，如 &#36;&#123;客户名称&#125;�? oninput="actWaves.find(x=>x.id==='${w.id}').custom=this.value">${w.custom||''}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+}
+function onWaveModeChange(wid, mode){
+  const w = actWaves.find(x => x.id === wid);
+  if (!w) return;
+  w.mode = mode;
+  // 切换后重渲染单卡（仅刷新该卡的模式相关区域）
+  const tplBox = document.getElementById('waveTplBox_'+wid);
+  const previewBox = document.getElementById('wavePreviewBox_'+wid);
+  const customBox = document.getElementById('waveCustomBox_'+wid);
+  if (tplBox) tplBox.style.display = mode === 'template' ? 'block' : 'none';
+  if (previewBox) previewBox.style.display = mode === 'template' ? 'block' : 'none';
+  if (customBox) customBox.style.display = mode === 'custom' ? 'block' : 'none';
+}
+
+function saveActivity(){
+  const mode = document.querySelector('input[name="actMode"]:checked').value;
+  const name = $('actName').value.trim();
+  const scene = $('actScene').value;
+  const dept = $('actDept').value;
+  const start = $('actStart').value;
+  const end = $('actEnd').value;
+  const budget = parseFloat($('actBudget').value);
+  const goals = [...document.querySelectorAll('#actGoalBox input[type=checkbox]:checked')].map(c => c.parentElement.dataset.goal);
+  const dailyQuota = parseInt($('actDailyQuota').value);
+
+  // 必填校验
+  if (!name) { showToast('活动名称必填�?, 'error'); return; }
+  if (!scene) { showToast('请选择归属场景�?, 'error'); return; }
+  if (!dept) { showToast('请选择归属部门�?, 'error'); return; }
+  if (!start || !end) { showToast('请填写完整的开�?结束时间�?, 'error'); return; }
+  if (end < start) { showToast('结束时间必须大于等于开始时间！', 'error'); return; }
+  if (!budget || budget <= 0) { showToast('活动预算必须为正数！', 'error'); return; }
+  if (goals.length === 0) { showToast('请至少选择一个营销目标�?, 'error'); return; }
+
+  let payload = { name, scene, dept, start, end, budget, goals, dailyQuota, desc: $('actDesc').value.trim() };
+
+  if (mode === 'template') {
+    const tpl = $('actRuleTpl').value;
+    if (!tpl) { showToast('请选择规则模板�?, 'error'); return; }
+    payload.mode = 'template';
+    payload.ruleTpl = tpl;
+    payload.ruleName = $('actRuleTpl').options[$('actRuleTpl').selectedIndex].text.split(' - ')[1];
+  } else {
+    if (selectedGroups.length === 0) { showToast('请至少选择一个目标客群！', 'error'); return; }
+    if (selectedBenefits.length === 0) { showToast('请至少选择一个权益！', 'error'); return; }
+    if (!dailyQuota || dailyQuota <= 0) { showToast('请填写有效的每日发放上限�?, 'error'); return; }
+    payload.mode = 'custom';
+    payload.sendType = document.querySelector('input[name="actSendType"]:checked').value;
+    payload.groupList = [...selectedGroups];
+    payload.benefitList = [...selectedBenefits];
+    const trigger = document.querySelector('input[name="actTrigger"]:checked').value;
+    payload.trigger = trigger;
+    if (trigger === 'yes') {
+      payload.triggerEvent = $('actTriggerEvent').value;
+      payload.triggerRule = $('actTriggerRule').value.trim();
+      if (!payload.triggerEvent || !payload.triggerRule) {
+        showToast('请填写完整的触发事件及参数规则！', 'error');
+        return;
+      }
+    }
+    payload.claimType = document.querySelector('input[name="actClaim"]:checked').value;
+    if (payload.claimType === 'manual') {
+      payload.claimPeriod = document.querySelector('input[name="actClaimPeriod"]:checked').value;
+      payload.claimCustom = $('actPeriodCustomTxt').value.trim();
+      payload.dailyLimit = parseInt($('actDailyLimit').value) || 1;
+      payload.totalLimit = parseInt($('actTotalLimit').value) || 1;
+    } else {
+      payload.autoMode = document.querySelector('input[name="actAutoMode"]:checked').value;
+      if (payload.autoMode === 'once') {
+        payload.autoOnceTime = $('actAutoOnceTime').value;
+      } else {
+        payload.cycleFreq = '每天/每周/每月';
+        payload.cycleTime = '09:00';
+      }
+    }
+  }
+
+  // 至少一个投放计划已选择渠道
+  const validWaves = actWaves.filter(w => w.channel);
+  if (validWaves.length === 0) {
+    if (!confirm('您尚未配置任何投放计划的触达渠道，保存后将以默认短信通知，是否继续？')) return;
+  }
+  payload.waves = actWaves;
+
+  if (editingAct) {
+    Object.assign(editingAct, payload);
+    showToast('权益直投活动已保存并重新上架�?, 'success');
+  } else {
+    const newId = 'ACT_' + new Date().toISOString().slice(0,10).replace(/-/g,'') + String(activities.length+1).padStart(2,'0');
+    activities.unshift({ id: newId, ...payload, group: payload.groupList?.[0] || '', benefit: payload.benefitList?.[0] || '', status:'pending', createdAt: new Date().toISOString() });
+    showToast('权益直投活动已保存并成功上架�?, 'success');
+  }
+  closeModal('modalActivity');
+  renderTable();
+}
+function toggleStatus(id){
+  const a = activities.find(x => x.id === id);
+  if (!a) return;
+  if (a.status === 'running') a.status = 'paused';
+  else if (a.status === 'paused') a.status = 'running';
+  else if (a.status === 'pending') a.status = 'running';
+  else if (a.status === 'closed') a.status = 'running';
+  showToast('活动状态已更新�?, 'success');
+  renderTable();
+}
+function deleteAct(id){
+  if (!confirm('确定要删除此活动吗？将释放引用的权益配额�?)) return;
+  const i = activities.findIndex(x => x.id === id);
+  if (i >= 0) activities.splice(i, 1);
+  showToast('活动已删除！', 'success');
+  renderTable();
+}
+
+/* ========== 漏斗弹窗 ========== */
+function openFunnelModal(id, name){
+  $('funnelTitle').textContent = '【活动监控明细�?- ' + name;
+  openModal('modalFunnel');
+}
+
+/* ========== 数据看板（点�?查看"展开�?========== */
+function openDashboard(id, name){
+  const a = activities.find(x => x.id === id);
+  if (!a) return;
+  currentDashAct = a;
+  $('dashActName').textContent = '�? + a.id + '�? + a.name;
+  $('dashActScene').textContent = '场景�? + a.scene + ' · 部门�? + (a.dept || '-');
+  const statusMap = { running:'运行�?, paused:'已暂�?, pending:'计划�?, closed:'已结�? };
+  $('dashActStatus').className = 'am-status ' + a.status;
+  $('dashActStatus').innerHTML = '<span class="dot"></span>' + statusMap[a.status];
+  const d = dashData[id] || defaultDashData;
+  $('dashActReach').textContent = d.reach.toLocaleString() + ' 人次';
+  $('activityDashboard').style.display = 'block';
+  switchDashTab('config');
+  // 平滑滚动到看�?  setTimeout(() => $('activityDashboard').scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+}
+function closeDashboard(){
+  $('activityDashboard').style.display = 'none';
+  currentDashAct = null;
+}
+function switchDashTab(tab, btn){
+  document.querySelectorAll('#dashTabs .am-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelector('#dashTabs .am-tab-btn[data-tab="'+tab+'"]').classList.add('active');
+  const a = currentDashAct;
+  if (!a) return;
+  const d = dashData[a.id] || defaultDashData;
+  if (tab === 'config') renderDashConfig(a, d);
+  else if (tab === 'delivery') renderDashDelivery(d);
+  else if (tab === 'users') renderDashUsers(d);
+  else if (tab === 'benefit') renderDashBenefit(d);
+  else if (tab === 'effect') renderDashEffect(a, d);
+}
+
+/* TAB 1: 配置明细 */
+function renderDashConfig(a, d){
+  const goalTxt = (a.goals || []).join('�?) || '-';
+  const triggerDesc = a.mode === 'template'
+    ? '引用规则模板�? + (a.ruleTpl || '-') + '（模板已固化触发逻辑�?
+    : (a.trigger === 'yes' ? '事件驱动触发�? + (a.triggerEvent || '-') + ' / ' + (a.triggerRule || '-') : '常规周期/一次性下�?);
+  const claimDesc = a.claimType === 'auto'
+    ? '自动发放�? + (a.autoMode === 'once' ? (a.trigger==='yes'?'事件触发立即发放':'活动开始后立即发放') : '周期性循环发�?)
+    : '手动领取�? + (a.claimPeriod === 'today' ? '当日有效' : a.claimPeriod === 'period' ? '按活动期' : a.claimCustom || '自定�?);
+  const benefitsRows = (a.benefitList || []).map(it => {
+    const name = typeof it === 'string' ? it : (it.name || '-');
+    const b = benefits.find(x => x.id === (typeof it === 'string' ? '' : it.id) || x.name === name) || {};
+    // 单项有效期：手动根据 validType/validDays 渲染
+    const perValid = typeof it === 'string'
+      ? (a.claimType==='auto' ? '即时入账' : (a.claimPeriod==='today'?'当日有效':a.claimPeriod==='period'?'按活动期':'自定�?))
+      : (it.validType === 'after' ? '发放�?' + (it.validDays||1) + ' �? : '固定 ' + (it.validDays||1) + ' �?);
+    return `<tr>
+      <td>
+        <div class="font-medium text-slate-700">${name}</div>
+        <div class="mt-1">
+          <span class="rule-chip">方式: ${a.claimType==='auto'?'自动发放':'手动领取'}</span>
+          <span class="rule-chip">截止: ${perValid}</span>
+          <span class="rule-chip">每人�?${a.dailyLimit||1} �?/span>
+          <span class="rule-chip">每日不限�?/span>
+        </div>
+      </td>
+      <td>${b.typeLabel || (typeof it === 'object' ? it.typeLabel : '权益') || '权益'}</td>
+      <td class="am-mono">-</td>
+      <td>${a.dailyQuota?a.dailyQuota+' �?�?:'无限�?}</td>
+    </tr>`;
+  }).join('');
+  $('dashContent').innerHTML = `
+    <div class="grid grid-cols-10 gap-3">
+      <!-- 左栏 45% -->
+      <div class="col-span-5 space-y-3">
+        <div class="dash-card">
+          <div class="am-section-title mb-2">活动基本属�?/div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-[12px]">
+            <div><span class="text-slate-500">活动预算�?/span><b class="text-blue-600">¥${(a.budget||0).toLocaleString()}</b></div>
+            <div><span class="text-slate-500">归属部门�?/span>${a.dept||'-'}</div>
+            <div><span class="text-slate-500">开始时间：</span>${a.start||'-'}</div>
+            <div><span class="text-slate-500">结束时间�?/span>${a.end||'-'}</div>
+            <div class="col-span-2"><span class="text-slate-500">营销目标�?/span>${goalTxt}</div>
+            <div class="col-span-2"><span class="text-slate-500">归属场景�?/span>${a.scene||'-'}</div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="am-section-title mb-2">覆盖客群�?{(a.groupList||[]).length} 个）</div>
+          <div>${(a.groupList||[]).map(g => '<span class="am-pill">'+g+'</span>').join('') || '<span class="text-slate-400 text-[12px]">未配置客�?/span>'}</div>
+        </div>
+        <div class="dash-card">
+          <div class="am-section-title mb-2">触发与限制说�?/div>
+          <div class="text-[12px] space-y-1">
+            <div><b>触发机制�?/b>${triggerDesc}</div>
+            <div><b>领取方式�?/b>${claimDesc}</div>
+            <div><b>单日出账安全锁：</b><span class="text-amber-600 font-semibold">${a.dailyQuota||'-'} �?�?/span>（熔断保护）</div>
+            <div><b>领取频控�?/b>每人每日 ${a.dailyLimit||1} �?/ 活动期总限 ${a.totalLimit||1} �?/div>
+          </div>
+        </div>
+      </div>
+      <!-- 右栏 55% -->
+      <div class="col-span-5">
+        <div class="dash-card">
+          <div class="am-section-title mb-2">权益/奖项绑定清单�?{(a.benefitList||[]).length} 项）</div>
+          <table class="am-table">
+            <thead><tr><th>权益/奖项名称</th><th>类型</th><th>面�?/th><th>发放配额</th></tr></thead>
+            <tbody>${benefitsRows || '<tr><td colspan="4" class="text-center text-slate-400 py-4">未绑定权�?/td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* TAB 2: 触达渠道方案 */
+function renderDashDelivery(d){
+  const wavesRows = d.waves.map(w => `
+    <tr>
+      <td class="font-medium text-slate-700">${w.name}</td>
+      <td><span class="am-tag blue">${w.channel}</span></td>
+      <td>${w.time}</td>
+      <td class="text-right am-mono">${w.target.toLocaleString()}</td>
+      <td>${w.status==='done' ? '<span class="exec-status done"><span class="dot"></span>已执�?/span>' : '<span class="exec-status planned">计划�?/span>'}</td>
+      <td class="text-right am-mono font-semibold text-emerald-600">${w.convert.toLocaleString()}</td>
+      <td class="text-center"><span class="am-link" onclick="openWaveMonitor('${w.name}','${w.channel}')">数据监控</span></td>
+    </tr>
+  `).join('');
+  $('dashContent').innerHTML = `
+    <div class="grid grid-cols-3 gap-3 mb-3">
+      <div class="dash-metric"><div class="v" id="detTotalPlansCount">${d.plans.total}</div><div class="l">计划投放总批�?/div></div>
+      <div class="dash-metric"><div class="v" id="detTotalPlansTarget">${d.plans.target.toLocaleString()}</div><div class="l">计划覆盖总人�?/div></div>
+      <div class="dash-metric"><div class="v text-emerald-600" id="detTotalPlansConverts">${d.plans.convert.toLocaleString()}</div><div class="l">目前实际转化人次</div></div>
+    </div>
+    <div class="dash-card">
+      <div class="am-section-title mb-2">底层执行计划明细</div>
+      <table class="am-table">
+        <thead><tr><th>投放计划名称</th><th>发送渠�?/th><th>下发时间</th><th style="width:90px" class="text-right">计划发送人�?/th><th>执行状�?/th><th style="width:90px" class="text-right">达成转化人数</th><th style="width:80px" class="text-center">操作</th></tr></thead>
+        <tbody>${wavesRows || '<tr><td colspan="7" class="text-center text-slate-400 py-4">暂无投放计划</td></tr>'}</tbody>
+      </table>
+    </div>
+  `;
+}
+function openWaveMonitor(name, channel){
+  showToast(`�?{channel}�?{name} - 通道到达�?96.2% / 回执失败 1.8% / 防拦截占�?0.4%（演示数据）`, 'success');
+}
+
+/* TAB 3: 覆盖用户名单 */
+function renderDashUsers(d){
+  $('dashContent').innerHTML = `
+    <div class="grid grid-cols-7 gap-2 mb-3">
+      <input class="ipt" placeholder="客户ID / 手机�? oninput="filterUsersList(this.value)" />
+      <select class="ipt" onchange="filterUsersList()"><option value="">客群匹配类型（全部）</option></select>
+      <select class="ipt" onchange="filterUsersList()"><option value="">企业层级（全部）</option><option>金牌客户</option><option>白金对公客户</option><option>普通客�?/option></select>
+      <select class="ipt" onchange="filterUsersList()"><option value="">管辖网点（全部）</option></select>
+      <select class="ipt" onchange="filterUsersList()"><option value="">触达通道（全部）</option></select>
+      <select class="ipt" onchange="filterUsersList()"><option value="">触达状态（全部�?/option><option>已触�?/option><option>待触�?/option></select>
+      <select class="ipt" onchange="filterUsersList()"><option value="">到账状态（全部�?/option><option>用户已核销使用</option><option>已到账待使用</option><option>未到�?/option></select>
+    </div>
+    <div class="flex items-center justify-between mb-2 text-[12px]">
+      <div class="text-slate-600">�?<b id="userCount" class="text-slate-800">${d.users.length}</b> 位客�?/div>
+      <button class="am-btn" onclick="resetUserFilter()">重置筛�?/button>
+    </div>
+    <div class="dash-card" style="overflow:auto">
+      <table class="am-table">
+        <thead><tr>
+          <th>客户编号/ID</th><th>客户姓名</th><th>命中客群</th><th>企业层级</th>
+          <th>归属分行</th><th>手机�?/th><th>发放渠道</th><th>触达状�?/th><th>到账/核销状�?/th>
+        </tr></thead>
+        <tbody id="userTbody">${renderUserRows(d.users)}</tbody>
+      </table>
+    </div>
+  `;
+}
+function renderUserRows(list){
+  return list.map(u => {
+    const reachCell = u.reach === '已触�? ? '<span class="text-emerald-600 font-semibold">已触�?/span>' : '<span class="text-slate-400">待触�?/span>';
+    let settleCell = u.settle;
+    if (u.settle === '用户已核销使用') settleCell = '<span class="text-emerald-600 font-semibold">用户已核销使用</span>';
+    else if (u.settle === '已到账待使用' || u.settle === '已自动直投到�?) settleCell = '<span class="text-blue-600">已到账待使用</span>';
+    else if (u.settle === '未到�?) settleCell = '<span class="text-slate-400">未到�?/span>';
+    return `<tr>
+      <td class="am-mono">${u.id}</td>
+      <td>${u.name}</td>
+      <td>${u.group}</td>
+      <td>${u.level}</td>
+      <td>${u.branch}</td>
+      <td class="am-mono">${u.phone}</td>
+      <td>${u.channel}</td>
+      <td>${reachCell}</td>
+      <td>${settleCell}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="9" class="text-center text-slate-400 py-4">暂无用户数据</td></tr>';
+}
+function filterUsersList(kw){
+  if (!currentDashAct) return;
+  const d = dashData[currentDashAct.id] || defaultDashData;
+  kw = (kw || '').toString();
+  const list = d.users.filter(u => !kw || u.id.includes(kw) || u.phone.includes(kw) || u.name.includes(kw));
+  $('userTbody').innerHTML = renderUserRows(list);
+  $('userCount').textContent = list.length;
+}
+function resetUserFilter(){
+  if (!currentDashAct) return;
+  const d = dashData[currentDashAct.id] || defaultDashData;
+  $('userTbody').innerHTML = renderUserRows(d.users);
+  $('userCount').textContent = d.users.length;
+  document.querySelectorAll('#dashContent select.ipt').forEach(s => s.value = '');
+}
+
+/* TAB 4: 权益发放分析 */
+function renderDashBenefit(d){
+  const f = d.funnel;
+  const stagePlan = f.plan, stageReach = f.reach, stageDel = f.deliver, stageClaim = f.claim, stageUsed = f.used;
+  const convDel = (stageDel/stagePlan*100).toFixed(1);
+  const convClaim = (stageClaim/stageDel*100).toFixed(1);
+  const convUsed = (stageUsed/stageClaim*100).toFixed(1);
+  const bpRows = d.benefits_perf.map(b => `
+    <tr>
+      <td class="font-medium text-slate-700">${b.name}</td>
+      <td>${b.type}</td>
+      <td class="text-right am-mono">${b.quota.toLocaleString()}</td>
+      <td class="text-right am-mono font-semibold">${b.used.toLocaleString()}</td>
+      <td>
+        <div class="flex items-center gap-2">
+          <div class="funnel-bar flex-1"><div class="fill" style="width:${b.rate}%;background:linear-gradient(90deg,#1677ff,#36cfc9)">${b.rate}%</div></div>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  $('dashContent').innerHTML = `
+    <div class="grid grid-cols-5 gap-3 mb-3">
+      <div class="dash-metric"><div class="v">¥${((currentDashAct.budget||0)).toLocaleString()}</div><div class="l">预算总额</div></div>
+      <div class="dash-metric"><div class="v">${Math.round((f.deliver/100)*(currentDashAct.dailyQuota||100)*30).toLocaleString()}</div><div class="l">已发权益数（个）</div></div>
+      <div class="dash-metric"><div class="v">${Math.round((f.claim/100)*(currentDashAct.dailyQuota||100)*30).toLocaleString()}</div><div class="l">已领权益数（个）</div></div>
+      <div class="dash-metric"><div class="v">${Math.round((f.used/100)*(currentDashAct.dailyQuota||100)*30).toLocaleString()}</div><div class="l">已核销使用数（个）</div></div>
+      <div class="dash-metric"><div class="v text-emerald-600">¥${Math.round((currentDashAct.budget||0)*f.used/100).toLocaleString()}</div><div class="l">实付总成本（¥�?/div></div>
+    </div>
+    <div class="dash-card mb-3">
+      <div class="am-section-title mb-3">漏斗转化追踪（计�?�?触达 �?发放 �?领取 �?核销�?/div>
+      <div class="space-y-2">
+        <div class="flex items-center gap-3"><div class="w-24 text-[12px] text-slate-500">计划覆盖</div><div class="funnel-bar flex-1"><div class="fill" style="width:${stagePlan}%;background:linear-gradient(90deg,#94a3b8,#64748b)">${stagePlan}%</div></div><div class="w-20 text-right text-[12px] text-slate-500">${d.reach.toLocaleString()} �?/div></div>
+        <div class="flex items-center gap-3"><div class="w-24 text-[12px] text-slate-500">成功营销触达</div><div class="funnel-bar flex-1" title="触达转化�?${stageReach}%"><div class="fill" style="width:${stageReach}%;background:linear-gradient(90deg,#1677ff,#4096ff)">${stageReach}%</div></div><div class="w-20 text-right text-[12px] text-slate-500" title="触达→发�?${convDel}%">${Math.round(d.reach*stageReach/100).toLocaleString()} �?/div></div>
+        <div class="flex items-center gap-3"><div class="w-24 text-[12px] text-slate-500">完成权益发放</div><div class="funnel-bar flex-1" title="发放�?${convDel}%"><div class="fill" style="width:${stageDel}%;background:linear-gradient(90deg,#36cfc9,#5cdbd3)">${stageDel}%</div></div><div class="w-20 text-right text-[12px] text-slate-500" title="发放→领�?${convClaim}%">${Math.round(d.reach*stageDel/100).toLocaleString()} �?/div></div>
+        <div class="flex items-center gap-3"><div class="w-24 text-[12px] text-slate-500">用户主动领取</div><div class="funnel-bar flex-1" title="领取转化�?${convClaim}%"><div class="fill" style="width:${stageClaim}%;background:linear-gradient(90deg,#faad14,#ffc53d)">${stageClaim}%</div></div><div class="w-20 text-right text-[12px] text-slate-500" title="领取→核销 ${convUsed}%">${Math.round(d.reach*stageClaim/100).toLocaleString()} �?/div></div>
+        <div class="flex items-center gap-3"><div class="w-24 text-[12px] text-slate-500">客户核销使用</div><div class="funnel-bar flex-1" title="核销�?${stageUsed}%"><div class="fill" style="width:${stageUsed}%;background:linear-gradient(90deg,#52c41a,#73d13d)">${stageUsed}%</div></div><div class="w-20 text-right text-[12px] text-slate-500">${Math.round(d.reach*stageUsed/100).toLocaleString()} �?/div></div>
+      </div>
+    </div>
+    <div class="dash-card">
+      <div class="am-section-title mb-2">奖项效能分拆</div>
+      <table class="am-table">
+        <thead><tr><th>权益/奖项名称</th><th>类型</th><th style="width:90px" class="text-right">发放配额</th><th style="width:90px" class="text-right">已消�?/th><th style="width:200px">使用�?/th></tr></thead>
+        <tbody>${bpRows || '<tr><td colspan="5" class="text-center text-slate-400 py-4">暂无奖项数据</td></tr>'}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* TAB 5: 执行效果分析 */
+function renderDashEffect(a, d){
+  const e = d.effect;
+  // 场景自适应：交易达�?/ 新开�?  const sceneAdapt = a.scene === '交易达标' || a.scene === '存贷联动'
+    ? { kpi1:'笔数提升', kpi2:'交易额增�?, unit:'�? }
+    : { kpi1:'开户达标率', kpi2:'日均 AUM 净�?, unit:'万元' };
+  $('dashContent').innerHTML = `
+    <div class="grid grid-cols-3 gap-3 mb-3">
+      <div class="dash-metric"><div class="l">核心目标类型</div><div class="v" style="color:#1677ff">${e.goal}</div></div>
+      <div class="dash-metric"><div class="l">转化成功�?/div><div class="v">${e.conv.toLocaleString()} �?/div></div>
+      <div class="dash-metric"><div class="l">达标转化率（${sceneAdapt.kpi1}�?/div><div class="v text-emerald-600">${e.rate}%</div></div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <!-- A/B 对照 -->
+      <div class="dash-card">
+        <div class="am-section-title mb-3">A/B 对照实验组对�?/div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="border border-blue-200 bg-blue-50 rounded p-3">
+            <div class="text-[12px] text-blue-600 font-semibold mb-2">▌直投实验组（Direct Group�?/div>
+            <div class="text-[11px] space-y-1 text-slate-700">
+              <div>日均 AUM 提升�?b class="text-blue-700">¥52,000 / �?/b></div>
+              <div>理财/产品购买转化率：<b class="text-blue-700">8.5%</b></div>
+              <div>触达用户数：<b>${d.reach.toLocaleString()}</b></div>
+              <div>活动参与率：<b>76.4%</b></div>
+            </div>
+          </div>
+          <div class="border border-slate-200 bg-slate-50 rounded p-3">
+            <div class="text-[12px] text-slate-600 font-semibold mb-2">▌空白对照组（Control Group�?/div>
+            <div class="text-[11px] space-y-1 text-slate-700">
+              <div>日均 AUM 增长�?b class="text-slate-700">¥8,500 / �?/b></div>
+              <div>理财/产品购买转化率：<b>1.8%</b></div>
+              <div>触达用户数：<b>1,200</b></div>
+              <div>自然增长率：<b>0.6%</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="text-[11px] text-slate-500 mt-3 p-2 bg-amber-50 border border-amber-200 rounded">
+          💡 增量贡献：扣除对照组自然增长水分后，本活�?<b class="text-amber-700">净�?AUM ¥43,500/�?/b>�?b>${sceneAdapt.kpi2}</b> 增益显著�?        </div>
+      </div>
+      <!-- 杠杆核算 -->
+      <div class="dash-card">
+        <div class="am-section-title mb-3">业务杠杆核算</div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="border border-emerald-200 bg-emerald-50 rounded p-3 text-center">
+            <div class="text-[12px] text-emerald-600">单位转化成本 (CPA)</div>
+            <div class="text-[24px] font-bold text-emerald-700 mt-1">¥${e.cpa}</div>
+            <div class="text-[10px] text-slate-500 mt-1">实付总成�?/ 成功转化人数</div>
+          </div>
+          <div class="border border-blue-200 bg-blue-50 rounded p-3 text-center">
+            <div class="text-[12px] text-blue-600">财务投资回报�?(ROI)</div>
+            <div class="text-[24px] font-bold text-blue-700 mt-1">${e.roi}</div>
+            <div class="text-[10px] text-slate-500 mt-1">每投�?元营销成本，拉�?AUM 净�?/div>
+          </div>
+        </div>
+        <div class="mt-3 p-3 border border-slate-200 rounded">
+          <div class="text-[12px] text-slate-600 font-semibold mb-2">核算明细</div>
+          <div class="text-[11px] space-y-1 text-slate-700">
+            <div class="flex justify-between"><span>实付总成�?/span><b>¥${Math.round((a.budget||0)*d.funnel.used/100).toLocaleString()}</b></div>
+            <div class="flex justify-between"><span>成功转化人数</span><b>${e.conv.toLocaleString()} �?/b></div>
+            <div class="flex justify-between"><span>实验组净增日�?AUM</span><b>¥43,500 / �?/b></div>
+            <div class="flex justify-between text-blue-700"><span>杠杆倍数（ROI�?/span><b>${e.roi}</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ========== 客群弹窗 ========== */
+function openGroupModal(){
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客�?) + ' (已选择 ' + selectedGroups.length + ' �?:';
+  renderGroupRows();
+  renderGroupPillsInModal();
+  openModal('modalGroup');
+}
+function switchGroupTab(btn, tab){
+  document.querySelectorAll('#modalGroup .am-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGroupTab = tab;
+  renderGroupRows();
+  $('groupSummary').textContent = (tab==='tag'?'标签客群':'白名单客�?) + ' (已选择 ' + selectedGroups.length + ' �?:';
+}
+function filterGroup(v){ renderGroupRows(v); }
+function renderGroupRows(kw){
+  kw = kw || '';
+  const filter = currentGroupTab === 'tag' ? g => g.type === '标签生成' : g => g.type === '白名单导�?;
+  const list = groupPool.filter(filter).filter(g => !kw || g.name.includes(kw));
+  $('groupTbody').innerHTML = list.map((g,i) => {
+    const checked = selectedGroups.includes(g.name) ? 'checked' : '';
+    return `<tr>
+      <td><input type="checkbox" ${checked} onclick="toggleGroup('${g.name}', this)" /></td>
+      <td>${g.name}</td>
+      <td><span class="am-tag ${g.type==='标签生成'?'blue':'gray'}">${g.type}</span></td>
+      <td>${g.cnt}</td>
+      <td class="text-slate-500">${g.sync}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" class="text-center text-slate-400 py-6">无匹配数�?/td></tr>';
+}
+function toggleGroup(name, cb){
+  if (cb.checked) {
+    if (!selectedGroups.includes(name)) selectedGroups.push(name);
+  } else {
+    selectedGroups = selectedGroups.filter(x => x !== name);
+  }
+  renderGroupPillsInModal();
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客�?) + ' (已选择 ' + selectedGroups.length + ' �?:';
+}
+function toggleAllGroups(cb){
+  const filter = currentGroupTab === 'tag' ? g => g.type === '标签生成' : g => g.type === '白名单导�?;
+  const list = groupPool.filter(filter);
+  if (cb.checked) list.forEach(g => { if (!selectedGroups.includes(g.name)) selectedGroups.push(g); });
+  else list.forEach(g => { selectedGroups = selectedGroups.filter(x => x !== g.name); });
+  renderGroupRows();
+  renderGroupPillsInModal();
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客�?) + ' (已选择 ' + selectedGroups.length + ' �?:';
+}
+function renderGroupPillsInModal(){
+  $('groupPills').innerHTML = selectedGroups.map(g => `<span class="am-pill">${g}<span class="x" onclick="removeGroupPill('${g}')">×</span></span>`).join('');
+}
+function removeGroupPill(name){
+  selectedGroups = selectedGroups.filter(x => x !== name);
+  renderGroupRows();
+  renderGroupPillsInModal();
+  renderGroupPills();
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客�?) + ' (已选择 ' + selectedGroups.length + ' �?:';
+}
+function confirmGroups(){
+  renderGroupPills();
+  closeModal('modalGroup');
+}
+function clearGroups(){
+  selectedGroups = [];
+  renderGroupPills();
+}
+function renderGroupPills(){
+  $('actGroupList').innerHTML = selectedGroups.length
+    ? selectedGroups.map(g => `<span class="am-pill">${g}<span class="x" onclick="removeGroup('${g}')">×</span></span>`).join('')
+    : '<span class="text-[12px] text-slate-400">暂未选择</span>';
+}
+function removeGroup(name){
+  selectedGroups = selectedGroups.filter(x => x !== name);
+  renderGroupPills();
+}
+
+/* ========== 权益商品弹窗 ========== */
+function openBenefitModal(){
+  benefitPage = 1;
+  // 同步下拉默认�?  const sel = $('benefitTypeSelect');
+  if (sel) sel.value = currentBenefitTab;
+  const kw = $('benefitSearchInput');
+  if (kw) kw.value = '';
+  $('benefitGoto').value = 1;
+  renderBenefitRows();
+  openModal('modalBenefit');
+}
+function switchBenefitTab(v){
+  currentBenefitTab = v || 'all';
+  benefitPage = 1;
+  $('benefitGoto').value = 1;
+  renderBenefitRows();
+}
+function filterBenefit(v){
+  benefitPage = 1;
+  $('benefitGoto').value = 1;
+  renderBenefitRows(v);
+}
+function changeBenefitPageSize(v){
+  benefitPageSize = parseInt(v) || 5;
+  benefitPage = 1;
+  $('benefitGoto').value = 1;
+  renderBenefitRows();
+}
+function gotoBenefitPage(p){
+  const total = getFilteredBenefits().length;
+  const pages = Math.max(1, Math.ceil(total / benefitPageSize));
+  benefitPage = Math.min(Math.max(1, p), pages);
+  $('benefitGoto').value = benefitPage;
+  renderBenefitRows();
+}
+function getFilteredBenefits(kw){
+  kw = (kw !== undefined ? kw : ($('benefitSearchInput') ? $('benefitSearchInput').value : '')) || '';
+  return benefits
+    .filter(b => currentBenefitTab==='all' || b.category === currentBenefitTab)
+    .filter(b => !kw || b.name.includes(kw) || String(b.id).includes(kw));
+}
+function renderBenefitRows(kw){
+  const all = getFilteredBenefits(kw);
+  const total = all.length;
+  const pages = Math.max(1, Math.ceil(total / benefitPageSize));
+  if (benefitPage > pages) benefitPage = pages;
+  const start = (benefitPage - 1) * benefitPageSize;
+  const pageList = all.slice(start, start + benefitPageSize);
+  // 渲染表格
+  $('benefitTbody').innerHTML = pageList.length ? pageList.map(b => {
+    const checked = selectedBenefits.some(x => x.id === b.id) ? 'checked' : '';
+    const stockWarn = b.stock < 500;
+    return `<tr>
+      <td><input type="checkbox" ${checked} onclick="toggleBenefit('${b.id}')" /></td>
+      <td class="am-mono text-slate-500">${b.id}</td>
+      <td>${b.name}</td>
+      <td><span class="am-tag" style="background:#f5f3ff;color:#6d28d9">${b.typeLabel}</span></td>
+      <td style="text-align:right" class="am-mono">${b.stock.toLocaleString()} ${stockWarn?'<span class="am-tag" style="background:#ffedd5;color:#c2410c;margin-left:4px">库存偏低</span>':''}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="5" class="text-center text-slate-400 py-6">无匹配数�?/td></tr>';
+  // 总数
+  $('benefitTotalCount').textContent = total;
+  // 分页
+  $('benefitPager').innerHTML = renderPager(pages, benefitPage, 'gotoBenefitPage');
+}
+function renderPager(pages, cur, fnName){
+  if (pages <= 1) return '';
+  let html = '';
+  html += `<button class="am-btn" style="height:26px;padding:0 8px;font-size:11px" onclick="${fnName}(${cur-1})" ${cur===1?'disabled':''}>�?/button>`;
+  // 简单显示：1...cur...last
+  const set = new Set([1, pages, cur, cur-1, cur+1]);
+  const arr = [...set].filter(x => x>=1 && x<=pages).sort((a,b)=>a-b);
+  let prev = 0;
+  arr.forEach(p => {
+    if (p - prev > 1) html += `<span class="px-1 text-slate-400">�?/span>`;
+    prev = p;
+    html += `<button class="am-btn ${p===cur?'primary':''}" style="height:26px;padding:0 8px;font-size:11px;min-width:26px" onclick="${fnName}(${p})">${p}</button>`;
+  });
+  html += `<button class="am-btn" style="height:26px;padding:0 8px;font-size:11px" onclick="${fnName}(${cur+1})" ${cur===pages?'disabled':''}>�?/button>`;
+  return html;
+}
+function toggleBenefit(id){
+  if (selectedBenefits.some(x => x.id === id)) {
+    selectedBenefits = selectedBenefits.filter(x => x.id !== id);
+  } else {
+    const b = benefits.find(x => x.id === id);
+    if (!b) return;
+    selectedBenefits.push({ id:b.id, name:b.name, category:b.category, typeLabel:b.typeLabel, stock:b.stock, qty:1, validType:'after', validDays:1 });
+  }
+}
+function confirmBenefit(){
+  if (selectedBenefits.length === 0) { showToast('请至少选择一个权益商品！', 'error'); return; }
+  renderBenefitList();
+  closeModal('modalBenefit');
+}
+
+/* ========== 已选权益卡片（弹窗外展示） ========== */
+function renderBenefitList(){
+  const host = $('actBenefitList');
+  if (!selectedBenefits.length) {
+    // 空状�?    host.innerHTML = `<div class="am-benefit-empty">
+      <svg class="w-10 h-10 text-slate-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg>
+      <div>暂无配置权益，请点击上方�? 选择权益」进行配�?/div>
+    </div>`;
+    return;
+  }
+  host.innerHTML = selectedBenefits.map((it, idx) => `
+    <div class="am-bcard">
+      <div class="am-bcard-head">
+        <div class="flex items-center gap-1.5">
+          <span class="am-bcard-title">权益${idx+1}</span>
+          <span class="am-bcard-subtype">${it.typeLabel || '卡券'}</span>
+        </div>
+        <button class="am-bcard-del" onclick="removeBenefit('${it.id}')" title="删除">🗑</button>
+      </div>
+      <div class="am-bcard-body">
+        <div class="am-bcard-col am-bcard-col-name">
+          <div class="am-bcard-label">权益名称</div>
+          <div class="am-bcard-namebox" title="${it.name}">${it.name}<span class="am-bcard-count">${it.name.length}/50</span></div>
+        </div>
+        <div class="am-bcard-col">
+          <div class="am-bcard-label">每次发放数量</div>
+          <div class="am-stepper">
+            <button type="button" onclick="stepQty(${idx},-1)">�?/button>
+            <input type="number" min="1" value="${it.qty||1}" onchange="updateBenefitQty(${idx}, this.value)" />
+            <button type="button" onclick="stepQty(${idx},1)">+</button>
+          </div>
+        </div>
+        <div class="am-bcard-col am-bcard-col-valid">
+          <div class="am-bcard-label">权益有效�?/div>
+          <div class="am-bcard-valid">
+            <select class="ipt am-bcard-sel" onchange="updateBenefitValidType(${idx}, this.value)">
+              <option value="after" ${it.validType==='after'?'selected':''}>发放�?/option>
+              <option value="fixed" ${it.validType==='fixed'?'selected':''}>固定天数</option>
+            </select>
+            <input type="number" min="1" value="${it.validDays||1}" class="ipt am-bcard-num" onchange="updateBenefitValidDays(${idx}, this.value)" />
+            <span class="am-bcard-unit">�?/span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function removeBenefit(id){
+  selectedBenefits = selectedBenefits.filter(x => x.id !== id);
+  renderBenefitList();
+}
+function stepQty(idx, delta){
+  const it = selectedBenefits[idx];
+  if (!it) return;
+  it.qty = Math.max(1, (it.qty || 1) + delta);
+  renderBenefitList();
+}
+function updateBenefitQty(idx, v){
+  const it = selectedBenefits[idx];
+  if (!it) return;
+  it.qty = Math.max(1, parseInt(v) || 1);
+}
+function updateBenefitValidType(idx, v){
+  const it = selectedBenefits[idx];
+  if (!it) return;
+  it.validType = v;
+}
+function updateBenefitValidDays(idx, v){
+  const it = selectedBenefits[idx];
+  if (!it) return;
+  it.validDays = Math.max(1, parseInt(v) || 1);
+}
+function clearBenefit(){ selectedBenefits = []; renderBenefitList(); }
+
+/* ========== 初始�?========== */
+document.addEventListener('DOMContentLoaded', function(){
+  renderSidebar(); renderHeader(); syncCurrentTab(); renderPageTabs();
+  renderTable();
+});
+</script>
+<script src="../assets/js/layout-new.js"></script>
+</body>
+</html>

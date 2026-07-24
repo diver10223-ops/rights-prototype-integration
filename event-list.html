@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事件管理 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mk-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .mk-input-prefix {
+      padding-left: 32px;
+    }
+    .mk-input-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8c95a6;
+    }
+    .mk-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      font-size: 13px;
+      z-index: 9999;
+    }
+    .detail-tab {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .detail-tab.active {
+      color: #1677ff;
+      border-bottom-color: #1677ff;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 查询面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">规则名称</label>
+                <div class="mk-input-wrap">
+                  <svg class="mk-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input class="mk-input mk-input-prefix" placeholder="请输入规则名称" id="keyword">
+                </div>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">事件规则类型</label>
+                <select class="mk-select" id="type-filter">
+                  <option value="">全部</option>
+                  <option value="单业务事件">单业务事件</option>
+                  <option value="组合业务事件">组合业务事件</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">事件规则状态</label>
+                <select class="mk-select" id="status-filter">
+                  <option value="">全部</option>
+                  <option value="启用">启用</option>
+                  <option value="暂停">暂停</option>
+                </select>
+              </div>
+            </div>
+            <div class="mk-search-actions">
+              <button class="mk-btn mk-btn-default" onclick="handleReset()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                重置
+              </button>
+              <button class="mk-btn mk-btn-primary" onclick="handleSearch()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">事件规则库</span>
+              <button class="mk-btn mk-btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                新增事件规则
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>事件规则名称</th>
+                    <th>事件规则类型</th>
+                    <th>事件源</th>
+                    <th>生效中业务数</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="event-tbody"></tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span style="font-size: 13px; color: #8c95a6;">共 <span id="total-count">10</span> 条</span>
+              <div style="display: flex; gap: 6px;" id="pagination-btns"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 查看详情弹窗 -->
+  <div class="mk-modal-overlay" id="detail-modal" style="display: none;" onclick="closeDetailModal(event)">
+    <div class="mk-modal" style="max-width: 560px; width: 100%;" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span>事件规则详情</span>
+        <button class="mk-modal-close" onclick="closeDetailModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <!-- Tab -->
+      <div style="display: flex; border-bottom: 1px solid #e8ecf0; padding: 0 24px;">
+        <button class="detail-tab active" data-tab="rule" onclick="switchDetailTab('rule')">规则信息</button>
+        <button class="detail-tab" data-tab="user" onclick="switchDetailTab('user')">参与用户</button>
+      </div>
+      <div class="mk-modal-body" style="min-height: 200px;">
+        <div id="detail-content-rule">
+          <div style="font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px;">基本信息</div>
+          <div id="detail-time-order" style="display: none;">
+            <div style="display: flex; align-items: flex-start; margin-bottom: 14px;">
+              <span style="min-width: 80px; font-size: 13px; color: #888; flex-shrink: 0;">时间顺序：</span>
+              <span style="font-size: 13px;" id="detail-time-order-value"></span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: flex-start; margin-bottom: 14px;">
+            <span style="min-width: 80px; font-size: 13px; color: #888; flex-shrink: 0;">规则：</span>
+            <div id="detail-rules" style="flex: 1;"></div>
+          </div>
+          <div style="display: flex; align-items: flex-start;">
+            <span style="min-width: 80px; font-size: 13px; color: #888; flex-shrink: 0;">事件描述：</span>
+            <span style="font-size: 13px; color: #555;" id="detail-desc"></span>
+          </div>
+        </div>
+        <div id="detail-content-user" style="display: none;">
+          <div style="display: flex; align-items: center; justify-content: center; height: 120px; color: #aaa; font-size: 13px;">暂无参与用户数据</div>
+        </div>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeDetailModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div class="mk-modal-overlay" id="delete-modal" style="display: none;" onclick="closeDeleteModal(event)">
+    <div class="mk-modal" style="max-width: 400px;" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span>删除确认</span>
+        <button class="mk-modal-close" onclick="closeDeleteModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="mk-modal-body">
+        <p style="font-size: 13px; font-weight: 500;">确认删除「<span id="delete-name"></span>」？</p>
+        <p style="font-size: 12px; color: #8c95a6; margin-top: 4px;">删除后不可恢复。</p>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeDeleteModal()">取消</button>
+        <button class="mk-btn" style="background: #ff4d4f; color: #fff; border-color: #ff4d4f;" onclick="confirmDelete()">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" style="display: none;" class="mk-toast"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // 事件规则数据
+    let eventRules = [
+      { id: 'ER001', name: '0401借记卡动账300', ruleType: '单业务事件', eventSource: '借记卡/借记卡动账', bizCount: 0, status: '暂停', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER002', name: '0401通讯录转账', ruleType: '单业务事件', eventSource: '通讯录/通讯录转账', bizCount: 1, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER003', name: '0401测试', ruleType: '单业务事件', eventSource: '点击/购买按钮点击', bizCount: 0, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER004', name: '测测', ruleType: '单业务事件', eventSource: '事件测试/下单', bizCount: 0, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER005', name: '购买理财累计大于一万', ruleType: '单业务事件', eventSource: '理财/理财申购', bizCount: 0, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER006', name: '跨行转账超过1万元', ruleType: '单业务事件', eventSource: '', bizCount: 0, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER007', name: '大额动账演示', ruleType: '单业务事件', eventSource: '', bizCount: 3, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER008', name: '理财到期', ruleType: '单业务事件', eventSource: '', bizCount: 1, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER009', name: '工资到账小于5000元', ruleType: '单业务事件', eventSource: '', bizCount: 0, status: '启用', timeOrder: false, subRules: [], description: '' },
+      { id: 'ER010', name: '组合测试', ruleType: '组合业务事件', eventSource: '', bizCount: 0, status: '启用', timeOrder: true, subRules: ['事件规则1：理财赎回累计次数', '事件规则2：大额工资到账事件'], description: '' },
+    ];
+
+    let currentPage = 1;
+    const pageSize = 10;
+    let detailItem = null;
+    let deleteTarget = null;
+
+    // 渲染列表
+    function renderList() {
+      const keyword = document.getElementById('keyword').value;
+      const typeFilter = document.getElementById('type-filter').value;
+      const statusFilter = document.getElementById('status-filter').value;
+
+      const filtered = eventRules.filter(r => {
+        if (keyword && !r.name.includes(keyword)) return false;
+        if (typeFilter && r.ruleType !== typeFilter) return false;
+        if (statusFilter && r.status !== statusFilter) return false;
+        return true;
+      });
+
+      document.getElementById('total-count').textContent = filtered.length;
+
+      const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+      const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+      const tbody = document.getElementById('event-tbody');
+      if (paged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #8c95a6; padding: 40px;">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = paged.map(rule => `
+          <tr>
+            <td style="color: #1677ff; font-weight: 500;">${rule.name}</td>
+            <td>
+              <span class="${rule.ruleType === '组合业务事件' ? 'mk-badge mk-badge-primary' : 'mk-badge mk-badge-default'}">${rule.ruleType}</span>
+            </td>
+            <td style="color: #8c95a6;">${rule.eventSource || '—'}</td>
+            <td>${rule.bizCount}</td>
+            <td>
+              <span class="${rule.status === '启用' ? 'mk-badge mk-badge-success' : 'mk-badge mk-badge-default'}">${rule.status}</span>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="mk-icon-btn" title="查看" onclick="openDetail('${rule.id}')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                ${rule.status !== '暂停' ? `
+                  <button class="mk-icon-btn" title="编辑">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 16.5 3 18l1.5-4.5L17 3z"/></svg>
+                  </button>
+                ` : ''}
+                <button class="mk-icon-btn" title="${rule.status === '启用' ? '暂停' : '启用'}" onclick="toggleStatus('${rule.id}')">
+                  ${rule.status === '启用'
+                    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+                    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21 5,3"/></svg>'}
+                </button>
+                ${rule.bizCount === 0 ? `
+                  <button class="mk-icon-btn" title="删除" style="color: #ff4d4f;" onclick="openDelete('${rule.id}')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 渲染分页
+      renderPagination(totalPages);
+    }
+
+    // 渲染分页
+    function renderPagination(totalPages) {
+      const btns = document.getElementById('pagination-btns');
+      let html = `<button class="mk-page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><</button>`;
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        html += `<button class="mk-page-btn${currentPage === i ? ' active' : ''}" onclick="changePage(${i})">${i}</button>`;
+      }
+      html += `<button class="mk-page-btn" ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">></button>`;
+      btns.innerHTML = html;
+    }
+
+    // 切换页码
+    function changePage(page) {
+      currentPage = page;
+      renderList();
+    }
+
+    // 查询
+    function handleSearch() {
+      currentPage = 1;
+      renderList();
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('keyword').value = '';
+      document.getElementById('type-filter').value = '';
+      document.getElementById('status-filter').value = '';
+      currentPage = 1;
+      renderList();
+    }
+
+    // 切换状态
+    function toggleStatus(id) {
+      const rule = eventRules.find(r => r.id === id);
+      if (rule) {
+        rule.status = rule.status === '启用' ? '暂停' : '启用';
+        renderList();
+        showToast('状态已更新');
+      }
+    }
+
+    // 打开详情
+    function openDetail(id) {
+      detailItem = eventRules.find(r => r.id === id);
+      if (!detailItem) return;
+
+      // 切换到规则信息tab
+      switchDetailTab('rule');
+
+      // 填充内容
+      if (detailItem.ruleType === '组合业务事件') {
+        document.getElementById('detail-time-order').style.display = 'flex';
+        document.getElementById('detail-time-order-value').textContent = detailItem.timeOrder ? '开启' : '关闭';
+        document.getElementById('detail-time-order-value').style.color = detailItem.timeOrder ? '#1677ff' : '#555';
+      } else {
+        document.getElementById('detail-time-order').style.display = 'none';
+      }
+
+      // 规则
+      const rulesDiv = document.getElementById('detail-rules');
+      if (detailItem.subRules && detailItem.subRules.length > 0) {
+        rulesDiv.innerHTML = detailItem.subRules.map((sr, i) => `
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 13px; color: #1677ff; font-weight: 500;">${sr}</span>
+            ${i < detailItem.subRules.length - 1 ? '<div style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1px solid #d9dee6; border-radius: 4px; font-size: 12px; color: #555; background: #f5f7fa; flex-shrink: 0;">且</div>' : ''}
+          </div>
+        `).join('');
+      } else {
+        rulesDiv.innerHTML = `<span style="font-size: 13px; color: #1677ff; font-weight: 500;">${detailItem.eventSource || detailItem.name}</span>`;
+      }
+
+      document.getElementById('detail-desc').textContent = detailItem.description || '--';
+
+      document.getElementById('detail-modal').style.display = 'flex';
+    }
+
+    // 切换详情tab
+    function switchDetailTab(tab) {
+      document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.detail-tab[data-tab="${tab}"]`).classList.add('active');
+      document.getElementById('detail-content-rule').style.display = tab === 'rule' ? 'block' : 'none';
+      document.getElementById('detail-content-user').style.display = tab === 'user' ? 'block' : 'none';
+    }
+
+    // 关闭详情弹窗
+    function closeDetailModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    // 打开删除弹窗
+    function openDelete(id) {
+      deleteTarget = eventRules.find(r => r.id === id);
+      if (!deleteTarget) return;
+      document.getElementById('delete-name').textContent = deleteTarget.name;
+      document.getElementById('delete-modal').style.display = 'flex';
+    }
+
+    // 关闭删除弹窗
+    function closeDeleteModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('delete-modal').style.display = 'none';
+    }
+
+    // 确认删除
+    function confirmDelete() {
+      if (!deleteTarget) return;
+      eventRules = eventRules.filter(r => r.id !== deleteTarget.id);
+      closeDeleteModal();
+      renderList();
+      showToast('已删除');
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderList();
+    });
+  </script>
+</body>
+</html>

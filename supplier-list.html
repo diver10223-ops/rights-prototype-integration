@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>供应商管理 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面特定样式 */
+    .mk-page { min-height: calc(100vh - 92px); display: flex; flex-direction: column; gap: 12px; }
+    .mk-search-panel { background: #fff; border-radius: 8px; border: 1px solid var(--border); padding: 16px 20px 14px; }
+    .mk-list-panel { background: #fff; border-radius: 8px; border: 1px solid var(--border); flex: 1; }
+    .mk-list-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 16px 20px; border-bottom: 1px solid var(--bg-gray); }
+    .mk-list-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .mk-table-wrap { overflow-x: auto; }
+    .mk-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 12px 20px; font-size: 13px; color: var(--text-secondary); }
+    .mk-page-btn { min-width: 28px; height: 28px; padding: 0 6px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d9dee6; border-radius: 4px; cursor: pointer; background: #fff; font-size: 13px; transition: all 0.15s; }
+    .mk-page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .mk-page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .mk-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .mk-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .mk-modal { background: #fff; border-radius: 10px; box-shadow: 0 12px 48px rgba(0,0,0,0.16); max-width: 400px; width: 90%; }
+    .mk-modal-header { padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; }
+    .mk-modal-close { width: 28px; height: 28px; border-radius: 6px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+    .mk-modal-close:hover { background: var(--bg-gray); }
+    .mk-modal-body { padding: 20px; }
+    .mk-modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+    .mk-toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #fff; padding: 10px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; z-index: 2000; display: flex; align-items: center; gap: 6px; animation: fadeIn 0.2s ease; }
+    .whitespace-nowrap { white-space: nowrap; }
+    .py-10 { padding-top: 40px; padding-bottom: 40px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">🔔</button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page" id="page-content">
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">供应商名称</span>
+                <input class="mk-input" style="width: 220px;" placeholder="请输入" id="keyword-input">
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">合作状态</span>
+                <select class="mk-select" style="width: 180px;" id="status-select">
+                  <option value="">全部</option>
+                  <option value="active">合作中</option>
+                  <option value="ended">已结束</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 8px; margin-left: auto;">
+                <button class="mk-btn mk-btn-primary" onclick="handleQuery()">查询</button>
+                <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表面板 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">供应商列表</span>
+              <button class="mk-btn mk-btn-primary" onclick="goToAdd()">
+                <span style="font-size: 14px; line-height: 1;">+</span> 新增供应商
+              </button>
+            </div>
+            <div class="mk-table-wrap">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>供应商名称</th>
+                    <th>法人名称</th>
+                    <th>联系人姓名</th>
+                    <th>联系人手机号</th>
+                    <th>合作日期</th>
+                    <th>合作状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span style="font-size: 13px; color: var(--text-muted);">共 <span id="total-count">0</span> 条</span>
+              <div style="display: flex; gap: 4px;" id="pagination-btns"></div>
+              <span style="font-size: 13px; color: var(--text-muted);">前往</span>
+              <input class="mk-input" style="width: 48px; text-align: center;" id="goto-input">
+              <span style="font-size: 13px; color: var(--text-muted);">页　10条/页</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div class="mk-modal-overlay" id="delete-modal" style="display: none;" onclick="closeDeleteModal(event)">
+    <div class="mk-modal" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span>删除确认</span>
+        <button class="mk-modal-close" onclick="closeDeleteModal()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <p style="font-size: 14px; font-weight: 500;">确认删除供应商「<span id="delete-name"></span>」？</p>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">删除后不可恢复。</p>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeDeleteModal()">取消</button>
+        <button class="mk-btn" style="background: #ff4d4f; color: #fff; border-color: #ff4d4f;" onclick="confirmDelete()">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="mk-toast" id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const supplierList = [
+      { id: 'SUP001', name: '供应商测试0930', legalRep: '王萌', contactName: '王萌', phone: '15643328875', cooperationDate: '2024-09-01', status: 'ended', equityCount: 0, description: '' },
+      { id: 'SUP002', name: '年年卡', legalRep: '李明', contactName: '张三', phone: '18900001111', cooperationDate: '2024-03-01', status: 'active', equityCount: 3, description: '' },
+      { id: 'SUP003', name: '橙券', legalRep: '王平平', contactName: '张一明', phone: '18900001111', cooperationDate: '2024-01-28', status: 'active', equityCount: 8, description: '' },
+    ];
+
+    const coopEndMap = {
+      'SUP001': '2025-10-31',
+      'SUP002': '2029-11-28',
+      'SUP003': '2029-02-01',
+    };
+
+    let localList = [...supplierList];
+    let currentPage = 1;
+    const PAGE_SIZE = 10;
+    let deleteTarget = null;
+
+    // 筛选数据
+    function getFiltered() {
+      const keyword = document.getElementById('keyword-input').value.trim();
+      const status = document.getElementById('status-select').value;
+
+      return localList.filter(item => {
+        if (keyword && !item.name.includes(keyword)) return false;
+        if (status === 'active' && item.status !== 'active') return false;
+        if (status === 'ended' && item.status !== 'ended') return false;
+        return true;
+      });
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const filtered = getFiltered();
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const paged = filtered.slice(start, start + PAGE_SIZE);
+      const tbody = document.getElementById('table-body');
+
+      if (paged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted-foreground py-10">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = paged.map(item => `
+          <tr>
+            <td style="color: #1677ff;">${item.name}</td>
+            <td>${item.legalRep}</td>
+            <td style="color: #1677ff;">${item.contactName}</td>
+            <td style="color: #1677ff;">${item.phone}</td>
+            <td class="text-muted-foreground whitespace-nowrap">${item.cooperationDate} 至 ${coopEndMap[item.id] || '—'}</td>
+            <td style="color: ${item.status === 'active' ? '#333' : '#8c95a6'};">
+              ${item.status === 'active' ? '合作中' : '已结束'}
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="mk-icon-btn" title="编辑" onclick="goToEdit('${item.id}')">✏️</button>
+                <button class="mk-icon-btn" title="删除" onclick="openDeleteModal('${item.id}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 更新总数
+      document.getElementById('total-count').textContent = filtered.length;
+
+      // 渲染分页
+      renderPagination(filtered.length);
+    }
+
+    // 渲染分页
+    function renderPagination(total) {
+      const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+      const container = document.getElementById('pagination-btns');
+
+      let html = `<button class="mk-page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">&lt;</button>`;
+
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        html += `<button class="mk-page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+      }
+
+      html += `<button class="mk-page-btn" ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">&gt;</button>`;
+
+      container.innerHTML = html;
+    }
+
+    // 切换页码
+    function changePage(page) {
+      const filtered = getFiltered();
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderTable();
+      }
+    }
+
+    // 查询
+    function handleQuery() {
+      currentPage = 1;
+      renderTable();
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('keyword-input').value = '';
+      document.getElementById('status-select').value = '';
+      currentPage = 1;
+      renderTable();
+    }
+
+    // 前往新增
+    function goToAdd() {
+      window.location.href = 'supplier-create.html';
+    }
+
+    // 前往编辑
+    function goToEdit(id) {
+      window.location.href = `supplier-create.html?edit=${id}`;
+    }
+
+    // 打开删除弹窗
+    function openDeleteModal(id) {
+      deleteTarget = localList.find(item => item.id === id);
+      if (deleteTarget) {
+        document.getElementById('delete-name').textContent = deleteTarget.name;
+        document.getElementById('delete-modal').style.display = 'flex';
+      }
+    }
+
+    // 关闭删除弹窗
+    function closeDeleteModal(event) {
+      if (!event || event.target === document.getElementById('delete-modal')) {
+        document.getElementById('delete-modal').style.display = 'none';
+        deleteTarget = null;
+      }
+    }
+
+    // 确认删除
+    function confirmDelete() {
+      if (deleteTarget) {
+        localList = localList.filter(item => item.id !== deleteTarget.id);
+        showToast('已删除');
+        renderTable();
+      }
+      closeDeleteModal();
+    }
+
+    // 显示Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    // 跳转输入框事件
+    document.getElementById('goto-input').addEventListener('blur', function(e) {
+      const page = parseInt(e.target.value);
+      const filtered = getFiltered();
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+
+      if (page >= 1 && page <= totalPages) {
+        changePage(page);
+      }
+    });
+
+    // 初始化
+    renderTable();
+  </script>
+</body>
+</html>

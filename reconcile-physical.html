@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实物奖品核销对账 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <button class="header-icon-btn" title="设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页面标题 -->
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">实物奖品核销对账</h1>
+              <p class="mk-page-subtitle">查询实物奖品兑换记录，支持导入物流单号及导出结算文件</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="mk-btn mk-btn-default" onclick="openImportModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>导入物流单号
+              </button>
+              <button class="mk-btn mk-btn-default" onclick="showToast('导出中，请稍候')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出提交商户
+              </button>
+              <button class="mk-btn mk-btn-default" onclick="showToast('导出中，请稍候')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出发放结果
+              </button>
+            </div>
+          </div>
+
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">商户</label>
+                <select class="mk-select" id="merchant">
+                  <option>全部</option>
+                  <option>商户一</option>
+                  <option>商户二</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">奖品名称</label>
+                <input class="mk-input" placeholder="请输入" id="prizeName">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">品牌</label>
+                <input class="mk-input" placeholder="请输入品牌" id="brand">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">品类</label>
+                <input class="mk-input" placeholder="请输入品类" id="category">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">兑换时间（起）</label>
+                <input class="mk-input" type="date" id="dateStart">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">兑换时间（止）</label>
+                <input class="mk-input" type="date" id="dateEnd">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">状态</label>
+                <select class="mk-select" id="status">
+                  <option>全部</option>
+                  <option>已提交商户</option>
+                  <option>未提交商户</option>
+                </select>
+              </div>
+            </div>
+            <div class="mk-search-actions">
+              <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              <button class="mk-btn mk-btn-primary" onclick="handleQuery()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">兑换记录列表</span>
+              <span class="text-sm text-secondary">共 <b>4</b> 条</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" id="record-table">
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>商户</th>
+                    <th>兑换时间</th>
+                    <th>奖品名称</th>
+                    <th>品牌</th>
+                    <th>型号</th>
+                    <th>流水号</th>
+                    <th>商品成本</th>
+                    <th>领取方式</th>
+                    <th>状态</th>
+                    <th>客户姓名</th>
+                    <th>联系电话</th>
+                    <th>地址</th>
+                    <th>物流单号</th>
+                  </tr>
+                </thead>
+                <tbody id="record-tbody">
+                </tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span class="text-sm text-secondary">共 4 条</span>
+              <div class="mk-pagination-btns">
+                <button class="mk-page-btn active">1</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 导入物流单号弹窗 -->
+  <div id="import-modal" class="mk-modal-overlay" style="display: none;" onclick="closeImportModal(event)">
+    <div class="mk-modal" style="max-width: 480px;" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span>导入物流单号</span>
+        <button class="mk-modal-close" onclick="closeImportModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="mk-modal-body">
+        <div class="p-4 mb-4" style="background: #e6f4ff; border: 1px solid #91caff; border-radius: 8px;">
+          <p class="text-sm" style="color: #1677ff;">请先下载模板，按模板格式填写物流单号后上传。</p>
+        </div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-sm text-secondary">模板下载：</span>
+          <button class="mk-btn mk-btn-default text-sm" style="padding: 0 10px; height: 28px;" onclick="showToast('下载模板中')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载模板
+          </button>
+        </div>
+        <div class="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer" style="border-color: #d9dee6;" onmouseover="this.style.borderColor='#1677ff'" onmouseout="this.style.borderColor='#d9dee6'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 8px; display: block; color: #8c95a6;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p class="text-sm font-medium" style="color: #1a1a2e; margin-bottom: 4px;">点击或拖拽上传文件</p>
+          <p class="text-xs" style="color: #8c95a6;">支持 .xlsx / .xls 格式</p>
+        </div>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeImportModal()">取消</button>
+        <button class="mk-btn mk-btn-primary" onclick="confirmImport()">确认导入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" class="mk-toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const mockRecords = [
+      { id: '1', merchant: '商户一', exchangeTime: '2024-06-20 10:00:00', prizeName: '蓝牙耳机', brand: '索尼', model: 'WH-1000XM5', flowId: 'PHY2024062001', cost: '¥299.00', receiveType: '邮寄', status: '未提交商户', customerName: '张三', phone: '138****0001', address: '北京市朝阳区XXX路1号', logistics: '' },
+      { id: '2', merchant: '商户一', exchangeTime: '2024-06-20 11:30:00', prizeName: '保温杯', brand: '膳魔师', model: 'JNL-502', flowId: 'PHY2024062002', cost: '¥128.00', receiveType: '邮寄', status: '已提交商户', customerName: '李四', phone: '139****0002', address: '上海市浦东新区XXX大道88号', logistics: 'SF1234567890' },
+      { id: '3', merchant: '商户二', exchangeTime: '2024-06-20 14:00:00', prizeName: '米家空气净化器', brand: '小米', model: 'AC-M6-SC', flowId: 'PHY2024062003', cost: '¥699.00', receiveType: '自取', status: '未提交商户', customerName: '王五', phone: '137****0003', address: '广州市天河区XXX广场', logistics: '' },
+      { id: '4', merchant: '商户二', exchangeTime: '2024-06-19 09:00:00', prizeName: '京东E卡', brand: '京东', model: '100元', flowId: 'PHY2024061901', cost: '¥100.00', receiveType: '邮寄', status: '已提交商户', customerName: '赵六', phone: '136****0004', address: '深圳市南山区XXX科技园', logistics: 'YTO9876543210' },
+    ];
+
+    // 渲染表格
+    function renderTable() {
+      const tbody = document.getElementById('record-tbody');
+      tbody.innerHTML = mockRecords.map((r, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${r.merchant}</td>
+          <td class="text-muted-foreground">${r.exchangeTime}</td>
+          <td class="font-medium">${r.prizeName}</td>
+          <td>${r.brand}</td>
+          <td>${r.model}</td>
+          <td class="text-xs text-muted-foreground">${r.flowId}</td>
+          <td class="font-medium">${r.cost}</td>
+          <td><span class="${getReceiveClass(r.receiveType)}">${r.receiveType}</span></td>
+          <td><span class="${getStatusClass(r.status)}">${r.status}</span></td>
+          <td>${r.customerName}</td>
+          <td>${r.phone}</td>
+          <td class="text-muted-foreground truncate" style="max-width: 140px;">${r.address}</td>
+          <td>${r.logistics || '<span class="text-muted-foreground">—</span>'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function getStatusClass(status) {
+      return status === '已提交商户' ? 'mk-badge mk-badge-success' : 'mk-badge mk-badge-warning';
+    }
+
+    function getReceiveClass(type) {
+      return type === '邮寄' ? 'mk-badge mk-badge-primary' : 'mk-badge mk-badge-default';
+    }
+
+    // Toast提示
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    // 打开导入弹窗
+    function openImportModal() {
+      document.getElementById('import-modal').style.display = 'flex';
+    }
+
+    // 关闭导入弹窗
+    function closeImportModal(event) {
+      if (!event || event.target === document.getElementById('import-modal')) {
+        document.getElementById('import-modal').style.display = 'none';
+      }
+    }
+
+    // 确认导入
+    function confirmImport() {
+      showToast('导入成功');
+      closeImportModal();
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('merchant').value = '全部';
+      document.getElementById('prizeName').value = '';
+      document.getElementById('brand').value = '';
+      document.getElementById('category').value = '';
+      document.getElementById('dateStart').value = '';
+      document.getElementById('dateEnd').value = '';
+      document.getElementById('status').value = '全部';
+    }
+
+    // 查询
+    function handleQuery() {
+      showToast('查询成功');
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

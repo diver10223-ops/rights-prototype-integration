@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益库存管理 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面特定样式 */
+    .mk-page { min-height: calc(100vh - 92px); display: flex; flex-direction: column; gap: 12px; }
+    .mk-search-panel { background: #fff; border-radius: 8px; border: 1px solid var(--border); padding: 16px 20px 14px; }
+    .mk-list-panel { background: #fff; border-radius: 8px; border: 1px solid var(--border); flex: 1; }
+    .mk-list-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 16px 20px; border-bottom: 1px solid var(--bg-gray); }
+    .mk-list-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .mk-tabs-bar { display: flex; border-bottom: 1px solid #e8ecf0; margin-bottom: 16px; padding: 0 20px; }
+    .mk-tab-btn { padding: 8px 20px; font-size: 13px; border: none; background: none; cursor: pointer; color: #4a5568; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 400; transition: all 0.15s; }
+    .mk-tab-btn:hover { color: #1677ff; }
+    .mk-tab-btn.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
+    .mk-table-wrap { overflow-x: auto; }
+    .mk-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 12px 20px; font-size: 13px; color: var(--text-secondary); }
+    .mk-link-btn { color: #1677ff; font-weight: 500; font-size: 12px; padding: 2px 8px; background: none; border: none; cursor: pointer; }
+    .mk-link-btn:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">🔔</button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page" id="page-content">
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">权益ID</span>
+                <input class="mk-input" style="width: 160px;" placeholder="请输入" id="equityId">
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">权益名称</span>
+                <input class="mk-input" style="width: 160px;" placeholder="请输入" id="equityName">
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">发行机构</span>
+                <select class="mk-select" style="width: 220px;" id="issuer">
+                  <option value="">请选择发行机构</option>
+                  <option value="易诚银行">易诚银行</option>
+                  <option value="广州分行">广州分行</option>
+                  <option value="杭州分行">杭州分行</option>
+                  <option value="深圳分行">深圳分行</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 8px; margin-left: auto;">
+                <button class="mk-btn mk-btn-primary" onclick="handleQuery()">查询</button>
+                <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">库存限制</span>
+                <select class="mk-select" style="width: 160px;" id="stockLimit">
+                  <option value="">请选择</option>
+                  <option value="是">是</option>
+                  <option value="否">否</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">状态</span>
+                <select class="mk-select" style="width: 160px;" id="status">
+                  <option value="">请选择</option>
+                  <option value="正常">正常</option>
+                  <option value="冻结">冻结</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表面板 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">权益库存管理</span>
+            </div>
+
+            <!-- Tab切换 -->
+            <div class="mk-tabs-bar" id="tabs-bar"></div>
+
+            <div class="mk-table-wrap">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>卡券名称</th>
+                    <th>权益ID</th>
+                    <th>发行机构</th>
+                    <th>成本(元)</th>
+                    <th>发放机构分摊比例</th>
+                    <th>库存限制</th>
+                    <th>当前库存</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span style="font-size: 13px; color: var(--text-muted);">共 <span id="total-count">0</span> 条</span>
+              <button class="mk-page-btn active">1</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const inventoryList = [
+      { id: 1, name: '满100减20券', equityId: 'EQ001', issuer: '易诚银行', cost: 20, shareRatio: '100%', stockControl: true, currentStock: 5800, status: '正常', category: '行内权益' },
+      { id: 2, name: '理财利率折扣券', equityId: 'EQ002', issuer: '易诚银行', cost: 15, shareRatio: '50%', stockControl: false, currentStock: 99999, status: '正常', category: '行内权益' },
+      { id: 3, name: '信用卡年费抵扣券', equityId: 'EQ003', issuer: '广州分行', cost: 200, shareRatio: '100%', stockControl: true, currentStock: 320, status: '正常', category: '行内权益' },
+      { id: 4, name: '贷款利率优惠券', equityId: 'EQ004', issuer: '杭州分行', cost: 50, shareRatio: '80%', stockControl: true, currentStock: 88, status: '冻结', category: '行内权益' },
+      { id: 5, name: '京东E卡50元', equityId: 'EQ005', issuer: '深圳分行', cost: 50, shareRatio: '100%', stockControl: true, currentStock: 2100, status: '正常', category: '第三方权益' },
+      { id: 6, name: '美团外卖券30元', equityId: 'EQ006', issuer: '易诚银行', cost: 30, shareRatio: '100%', stockControl: true, currentStock: 45, status: '正常', category: '第三方权益' },
+      { id: 7, name: '星巴克50元饮品券', equityId: 'EQ007', issuer: '北京分行', cost: 50, shareRatio: '100%', stockControl: true, currentStock: 150, status: '正常', category: '第三方权益' },
+      { id: 8, name: '爱奇艺季卡', equityId: 'EQ008', issuer: '上海分行', cost: 58, shareRatio: '100%', stockControl: true, currentStock: 200, status: '正常', category: '第三方权益' },
+    ];
+
+    const INV_TABS = ['全部', '行内权益', '第三方权益', '实物奖品', '权益包'];
+    let activeTab = '全部';
+
+    // 渲染Tab
+    function renderTabs() {
+      const container = document.getElementById('tabs-bar');
+      container.innerHTML = INV_TABS.map(tab => `
+        <button class="mk-tab-btn ${activeTab === tab ? 'active' : ''}" onclick="changeTab('${tab}')">${tab}</button>
+      `).join('');
+    }
+
+    // 切换Tab
+    function changeTab(tab) {
+      activeTab = tab;
+      renderTabs();
+      renderTable();
+    }
+
+    // 获取筛选数据
+    function getFiltered() {
+      const equityId = document.getElementById('equityId').value.trim();
+      const equityName = document.getElementById('equityName').value.trim();
+      const issuer = document.getElementById('issuer').value;
+      const stockLimit = document.getElementById('stockLimit').value;
+      const status = document.getElementById('status').value;
+
+      return inventoryList.filter(item => {
+        if (equityId && !item.equityId.includes(equityId)) return false;
+        if (equityName && !item.name.includes(equityName)) return false;
+        if (issuer && !item.issuer.includes(issuer)) return false;
+        if (stockLimit === '是' && !item.stockControl) return false;
+        if (stockLimit === '否' && item.stockControl) return false;
+        if (status && item.status !== status) return false;
+        if (activeTab !== '全部' && item.category !== activeTab) return false;
+        return true;
+      });
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const filtered = getFiltered();
+      const tbody = document.getElementById('table-body');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted-foreground" style="padding: 40px;">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = filtered.map(item => `
+          <tr>
+            <td>${item.name}</td>
+            <td class="text-muted-foreground">${item.equityId}</td>
+            <td>${item.issuer}</td>
+            <td>¥${item.cost}</td>
+            <td>${item.shareRatio}</td>
+            <td>${item.stockControl ? '是' : '否'}</td>
+            <td>${item.currentStock.toLocaleString()}</td>
+            <td style="color: ${item.status === '正常' ? '#1677ff' : '#ff4d4f'};">${item.status}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="mk-link-btn" onclick="viewEquity(${item.id})">查看权益</button>
+                <button class="mk-link-btn" onclick="manageStock(${item.id})">库存管理</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      document.getElementById('total-count').textContent = filtered.length;
+    }
+
+    // 查询
+    function handleQuery() {
+      renderTable();
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('equityId').value = '';
+      document.getElementById('equityName').value = '';
+      document.getElementById('issuer').value = '';
+      document.getElementById('stockLimit').value = '';
+      document.getElementById('status').value = '';
+      renderTable();
+    }
+
+    // 查看权益
+    function viewEquity(id) {
+      alert('查看权益详情: ID=' + id);
+    }
+
+    // 库存管理
+    function manageStock(id) {
+      alert('库存管理: ID=' + id);
+    }
+
+    // 初始化
+    renderTabs();
+    renderTable();
+  </script>
+</body>
+</html>

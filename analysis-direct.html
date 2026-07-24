@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>直投成效分析 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-stat-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      position: relative;
+    }
+    .mk-stat-label { font-size: 12px; color: #8c95a6; }
+    .mk-stat-value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+    .period-tabs {
+      display: flex;
+      gap: 4px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+    .period-tab {
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #555;
+    }
+    .period-tab.active {
+      background: #1677ff;
+      color: #fff;
+      font-weight: 600;
+    }
+    .trend-up { color: #52c41a; }
+    .trend-down { color: #ff4d4f; }
+    .chart-placeholder {
+      height: 240px;
+      background: linear-gradient(180deg, rgba(22,119,255,0.08) 0%, rgba(22,119,255,0.02) 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      gap: 8px;
+    }
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(180deg, #1677ff 0%, rgba(22,119,255,0.4) 100%);
+      border-radius: 3px 3px 0 0;
+      min-height: 20px;
+    }
+    .pie-chart-visual {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(#1677ff 0% 48%, #52c41a 48% 68%, #fa8c16 68% 81%, #722ed1 81% 94%, #eb2f96 94% 100%);
+      position: relative;
+    }
+    .pie-chart-visual::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .bar-h-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .bar-h-bg {
+      flex: 1;
+      height: 18px;
+      background: #f0f2f5;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-h-fill {
+      height: 100%;
+      background: #1677ff;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页头 -->
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">直投成效分析</h1>
+              <p class="mk-page-subtitle">权益投放任务效果追踪、核销转化与大盘趋势分析</p>
+            </div>
+          </div>
+
+          <!-- 时间Tab -->
+          <div class="period-tabs" id="period-tabs">
+            <button class="period-tab active" data-period="今日">今日</button>
+            <button class="period-tab" data-period="本周">本周</button>
+            <button class="period-tab" data-period="本月">本月</button>
+            <button class="period-tab" data-period="今年">今年</button>
+            <button class="period-tab" data-period="指定时间">指定时间</button>
+          </div>
+
+          <!-- 指定时间选择器 -->
+          <div id="custom-time-range" style="display: none; margin-bottom: 16px; display: none;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="date" class="mk-input" style="width: 160px;" id="custom-start">
+              <span style="color: #8c95a6;">至</span>
+              <input type="date" class="mk-input" style="width: 160px;" id="custom-end">
+              <button class="mk-btn mk-btn-primary">查询</button>
+            </div>
+          </div>
+
+          <!-- KPI卡片 -->
+          <div id="kpi-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;"></div>
+
+          <!-- 权益消耗走势 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">权益消耗走势</span>
+              <span style="font-size: 12px; color: #8c95a6;">按小时</span>
+            </div>
+            <div style="padding: 16px 20px;">
+              <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                  <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #555;">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #1677ff;"></span>发放量
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #555;">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #52c41a;"></span>核销量
+                    </span>
+                  </div>
+                  <div class="chart-placeholder" id="trend-chart"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 发放渠道分布 + 权益类型分布 -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <!-- 发放渠道分布 -->
+            <div class="mk-list-panel" style="margin-bottom: 0;">
+              <div class="mk-list-header">
+                <span class="mk-list-title">发放渠道分布</span>
+              </div>
+              <div style="padding: 16px 20px; display: flex; align-items: center; gap: 20px;">
+                <div class="pie-chart-visual"></div>
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #1677ff; flex-shrink: 0;"></span>
+                    <span style="font-size: 13px; color: #555; flex: 1;">手机银行</span>
+                    <span style="font-size: 13px; font-weight: 600;">48%</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #52c41a; flex-shrink: 0;"></span>
+                    <span style="font-size: 13px; color: #555; flex: 1;">网上银行</span>
+                    <span style="font-size: 13px; font-weight: 600;">20%</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #fa8c16; flex-shrink: 0;"></span>
+                    <span style="font-size: 13px; color: #555; flex: 1;">柜面</span>
+                    <span style="font-size: 13px; font-weight: 600;">13%</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #722ed1; flex-shrink: 0;"></span>
+                    <span style="font-size: 13px; color: #555; flex: 1;">微信公众号</span>
+                    <span style="font-size: 13px; font-weight: 600;">13%</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #eb2f96; flex-shrink: 0;"></span>
+                    <span style="font-size: 13px; color: #555; flex: 1;">其他</span>
+                    <span style="font-size: 13px; font-weight: 600;">6%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 权益类型分布 -->
+            <div class="mk-list-panel" style="margin-bottom: 0;">
+              <div class="mk-list-header">
+                <span class="mk-list-title">权益类型分布</span>
+              </div>
+              <div style="padding: 16px 20px;">
+                <div class="bar-h-item">
+                  <span style="width: 80px; font-size: 12px; color: #555;">行内自发行</span>
+                  <div class="bar-h-bg"><div class="bar-h-fill" style="width: 55%;"></div></div>
+                  <span style="font-size: 12px; color: #555;">55%</span>
+                </div>
+                <div class="bar-h-item">
+                  <span style="width: 80px; font-size: 12px; color: #555;">第三方权益</span>
+                  <div class="bar-h-bg"><div class="bar-h-fill" style="width: 28%;"></div></div>
+                  <span style="font-size: 12px; color: #555;">28%</span>
+                </div>
+                <div class="bar-h-item">
+                  <span style="width: 80px; font-size: 12px; color: #555;">实物权益</span>
+                  <div class="bar-h-bg"><div class="bar-h-fill" style="width: 22%;"></div></div>
+                  <span style="font-size: 12px; color: #555;">22%</span>
+                </div>
+                <div class="bar-h-item" style="margin-bottom: 0;">
+                  <span style="width: 80px; font-size: 12px; color: #555;">权益包</span>
+                  <div class="bar-h-bg"><div class="bar-h-fill" style="width: 18%;"></div></div>
+                  <span style="font-size: 12px; color: #555;">18%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 投放任务成效明细 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">投放任务成效明细</span>
+              <span style="font-size: 12px; color: #8c95a6;">数据来源：权益投放任务</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" style="min-width: 820px;">
+                <thead>
+                  <tr>
+                    <th>任务名称</th>
+                    <th>主办机构</th>
+                    <th>活动时间</th>
+                    <th>累计发放量</th>
+                    <th>核销量</th>
+                    <th>核销率</th>
+                    <th>覆盖客户数</th>
+                    <th>发放金额(元)</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody id="task-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // KPI数据
+    const KPI_SETS = {
+      '今日': [
+        { label: '累计发放量', value: '1,258', sub: '笔', color: '#1677ff', trend: 5.2 },
+        { label: '发放金额', value: '6.3', sub: '万元', color: '#52c41a', trend: 3.1 },
+        { label: '核销量', value: '874', sub: '笔', color: '#fa8c16', trend: 2.8 },
+        { label: '核销金额', value: '4.4', sub: '万元', color: '#722ed1', trend: 1.5 },
+        { label: '核销率', value: '69.5', sub: '%', color: '#1677ff', trend: -0.3 },
+        { label: '覆盖客户数', value: '1,102', sub: '人', color: '#52c41a', trend: 8.4 },
+        { label: '人均持有', value: '1.14', sub: '个', color: '#fa8c16', trend: 0.2 },
+        { label: '发放异常', value: '5', sub: '条', color: '#ff4d4f', trend: 0, alert: true },
+      ],
+      '本周': [
+        { label: '累计发放量', value: '8,742', sub: '笔', color: '#1677ff', trend: 12.3 },
+        { label: '发放金额', value: '44.2', sub: '万元', color: '#52c41a', trend: 7.5 },
+        { label: '核销量', value: '6,108', sub: '笔', color: '#fa8c16', trend: 9.1 },
+        { label: '核销金额', value: '30.8', sub: '万元', color: '#722ed1', trend: 6.4 },
+        { label: '核销率', value: '69.9', sub: '%', color: '#1677ff', trend: 1.2 },
+        { label: '覆盖客户数', value: '7,214', sub: '人', color: '#52c41a', trend: 15.2 },
+        { label: '人均持有', value: '1.21', sub: '个', color: '#fa8c16', trend: 0.5 },
+        { label: '发放异常', value: '18', sub: '条', color: '#ff4d4f', trend: 0, alert: true },
+      ],
+      '本月': [
+        { label: '累计发放量', value: '38,560', sub: '笔', color: '#1677ff', trend: 18.7 },
+        { label: '发放金额', value: '192.8', sub: '万元', color: '#52c41a', trend: 12.4 },
+        { label: '核销量', value: '26,980', sub: '笔', color: '#fa8c16', trend: 14.2 },
+        { label: '核销金额', value: '134.9', sub: '万元', color: '#722ed1', trend: 10.8 },
+        { label: '核销率', value: '70.0', sub: '%', color: '#1677ff', trend: 2.1 },
+        { label: '覆盖客户数', value: '31,200', sub: '人', color: '#52c41a', trend: 22.3 },
+        { label: '人均持有', value: '1.24', sub: '个', color: '#fa8c16', trend: 0.8 },
+        { label: '发放异常', value: '64', sub: '条', color: '#ff4d4f', trend: 0, alert: true },
+      ],
+      '今年': [
+        { label: '累计发放量', value: '128.4万', sub: '笔', color: '#1677ff', trend: 34.2 },
+        { label: '发放金额', value: '6,420', sub: '万元', color: '#52c41a', trend: 28.6 },
+        { label: '核销量', value: '94.6万', sub: '笔', color: '#fa8c16', trend: 31.5 },
+        { label: '核销金额', value: '4,718', sub: '万元', color: '#722ed1', trend: 26.2 },
+        { label: '核销率', value: '73.7', sub: '%', color: '#1677ff', trend: 5.4 },
+        { label: '覆盖客户数', value: '32.8万', sub: '人', color: '#52c41a', trend: 42.1 },
+        { label: '人均持有', value: '1.14', sub: '个', color: '#fa8c16', trend: 1.2 },
+        { label: '发放异常', value: '312', sub: '条', color: '#ff4d4f', trend: 0, alert: true },
+      ],
+    };
+
+    // 趋势数据
+    const TREND_DATA = [
+      { time: '00:00', issued: 38, used: 25 },
+      { time: '02:00', issued: 65, used: 43 },
+      { time: '04:00', issued: 52, used: 36 },
+      { time: '06:00', issued: 78, used: 52 },
+      { time: '08:00', issued: 142, used: 88 },
+      { time: '10:00', issued: 156, used: 98 },
+      { time: '12:00', issued: 148, used: 110 },
+      { time: '14:00', issued: 162, used: 118 },
+      { time: '16:00', issued: 158, used: 105 },
+      { time: '18:00', issued: 145, used: 92 },
+      { time: '20:00', issued: 160, used: 108 },
+      { time: '22:00', issued: 120, used: 78 },
+    ];
+
+    // 投放任务数据
+    const TASK_DATA = [
+      { id: 'T001', taskName: '全客群新客礼包活动', org: '易诚银行', period: '2026-06-01 ~ 2026-06-30', issued: 8420, used: 6102, rate: 72.5, customers: 7214, amount: 42100, status: '已结束' },
+      { id: 'T002', taskName: '贷款事件达标奖励', org: '广州分行', period: '2026-07-01 ~ 2026-07-31', issued: 1258, used: 874, rate: 69.5, customers: 1102, amount: 12580, status: '进行中' },
+      { id: 'T003', taskName: '节日活动通用发放', org: '上海分行', period: '2026-07-05 ~ 2026-07-20', issued: 3640, used: 1820, rate: 50.0, customers: 3100, amount: 18200, status: '进行中' },
+      { id: 'T004', taskName: '高净值客户专属权益', org: '北京分行', period: '2026-05-01 ~ 2026-05-31', issued: 520, used: 468, rate: 90.0, customers: 480, amount: 52000, status: '已结束' },
+      { id: 'T005', taskName: '手机银行周年纪念礼', org: '深圳分行', period: '2026-06-15 ~ 2026-07-15', issued: 2100, used: 840, rate: 40.0, customers: 1980, amount: 10500, status: '进行中' },
+      { id: 'T006', taskName: '理财到期客户回馈', org: '杭州分行', period: '2026-07-01 ~ 2026-08-31', issued: 680, used: 0, rate: 0, customers: 650, amount: 0, status: '待开始' },
+    ];
+
+    let currentPeriod = '今日';
+
+    // 渲染KPI卡片
+    function renderKPIs(period) {
+      const kpis = KPI_SETS[period] || KPI_SETS['今日'];
+      const grid = document.getElementById('kpi-grid');
+      grid.innerHTML = kpis.map(k => `
+        <div class="mk-stat-card" style="border-left: 4px solid ${k.color};">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span class="mk-stat-label">${k.label}</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 4px;">
+            <span style="font-size: 28px; font-weight: 700; color: ${k.color}; line-height: 1;">${k.value}</span>
+            <span class="mk-stat-label">${k.sub}</span>
+          </div>
+          ${k.alert
+            ? '<span style="font-size: 12px; color: #1677ff; cursor: pointer;">去处理 →</span>'
+            : `<div style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                ${k.trend >= 0
+                  ? `<span style="color: #52c41a;">↑ +${k.trend}%</span>`
+                  : `<span style="color: #ff4d4f;">↓ ${k.trend}%</span>`}
+                <span style="color: #8c95a6;">较昨日</span>
+              </div>`
+          }
+        </div>
+      `).join('');
+    }
+
+    // 渲染趋势图（简化版）
+    function renderTrendChart() {
+      const chart = document.getElementById('trend-chart');
+      const maxIssued = Math.max(...TREND_DATA.map(d => d.issued));
+      chart.innerHTML = TREND_DATA.map(d => {
+        const h1 = (d.issued / maxIssued) * 180;
+        const h2 = (d.used / maxIssued) * 180;
+        return `<div style="flex: 1; display: flex; flex-direction: column; gap: 2px; align-items: center;">
+          <div style="flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px;">
+            <div style="width: 100%; height: ${h1}px; background: linear-gradient(180deg, #1677ff 0%, rgba(22,119,255,0.6) 100%); border-radius: 3px 3px 0 0;"></div>
+            <div style="width: 100%; height: ${h2}px; background: linear-gradient(180deg, #52c41a 0%, rgba(82,196,26,0.6) 100%); border-radius: 0 0 3px 3px;"></div>
+          </div>
+          <span style="font-size: 10px; color: #8c95a6;">${d.time.split(':')[0]}h</span>
+        </div>`;
+      }).join('');
+    }
+
+    // 渲染任务表格
+    function renderTaskTable() {
+      const tbody = document.getElementById('task-table-body');
+      tbody.innerHTML = TASK_DATA.map(t => {
+        const rateBg = t.rate >= 70 ? '#f6ffed' : t.rate >= 50 ? '#fffbe6' : '#fff2f0';
+        const rateColor = t.rate >= 70 ? '#52c41a' : t.rate >= 50 ? '#fa8c16' : '#ff4d4f';
+        const statusBg = t.status === '进行中' ? '#e6f4ff' : t.status === '已结束' ? '#f5f5f5' : '#fff7e6';
+        const statusColor = t.status === '进行中' ? '#1677ff' : t.status === '已结束' ? '#8c95a6' : '#fa8c16';
+        return `<tr>
+          <td style="font-weight: 500; color: #1a1a1a;">${t.taskName}</td>
+          <td>${t.org}</td>
+          <td style="font-size: 12px; color: #8c95a6; white-space: nowrap;">${t.period}</td>
+          <td style="color: #1677ff; font-weight: 600;">${t.issued.toLocaleString()}</td>
+          <td>${t.used.toLocaleString()}</td>
+          <td><span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: ${rateBg}; color: ${rateColor}; font-weight: 600;">${t.rate}%</span></td>
+          <td>${t.customers.toLocaleString()}</td>
+          <td>${t.amount.toLocaleString()}</td>
+          <td><span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: ${statusBg}; color: ${statusColor};">${t.status}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // 绑定时间段切换
+    document.querySelectorAll('.period-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentPeriod = this.dataset.period;
+
+        const customRange = document.getElementById('custom-time-range');
+        if (currentPeriod === '指定时间') {
+          customRange.style.display = 'flex';
+        } else {
+          customRange.style.display = 'none';
+          renderKPIs(currentPeriod);
+        }
+      });
+    });
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderKPIs('今日');
+      renderTrendChart();
+      renderTaskTable();
+    });
+  </script>
+</body>
+</html>

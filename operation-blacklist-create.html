@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增黑名单 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      animation: fadeIn 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div style="min-height: 100%; background: #f5f7fa;">
+<!-- 表单卡片 -->
+          <div style="maxWidth: 900; margin: '32px auto'; background: #fff; borderRadius: 8; border: '1px solid #e8ecf0'; padding: '40px 60px 48px';">
+            <!-- 用户ID -->
+            <div style="display: flex; alignItems: center; marginBottom: 28;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0;">用户ID：</label>
+              <input class="mk-input" style="width: 300;" placeholder="" id="userId">
+              <button class="mk-btn mk-btn-primary" style="marginLeft: 12; height: 36;" onclick="handleSearch()">搜索</button>
+            </div>
+
+            <!-- 限制理由 -->
+            <div style="display: flex; alignItems: flex-start; marginBottom: 28;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0; paddingTop: 6;">限制理由：</label>
+              <div style="flex: 1; position: relative;">
+                <textarea class="mk-textarea" style="width: 100%; minHeight: 80;" maxLength="200" id="reason" oninput="updateReasonCount()"></textarea>
+                <span style="position: absolute; right: 10; bottom: 8; fontSize: 12; color: #aaa;" id="reasonCount">0/200</span>
+              </div>
+            </div>
+
+            <!-- 限制资产 -->
+            <div style="display: flex; alignItems: flex-start;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0; paddingTop: 4;">限制资产：</label>
+              <div style="flex: 1;" id="equityList">
+                <span style="fontSize: 13; color: #8c95a6;">请先输入用户ID并搜索，展示该用户持有的权益</span>
+              </div>
+            </div>
+
+            <!-- 确定按钮 -->
+            <div style="display: flex; justifyContent: center; marginTop: 36;">
+              <button class="mk-btn mk-btn-primary" style="width: 100; height: 38;" onclick="handleSubmit()">确定</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据 - 客户持有权益
+    const mockEquities = {
+      '15901209729': [
+        '中台现金抵扣券', '理财加息5元现金券', '理财加息券',
+        'wzw权益库存测试3',
+        '五一折扣券', '理财兑换券测试', 'YNET利率满减优惠券',
+      ],
+      '100000000012': ['满100减20券', '理财加息券', '信用卡年费抵扣券', '满100减20券'],
+      '18618288540': ['猎豹金币', '优惠券0507', '鲁信电影院电影票', '理财贴息券15元'],
+    };
+
+    let searchedId = '';
+    let selectedEquities = new Set();
+
+    function goBack() {
+      window.location.href = 'operation-blacklist.html';
+    }
+
+    function updateReasonCount() {
+      const reason = document.getElementById('reason').value;
+      document.getElementById('reasonCount').textContent = `${reason.length}/200`;
+    }
+
+    function handleSearch() {
+      const userId = document.getElementById('userId').value.trim();
+      if (!userId) return;
+
+      const equities = mockEquities[userId] || [];
+      searchedId = userId;
+      selectedEquities.clear();
+
+      const container = document.getElementById('equityList');
+      if (equities.length === 0) {
+        container.innerHTML = '<span style="fontSize: 13; color: #8c95a6;">该用户暂无持有的权益</span>';
+        showToast('未找到该用户持有的权益');
+      } else {
+        container.innerHTML = equities.map(name => `
+          <div style="display: flex; alignItems: center; marginBottom: 12; cursor: pointer;" onclick="toggleEquity('${name}')">
+            <div style="
+              width: 16; height: 16; borderRadius: 3; border: '1px solid #d9dee6';
+              background: #fff; display: flex; alignItems: center; justifyContent: center; flexShrink: 0; marginRight: 8;
+            " id="check-${name.replace(/\s/g, '_')}">
+            </div>
+            <span style="fontSize: 14; color: #333;">${name}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function toggleEquity(name) {
+      const checkEl = document.getElementById(`check-${name.replace(/\s/g, '_')}`);
+      if (selectedEquities.has(name)) {
+        selectedEquities.delete(name);
+        checkEl.style.borderColor = '#d9dee6';
+        checkEl.style.background = '#fff';
+        checkEl.innerHTML = '';
+      } else {
+        selectedEquities.add(name);
+        checkEl.style.borderColor = '#1677ff';
+        checkEl.style.background = '#1677ff';
+        checkEl.innerHTML = '<svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3L9 1" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>';
+      }
+    }
+
+    function handleSubmit() {
+      if (!searchedId) {
+        showToast('请先搜索客户号');
+        return;
+      }
+      if (selectedEquities.size === 0) {
+        showToast('请至少选择一个受限权益');
+        return;
+      }
+      showToast('已提交受限权益');
+      setTimeout(() => {
+        window.location.href = 'operation-blacklist.html';
+      }, 1200);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.className = 'mk-toast';
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    // Enter键触发搜索
+    document.getElementById('userId').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    });
+  </script>
+</body>
+</html>

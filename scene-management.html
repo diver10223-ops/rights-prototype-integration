@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>直投场景管理 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
+    .sm-page { padding: 12px; background: #f0f2f5; min-height: calc(100vh - 92px); }
+    .sm-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 8px; }
+    .sm-metric { display: flex; align-items: center; gap: 10px; padding: 14px 16px; }
+    .sm-metric .ico { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sm-metric .label { font-size: 11px; color: #8c95a6; }
+    .sm-metric .value { font-size: 18px; font-weight: 700; color: #1a1a2e; line-height: 1.2; }
+    .sm-metric .sub { font-size: 10px; color: #94a3b8; }
+    .sm-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+    .sm-status .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .sm-status.running { background: #d1fae5; color: #047857; }
+    .sm-status.running .dot { background: #10b981; }
+    .sm-status.stopped { background: #ffedd5; color: #c2410c; }
+    .sm-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .sm-tag.blue { background: #e6f4ff; color: #1677ff; }
+    .sm-tag.purple { background: #ede9fe; color: #6d28d9; }
+    .sm-tag.gray { background: #f1f5f9; color: #475569; }
+    .sm-tag.orange { background: #ffedd5; color: #c2410c; }
+    .sm-tag.green { background: #d1fae5; color: #047857; }
+    .sm-link { color: #1677ff; cursor: pointer; font-size: 12px; }
+    .sm-link:hover { text-decoration: underline; }
+    .sm-link.danger { color: #dc2626; }
+    .sm-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .sm-table th { background: #fafbfc; color: #8c95a6; font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8ecf0; }
+    .sm-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #4a5568; vertical-align: middle; }
+    .sm-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .sm-section-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .sm-field label { display: block; font-size: 12px; color: #4a5568; margin-bottom: 4px; }
+    .sm-field .ipt, .sm-field select, .sm-field textarea { width: 100%; border: 1px solid #e8ecf0; border-radius: 6px; padding: 6px 10px; font-size: 13px; color: #4a5568; background: #fff; outline: none; font-family: inherit; }
+    .sm-field .ipt:focus, .sm-field select:focus, .sm-field textarea:focus { border-color: #1677ff; }
+    .sm-field .ipt[readonly] { background: #f8fafc; color: #94a3b8; }
+    .sm-field textarea { min-height: 64px; line-height: 1.5; }
+    .sm-btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #e8ecf0; background: #fff; color: #4a5568; }
+    .sm-btn:hover { color: #1677ff; border-color: #1677ff; }
+    .sm-btn.primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .sm-btn.primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .sm-btn.lg { height: 36px; padding: 0 20px; }
+    .sm-radio { display: inline-flex; align-items: center; gap: 4px; margin-right: 16px; font-size: 13px; color: #4a5568; cursor: pointer; }
+    .sm-checkbox { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; font-size: 13px; color: #4a5568; cursor: pointer; padding: 4px 10px; border: 1px solid #e8ecf0; border-radius: 4px; }
+    .sm-checkbox.checked { background: #e6f4ff; border-color: #1677ff; color: #1677ff; }
+    .sm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .sm-modal-overlay.show { display: flex; }
+    .sm-modal { background: #fff; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-width: 92vw; max-height: 90vh; display: flex; flex-direction: column; }
+    .sm-modal-head { padding: 14px 20px; border-bottom: 1px solid #e8ecf0; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #1a1a2e; }
+    .sm-modal-close { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; color: #94a3b8; }
+    .sm-modal-close:hover { background: #f1f5f9; color: #475569; }
+    .sm-modal-body { padding: 20px; overflow: auto; }
+    .sm-modal-foot { padding: 12px 20px; border-top: 1px solid #e8ecf0; display: flex; justify-content: flex-end; gap: 8px; }
+    .sm-pill { padding: 6px 14px; border-radius: 9999px; font-size: 12px; background: #f1f5f9; color: #475569; cursor: pointer; border: 1px solid transparent; }
+    .sm-pill.active { background: #e6f4ff; color: #1677ff; border-color: #91caff; font-weight: 600; }
+    .sm-toast { position: fixed; top: 80px; right: 24px; padding: 10px 16px; border-radius: 6px; font-size: 13px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.15); z-index: 1100; opacity: 0; transform: translateX(20px); transition: all .25s; }
+    .sm-toast.show { opacity: 1; transform: translateX(0); }
+    .sm-toast.success { background: #10b981; }
+    .sm-toast.error { background: #ef4444; }
+    /* 场景表格行激活样式 */
+    .sm-table tr.scene-row { cursor: pointer; }
+    .sm-table tr.scene-row.active td { background: #e6f4ff !important; }
+    .sm-table tr.scene-row.active td:first-child { box-shadow: inset 4px 0 0 #1677ff; }
+    /* 时间轴 */
+    .timeline { position: relative; padding-left: 20px; }
+    .timeline::before { content: ''; position: absolute; left: 6px; top: 4px; bottom: 4px; width: 2px; background: #e2e8f0; }
+    .tl-item { position: relative; padding: 6px 0 12px 16px; }
+    .tl-item::before { content: ''; position: absolute; left: -20px; top: 10px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1677ff; background: #fff; }
+    .tl-item.success::before { border-color: #10b981; background: #10b981; }
+    .tl-item.warning::before { border-color: #f59e0b; background: #f59e0b; }
+    .tl-item.info::before { border-color: #1677ff; background: #1677ff; }
+    .tl-title { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+    .tl-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="app layout-v2">
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    <div class="top-shell">
+      <header id="header" class="app-header"></header>
+      <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+    <div class="content">
+      <div class="sm-page">
+        <!-- 页头 -->
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-[14px] font-bold text-slate-800">直投场景管理</div>
+            <div class="text-[11px] text-slate-500 mt-1">注册和管理调用直投能力的外部场景端点，并汇总监控各场景的营销转化漏斗与对公指标走势</div>
+          </div>
+        </div>
+
+        <!-- 顶部7个核心场景运营指标 -->
+        <div class="sm-card mb-3">
+          <div class="grid grid-cols-7">
+            <div class="sm-metric border-r border-slate-100">
+              <div class="ico" style="background:#e6f4ff;color:#1677ff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/></svg></div>
+              <div><div class="label">活跃场景数</div><div class="value">8</div><div class="sub">个</div></div>
+            </div>
+            <div class="sm-metric border-r border-slate-100">
+              <div class="ico" style="background:#ede9fe;color:#6d28d9"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div><div class="label">累计配置活动</div><div class="value">40</div><div class="sub">次</div></div>
+            </div>
+            <div class="sm-metric border-r border-slate-100">
+              <div class="ico" style="background:#d1fae5;color:#10b981"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+              <div><div class="label">覆盖用户数</div><div class="value">85,230</div><div class="sub">人</div></div>
+            </div>
+            <div class="sm-metric border-r border-slate-100">
+              <div class="ico" style="background:#fef3c7;color:#d97706"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/></svg></div>
+              <div><div class="label">权益发放数量</div><div class="value">98,450</div><div class="sub">件</div></div>
+            </div>
+            <div class="sm-metric border-r border-slate-100">
+              <div class="ico" style="background:#fce7f3;color:#be185d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div><div class="label">累计发放成本</div><div class="value">¥1.28M</div><div class="sub">元</div></div>
+            </div>
+            <div class="sm-metric border-r border-slate-100">
+              <div class="ico" style="background:#cffafe;color:#155e75"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div><div class="label">权益核销使用率</div><div class="value">45.2%</div><div class="sub">核销/发放</div></div>
+            </div>
+            <div class="sm-metric">
+              <div class="ico" style="background:#e0e7ff;color:#4338ca"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+              <div><div class="label">单人权益成本</div><div class="value">¥15.02</div><div class="sub">元/人</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 场景列表（上）与指标/活动明细（下） -->
+        <div class="space-y-3">
+          <!-- 上方：场景列表 -->
+          <div class="sm-card">
+            <div class="px-4 py-3 border-b border-slate-100">
+              <div class="sm-section-title mb-3">直投场景列表</div>
+              <div class="grid grid-cols-2 gap-2 mb-2">
+                <div class="sm-field">
+                  <label>管理条线/部门</label>
+                  <select id="fltDept" class="ipt" onchange="applyFilter()">
+                    <option value="">全部部门</option>
+                    <option>对公业务部</option>
+                    <option>普惠金融部</option>
+                    <option>零售银行部</option>
+                    <option>私人银行部</option>
+                    <option>国际业务部</option>
+                    <option>机构业务部</option>
+                  </select>
+                </div>
+                <div class="sm-field">
+                  <label>营销目标</label>
+                  <select id="fltGoal" class="ipt" onchange="applyFilter()">
+                    <option value="">全部目标</option>
+                    <option>产品销售</option>
+                    <option>资金留存</option>
+                    <option>客户留存</option>
+                    <option>活跃度提升</option>
+                    <option>AUM提升</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2 items-end">
+                <div class="sm-field col-span-2">
+                  <label>搜索</label>
+                  <input id="fltKeyword" class="ipt" placeholder="输入场景名称、场景编码" oninput="applyFilter()" />
+                </div>
+                <div class="flex gap-2">
+                  <button class="sm-btn" onclick="resetFilter()">重置条件</button>
+                  <button class="sm-btn primary" onclick="openCreateModal()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    新建直投场景
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="overflow-auto">
+              <table class="sm-table">
+                <thead>
+                  <tr>
+                    <th>场景编码</th>
+                    <th>场景名称</th>
+                    <th>适用条线</th>
+                    <th>营销目标</th>
+                    <th style="width:50px" class="text-center">关联活动数</th>
+                    <th>最近更新时间</th>
+                    <th>状态</th>
+                    <th style="width:130px" class="text-center">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="sceneTbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 下方：场景指标及关联活动明细面板 -->
+          <div class="sm-card">
+            <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+              <div class="sm-section-title" id="detailHeader">【SCENE_001】 新客开户 - 场景指标及关联活动明细</div>
+              <div class="flex gap-1" id="goalPills"></div>
+            </div>
+            <div class="p-4">
+              <!-- KPI -->
+              <div class="grid grid-cols-5 gap-3 mb-4">
+                <div class="text-center p-3 border border-slate-100 rounded">
+                  <div class="text-[11px] text-slate-500">累计覆盖用户</div>
+                  <div class="text-[20px] font-bold text-slate-800" id="kpiUser">55,230 <span class="text-[11px] text-slate-400">人</span></div>
+                </div>
+                <div class="text-center p-3 border border-slate-100 rounded">
+                  <div class="text-[11px] text-slate-500">累计发放权益</div>
+                  <div class="text-[20px] font-bold text-slate-800" id="kpiBenefit">48,150 <span class="text-[11px] text-slate-400">件</span></div>
+                </div>
+                <div class="text-center p-3 border border-slate-100 rounded">
+                  <div class="text-[11px] text-slate-500">累计发放成本</div>
+                  <div class="text-[20px] font-bold text-slate-800" id="kpiCost">¥540,000</div>
+                </div>
+                <div class="text-center p-3 border border-slate-100 rounded">
+                  <div class="text-[11px] text-slate-500">权益核销使用率</div>
+                  <div class="text-[20px] font-bold text-emerald-600" id="kpiRate">85.5%</div>
+                </div>
+                <div class="text-center p-3 border border-slate-100 rounded">
+                  <div class="text-[11px] text-slate-500">单客平均引流成本</div>
+                  <div class="text-[20px] font-bold text-slate-800" id="kpiCac">¥9.77</div>
+                </div>
+              </div>
+
+              <!-- 折线图 + 时间轴：宽度 7:3，高度一致 = 折线图宽度 -->
+              <div class="grid grid-cols-10 gap-3 mb-4" id="chartRow">
+                <div class="col-span-7 border border-slate-100 rounded p-3 flex flex-col" style="aspect-ratio:1/1; min-height:320px">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="sm-section-title">营销指标走势分析</div>
+                    <div class="flex gap-1">
+                      <button class="sm-pill active" data-metric="user" onclick="switchMetric(this)">覆盖用户</button>
+                      <button class="sm-pill" data-metric="benefit" onclick="switchMetric(this)">权益发放</button>
+                      <button class="sm-pill" data-metric="cost" onclick="switchMetric(this)">发放成本</button>
+                      <button class="sm-pill" data-metric="rate" onclick="switchMetric(this)">核销率</button>
+                    </div>
+                  </div>
+                  <div class="relative flex-1">
+                    <canvas id="chartLine"></canvas>
+                  </div>
+                </div>
+                <div class="col-span-3 border border-slate-100 rounded p-3 flex flex-col" style="aspect-ratio:1/1; min-height:320px">
+                  <div class="sm-section-title mb-2">场景事件与里程碑</div>
+                  <div class="timeline flex-1" id="timelineList" style="overflow:auto"></div>
+                </div>
+              </div>
+
+              <!-- 关联活动列表 -->
+              <div class="border border-slate-100 rounded">
+                <div class="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                  <div class="sm-section-title">关联直投活动列表</div>
+                  <span class="text-[11px] text-slate-500" id="actListSub">共 0 个活动</span>
+                </div>
+                <div class="overflow-auto" style="max-height:240px">
+                  <table class="sm-table">
+                    <thead>
+                      <tr>
+                        <th>活动名称</th>
+                        <th>状态</th>
+                        <th>推广时间</th>
+                        <th style="width:70px" class="text-right">覆盖用户</th>
+                        <th style="width:70px" class="text-right">发放数量</th>
+                        <th style="width:90px" class="text-right">发放成本(元)</th>
+                        <th style="width:70px" class="text-right">使用率</th>
+                        <th style="width:90px" class="text-right">单客成本(元)</th>
+                        <th>对当前目标贡献(贡献比)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="actListTbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗3.1 新建/编辑直投场景 ============== -->
+<div id="modalScene" class="sm-modal-overlay">
+  <div class="sm-modal" style="width:560px">
+    <div class="sm-modal-head">
+      <span id="modalSceneTitle">新建直投场景</span>
+      <div class="sm-modal-close" onclick="closeModal('modalScene')">✕</div>
+    </div>
+    <div class="sm-modal-body">
+      <div class="sm-field mb-3">
+        <label>场景编码</label>
+        <input id="sceneCode" class="ipt" readonly value="系统自动生成" />
+      </div>
+      <div class="sm-field mb-3">
+        <label>场景名称 <span class="text-rose-500">*</span></label>
+        <input id="sceneName" class="ipt" placeholder="如：节日高管营销" />
+      </div>
+      <div class="sm-field mb-3">
+        <label>业务管理条线/部门 <span class="text-rose-500">*</span></label>
+        <select id="sceneDept" class="ipt">
+          <option value="">请选择</option>
+          <option>对公业务部</option>
+          <option>普惠金融部</option>
+          <option>零售银行部</option>
+          <option>私人银行部</option>
+          <option>国际业务部</option>
+          <option>机构业务部</option>
+        </select>
+      </div>
+      <div class="sm-field">
+        <label>达成营销目标 <span class="text-rose-500">*</span>（多选）</label>
+        <div id="goalBox" class="flex flex-wrap gap-1.5 mt-1">
+          <label class="sm-checkbox" data-goal="活跃度提升">活跃度提升</label>
+          <label class="sm-checkbox" data-goal="产品销售">产品销售</label>
+          <label class="sm-checkbox" data-goal="资金留存">资金留存</label>
+          <label class="sm-checkbox" data-goal="客户留存">客户留存</label>
+          <label class="sm-checkbox" data-goal="AUM提升">AUM提升</label>
+        </div>
+      </div>
+    </div>
+    <div class="sm-modal-foot">
+      <button class="sm-btn" onclick="closeModal('modalScene')">取消</button>
+      <button class="sm-btn primary lg" onclick="saveScene()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="sm-toast"></div>
+
+<script>
+/* ========== 数据 ========== */
+const scenes = [
+  { id:'SCENE_001', name:'新客开户', dept:'对公业务部', goals:['活跃度提升','AUM提升'], activities:3, updated:'2026-07-13 10:20', status:'running' },
+  { id:'SCENE_002', name:'资金沉淀', dept:'对公业务部', goals:['AUM提升','资金留存'], activities:5, updated:'2026-07-12 16:30', status:'running' },
+  { id:'SCENE_003', name:'存贷联动', dept:'普惠金融部', goals:['产品销售','客户留存'], activities:4, updated:'2026-07-12 11:00', status:'running' },
+  { id:'SCENE_004', name:'节日营销', dept:'零售银行部', goals:['产品销售','活跃度提升'], activities:6, updated:'2026-07-11 09:45', status:'running' },
+  { id:'SCENE_005', name:'代发薪专区', dept:'对公业务部', goals:['资金留存','客户留存'], activities:3, updated:'2026-07-10 14:20', status:'running' },
+  { id:'SCENE_006', name:'高管VIP专享', dept:'私人银行部', goals:['AUM提升','产品销售'], activities:2, updated:'2026-07-09 17:30', status:'running' },
+  { id:'SCENE_007', name:'国际业务拓展', dept:'国际业务部', goals:['产品销售','客户留存'], activities:1, updated:'2026-07-08 11:00', status:'running' },
+  { id:'SCENE_008', name:'机构客户营销', dept:'机构业务部', goals:['客户留存','资金留存'], activities:0, updated:'2026-07-05 14:00', status:'stopped' }
+];
+
+/* KPI 模拟数据，按 (sceneIdx, goalKey) 维度 */
+const kpiMap = {
+  'SCENE_001': {
+    all:    { user:'55,230 人', benefit:'48,150 件', cost:'¥540,000', rate:'85.5%', cac:'¥9.77' },
+    '活跃度提升': { user:'38,500 人', benefit:'35,200 件', cost:'¥360,000', rate:'88.0%', cac:'¥9.35' },
+    'AUM提升':    { user:'42,100 人', benefit:'36,500 件', cost:'¥420,000', rate:'87.2%', cac:'¥9.98' }
+  },
+  'SCENE_002': {
+    all:    { user:'62,400 人', benefit:'52,800 件', cost:'¥680,000', rate:'78.4%', cac:'¥10.90' },
+    'AUM提升':    { user:'50,200 人', benefit:'42,300 件', cost:'¥520,000', rate:'80.1%', cac:'¥10.36' },
+    '资金留存':   { user:'48,100 人', benefit:'40,500 件', cost:'¥500,000', rate:'79.5%', cac:'¥10.40' }
+  },
+  'SCENE_003': {
+    all:    { user:'32,150 人', benefit:'28,400 件', cost:'¥320,000', rate:'72.5%', cac:'¥9.95' },
+    '产品销售':   { user:'22,400 人', benefit:'19,200 件', cost:'¥210,000', rate:'74.3%', cac:'¥9.38' },
+    '客户留存':   { user:'18,600 人', benefit:'16,500 件', cost:'¥180,000', rate:'73.8%', cac:'¥9.68' }
+  },
+  'SCENE_004': {
+    all:    { user:'45,800 人', benefit:'38,200 件', cost:'¥420,000', rate:'80.2%', cac:'¥9.17' },
+    '产品销售':   { user:'32,500 人', benefit:'27,100 件', cost:'¥300,000', rate:'82.5%', cac:'¥9.23' },
+    '活跃度提升': { user:'28,900 人', benefit:'24,500 件', cost:'¥260,000', rate:'81.8%', cac:'¥9.00' }
+  },
+  'SCENE_005': {
+    all:    { user:'36,500 人', benefit:'30,200 件', cost:'¥310,000', rate:'76.8%', cac:'¥8.49' },
+    '资金留存':   { user:'26,500 人', benefit:'22,100 件', cost:'¥220,000', rate:'78.1%', cac:'¥8.30' },
+    '客户留存':   { user:'22,300 人', benefit:'18,400 件', cost:'¥190,000', rate:'77.5%', cac:'¥8.52' }
+  },
+  'SCENE_006': {
+    all:    { user:'12,800 人', benefit:'10,500 件', cost:'¥520,000', rate:'90.1%', cac:'¥40.63' },
+    'AUM提升':    { user:'9,800 人', benefit:'8,200 件', cost:'¥420,000', rate:'92.5%', cac:'¥42.86' },
+    '产品销售':   { user:'7,200 人', benefit:'6,100 件', cost:'¥310,000', rate:'91.8%', cac:'¥43.06' }
+  },
+  'SCENE_007': {
+    all:    { user:'18,400 人', benefit:'14,200 件', cost:'¥240,000', rate:'65.4%', cac:'¥13.04' },
+    '产品销售':   { user:'12,100 人', benefit:'9,400 件', cost:'¥160,000', rate:'68.2%', cac:'¥13.22' },
+    '客户留存':   { user:'10,200 人', benefit:'7,800 件', cost:'¥135,000', rate:'66.5%', cac:'¥13.24' }
+  },
+  'SCENE_008': {
+    all:    { user:'0 人', benefit:'0 件', cost:'¥0', rate:'0%', cac:'¥0' },
+    '客户留存':   { user:'0 人', benefit:'0 件', cost:'¥0', rate:'0%', cac:'¥0' },
+    '资金留存':   { user:'0 人', benefit:'0 件', cost:'¥0', rate:'0%', cac:'¥0' }
+  }
+};
+
+/* 折线图走势数据 */
+const lineData = {
+  user:    [8000,9500,11200,12800,13500,14200],
+  benefit: [6800,8200,9500,11200,12100,12900],
+  cost:    [85000,92000,98000,105000,112000,118000],
+  rate:    [62.5, 68.2, 72.1, 78.5, 82.3, 85.5]
+};
+
+/* 时间轴 */
+const timelineByScene = {
+  'SCENE_001': [
+    { type:'info', title:'1月 - 场景正式上线', desc:'对接手机银行Push通道，完成首轮权益直投部署。' },
+    { type:'success', title:'3月 - 转化率突破阈值', desc:'开户转化率突破35%，触达用户达18,500人。' },
+    { type:'warning', title:'5月 - 通道触达异常预警', desc:'短信通道触达率环比下降8%，已自动切换备用通道。' },
+    { type:'success', title:'6月 - 普惠小微绿色通道上线', desc:'全行首贷小微专属礼包部署，开户核销率环比提升 12%。' }
+  ],
+  'SCENE_002': [
+    { type:'info', title:'2月 - 资金留存专项启动', desc:'针对月均AUM 50万+企业启动资金留存专项。' },
+    { type:'success', title:'4月 - AUM留存突破3亿', desc:'单月AUM留存突破3亿元，对应留存率 78.4%。' }
+  ]
+};
+
+/* 关联活动列表（按场景） */
+const activitiesByScene = {
+  'SCENE_001': [
+    { name:'新客开户理财首单立减', status:'running', start:'2026-07-01', end:'2026-09-30', user:'12,500', num:'8,200', cost:'85,000', rate:'78.5%', cac:'¥6.80', contrib:'活跃度贡献 +4500人 (12.3%)' },
+    { name:'普惠小微开户红包', status:'pending', start:'2026-07-10', end:'2026-12-31', user:'6,300', num:'4,800', cost:'52,000', rate:'65.0%', cac:'¥8.25', contrib:'AUM提升贡献 +¥18.5M (41.2%)' }
+  ]
+};
+
+/* ========== 状态 ========== */
+let activeSceneId = 'SCENE_001';
+let activeGoal = 'all';
+let activeMetric = 'user';
+let chartInstance = null;
+let currentGoals = new Set();
+let editingScene = null;
+
+/* ========== 工具 ========== */
+function $(id){ return document.getElementById(id); }
+function showToast(msg, type){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'sm-toast ' + (type || 'success') + ' show';
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
+
+/* ========== 场景列表 ========== */
+function renderTable(){
+  const dept = $('fltDept').value;
+  const goal = $('fltGoal').value;
+  const kw = ($('fltKeyword').value || '').trim();
+  const rows = scenes.filter(s => {
+    if (dept && s.dept !== dept) return false;
+    if (goal && !s.goals.includes(goal)) return false;
+    if (kw && !(s.name.includes(kw) || s.id.includes(kw))) return false;
+    return true;
+  });
+  $('sceneTbody').innerHTML = rows.map(s => {
+    const goalsHtml = s.goals.map(g => `<span class="sm-tag purple">${g}</span>`).join(' ');
+    const isActive = s.id === activeSceneId ? 'active' : '';
+    return `<tr class="scene-row ${isActive}" onclick="selectScene('${s.id}')">
+      <td class="sm-mono text-slate-600">${s.id}</td>
+      <td class="font-medium text-slate-700">${s.name}</td>
+      <td>${s.dept}</td>
+      <td>${goalsHtml}</td>
+      <td class="text-center"><span class="sm-tag blue">${s.activities}</span></td>
+      <td class="text-slate-500">${s.updated}</td>
+      <td><span class="sm-status ${s.status}"><span class="dot"></span>${s.status==='running'?'运行中':'已停用'}</span></td>
+      <td class="text-center" onclick="event.stopPropagation()">
+        <span class="sm-link" onclick="openEditModal('${s.id}')">编辑</span>
+        <span class="sm-link ml-2" onclick="loadDetail('${s.id}')">详情指标</span>
+        <span class="sm-link danger ml-2" onclick="deleteScene('${s.id}')">删除</span>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8" class="text-center text-slate-400 py-8">暂无数据</td></tr>';
+}
+function applyFilter(){ renderTable(); }
+function resetFilter(){ $('fltDept').value=''; $('fltGoal').value=''; $('fltKeyword').value=''; renderTable(); }
+
+function selectScene(id){ loadDetail(id); }
+
+/* ========== 详情面板 ========== */
+function loadDetail(id){
+  activeSceneId = id;
+  const s = scenes.find(x => x.id === id);
+  if (!s) return;
+  $('detailHeader').textContent = '【${s.id}】 ${s.name} - 场景指标及关联活动明细'.replace('${s.id}', s.id).replace('${s.name}', s.name);
+  // 渲染目标Pills：全部 + 该场景的所有目标
+  const pills = ['all', ...s.goals];
+  $('goalPills').innerHTML = pills.map(g => {
+    const label = g === 'all' ? '全部指标' : g;
+    return `<button class="sm-pill ${g==='all'?'active':''}" data-goal="${g}" onclick="switchGoal(this)">${label}</button>`;
+  }).join('');
+  activeGoal = 'all';
+  refreshKPI();
+  refreshChart();
+  refreshTimeline();
+  refreshActivityList();
+  renderTable();
+}
+function switchGoal(btn){
+  document.querySelectorAll('#goalPills .sm-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeGoal = btn.dataset.goal;
+  refreshKPI();
+  refreshChart();
+  refreshActivityList();
+}
+function refreshKPI(){
+  const data = (kpiMap[activeSceneId] && kpiMap[activeSceneId][activeGoal]) || kpiMap[activeSceneId].all;
+  $('kpiUser').innerHTML = data.user + (data.user.indexOf('人')>-1?'<span class="text-[11px] text-slate-400"> </span>':'');
+  $('kpiBenefit').innerHTML = data.benefit;
+  $('kpiCost').textContent = data.cost;
+  $('kpiRate').textContent = data.rate;
+  $('kpiCac').textContent = data.cac;
+}
+function refreshChart(){
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  const labels = ['1月','2月','3月','4月','5月','6月'];
+  const data = lineData[activeMetric];
+  const colorMap = { user:'#1677ff', benefit:'#36cfc9', cost:'#f5222d', rate:'#10b981' };
+  const color = colorMap[activeMetric];
+  const ctx = document.getElementById('chartLine');
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: activeMetric==='user'?'覆盖用户':activeMetric==='benefit'?'权益发放':activeMetric==='cost'?'发放成本':'核销率',
+        data: data,
+        borderColor: color,
+        backgroundColor: color + '20',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: color
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: false, grid:{ color:'#f1f5f9' } }, x:{ grid:{ display:false } } }
+    }
+  });
+}
+function switchMetric(btn){
+  document.querySelectorAll('[data-metric]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeMetric = btn.dataset.metric;
+  refreshChart();
+}
+function refreshTimeline(){
+  const list = timelineByScene[activeSceneId] || [
+    { type:'info', title:'暂无里程碑事件', desc:'该场景暂无重大事件记录。' }
+  ];
+  $('timelineList').innerHTML = list.map(t => `
+    <div class="tl-item ${t.type}">
+      <div class="tl-title">${t.title}</div>
+      <div class="tl-desc">${t.desc}</div>
+    </div>
+  `).join('');
+}
+function refreshActivityList(){
+  const acts = activitiesByScene[activeSceneId] || [];
+  $('actListSub').textContent = '共 ' + acts.length + ' 个活动';
+  $('actListTbody').innerHTML = acts.length ? acts.map(a => {
+    const st = a.status==='running'?'<span class="sm-status running"><span class="dot"></span>运行中</span>'
+            : a.status==='pending'?'<span class="sm-tag blue">待发布</span>'
+            : a.status==='paused'?'<span class="sm-tag orange">已暂停</span>'
+            : '<span class="sm-tag gray">已停用</span>';
+    const contrib = activeGoal === 'all'
+      ? (a.contrib.indexOf('AUM')>-1 ? a.contrib : '综合效果 拉动定期+¥18.5M / 促成月活+4500人')
+      : a.contrib;
+    return `<tr>
+      <td class="font-medium text-slate-700">${a.name}</td>
+      <td>${st}</td>
+      <td class="text-slate-500 text-[11px]">${a.start} ~ ${a.end}</td>
+      <td class="text-right">${a.user}</td>
+      <td class="text-right">${a.num}</td>
+      <td class="text-right">${a.cost}</td>
+      <td class="text-right"><span class="sm-tag green">${a.rate}</span></td>
+      <td class="text-right">${a.cac}</td>
+      <td class="text-slate-600">${contrib}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="9" class="text-center text-slate-400 py-6">该场景暂无关联活动</td></tr>';
+}
+
+/* ========== 复选框交互 ========== */
+document.querySelectorAll('#goalBox .sm-checkbox').forEach(el => {
+  el.addEventListener('click', function(){
+    this.classList.toggle('checked');
+    const g = this.dataset.goal;
+    if (this.classList.contains('checked')) currentGoals.add(g); else currentGoals.delete(g);
+  });
+});
+
+/* ========== 新建 / 编辑 ========== */
+function openCreateModal(){
+  editingScene = null;
+  $('modalSceneTitle').textContent = '新建直投场景';
+  $('sceneCode').value = '系统自动生成';
+  $('sceneName').value = '';
+  $('sceneDept').value = '';
+  currentGoals.clear();
+  document.querySelectorAll('#goalBox .sm-checkbox').forEach(el => el.classList.remove('checked'));
+  openModal('modalScene');
+}
+function openEditModal(id){
+  const s = scenes.find(x => x.id === id);
+  if (!s) return;
+  editingScene = s;
+  $('modalSceneTitle').textContent = '编辑直投场景';
+  $('sceneCode').value = s.id;
+  $('sceneName').value = s.name;
+  $('sceneDept').value = s.dept;
+  currentGoals = new Set(s.goals);
+  document.querySelectorAll('#goalBox .sm-checkbox').forEach(el => {
+    if (currentGoals.has(el.dataset.goal)) el.classList.add('checked'); else el.classList.remove('checked');
+  });
+  openModal('modalScene');
+}
+function saveScene(){
+  const name = $('sceneName').value.trim();
+  const dept = $('sceneDept').value;
+  if (!name || !dept || currentGoals.size === 0) {
+    showToast('请填齐所有的必填项！', 'error');
+    return;
+  }
+  if (editingScene) {
+    Object.assign(editingScene, { name, dept, goals:[...currentGoals] });
+    showToast('直投场景修改成功！', 'success');
+  } else {
+    const newId = 'SCENE_' + String(scenes.length + 1).padStart(3,'0');
+    scenes.unshift({ id: newId, name, dept, goals:[...currentGoals], activities:1, updated:new Date().toISOString().slice(0,16).replace('T',' '), status:'running' });
+    // 初始化KPI序列
+    kpiMap[newId] = {
+      all: { user:'1,200 人', benefit:'850 件', cost:'¥12,000', rate:'65.0%', cac:'¥10.00' }
+    };
+    [...currentGoals].forEach(g => {
+      kpiMap[newId][g] = { user:'600 人', benefit:'420 件', cost:'¥6,000', rate:'65.0%', cac:'¥10.00' };
+    });
+    timelineByScene[newId] = [
+      { type:'info', title:'上线 - 场景部署', desc:'新场景已成功部署并投入运行。' }
+    ];
+    activitiesByScene[newId] = [
+      { name: name + ' - 默认上线活动', status:'running', start:'2026-07-13', end:'2026-12-31', user:'1,200', num:'850', cost:'12,000', rate:'65.0%', cac:'¥10.00', contrib:'综合效果 拉动定期+¥0.5M / 促成月活+150人' }
+    ];
+    showToast('直投场景部署并运行成功！', 'success');
+  }
+  closeModal('modalScene');
+  renderTable();
+  loadDetail(editingScene ? editingScene.id : newId);
+}
+function deleteScene(id){
+  if (!confirm('确定要删除此营销场景吗？这可能会影响正在运行的活动！')) return;
+  const i = scenes.findIndex(x => x.id === id);
+  if (i >= 0) scenes.splice(i, 1);
+  showToast('场景已删除！', 'success');
+  if (activeSceneId === id && scenes.length) loadDetail(scenes[0].id);
+  else renderTable();
+}
+
+/* ========== 初始化 ========== */
+document.addEventListener('DOMContentLoaded', function(){
+  renderSidebar(); renderHeader(); syncCurrentTab(); renderPageTabs();
+  renderTable();
+  loadDetail('SCENE_001');
+});
+</script>
+<script src="js/nav.js"></script>
+
+</body>
+</html>

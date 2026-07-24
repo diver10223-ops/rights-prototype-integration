@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>活动费用统计 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+ <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面标题 -->
+      <div class="mb-5">
+        <h2 class="text-sm font-bold text-slate-800">活动费用统计</h2>
+        <p class="text-[10px] text-slate-400 mt-1">统计每个营销活动消耗的权益费用，按活动类型、营销场景、客群等多维度进行权益费用分析，支持费用明细导出</p>
+      </div>
+
+      <!-- 01 统计筛选区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">01</span>
+              <span class="text-[11px] font-medium text-slate-700">统计筛选区</span>
+            </div>
+            <p class="text-[10px] text-slate-400">按时间范围、活动类型、场景、客群等维度筛选费用数据</p>
+          </div>
+          <div class="flex flex-wrap gap-4 items-end mt-3">
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">统计日期</label>
+              <input type="date" value="2026-06-01" class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-36 focus:outline-none focus:border-blue-400" />
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">至</label>
+              <input type="date" value="2026-06-30" class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-36 focus:outline-none focus:border-blue-400" />
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">活动类型</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部类型</option>
+                <option>对公抽奖</option>
+                <option>事件营销</option>
+                <option>领权益</option>
+                <option>发权益</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">营销场景</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部场景</option>
+                <option>开户有礼</option>
+                <option>代发薪</option>
+                <option>存贷联动</option>
+                <option>节日营销</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">客群</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部客群</option>
+                <option>新客户</option>
+                <option>代发客户</option>
+                <option>企业客户</option>
+                <option>VIP客户</option>
+              </select>
+            </div>
+            <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-medium">查询</button>
+            <button class="px-4 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 核心指标区 -->
+      <div class="mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">02</span>
+          <span class="text-[11px] font-medium text-slate-700">核心指标区</span>
+        </div>
+        <p class="text-[10px] text-slate-400">汇总统计周期内所有活动的权益费用核心指标，支持同比环比分析</p>
+      </div>
+      <div class="grid grid-cols-5 gap-3 mb-5">
+        <div class="border border-slate-300 bg-white rounded-lg p-4">
+          <div class="text-[10px] text-slate-400 mb-1">权益费用总额</div>
+          <div class="text-lg font-bold text-blue-600">¥ 1,286,540</div>
+          <div class="text-[10px] text-emerald-500 mt-1">↑ 12.5% 同比</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-4">
+          <div class="text-[10px] text-slate-400 mb-1">活动数量</div>
+          <div class="text-lg font-bold text-slate-700">40</div>
+          <div class="text-[10px] text-emerald-500 mt-1">↑ 5 个</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-4">
+          <div class="text-[10px] text-slate-400 mb-1">参与人次</div>
+          <div class="text-lg font-bold text-slate-700">52,386</div>
+          <div class="text-[10px] text-emerald-500 mt-1">↑ 18.2%</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-4">
+          <div class="text-[10px] text-slate-400 mb-1">人均权益成本</div>
+          <div class="text-lg font-bold text-slate-700">¥ 24.56</div>
+          <div class="text-[10px] text-red-500 mt-1">↓ 4.8% 同比</div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg p-4">
+          <div class="text-[10px] text-slate-400 mb-1">权益发放次数</div>
+          <div class="text-lg font-bold text-slate-700">85,230</div>
+          <div class="text-[10px] text-emerald-500 mt-1">↑ 22.3%</div>
+        </div>
+      </div>
+
+      <!-- 03 多维分析区 -->
+      <div class="mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03</span>
+          <span class="text-[11px] font-medium text-slate-700">多维度费用分析</span>
+        </div>
+        <p class="text-[10px] text-slate-400">从活动类型、营销场景、目标客群三个维度对权益费用进行结构分析</p>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mb-5">
+        <!-- 按活动类型分析 -->
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03-1</span>
+              <span class="text-[11px] font-medium text-slate-700">按活动类型分析</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">展示不同活动类型（抽奖、事件营销、领权益、发权益）的费用占比</p>
+          </div>
+          <div class="p-4 space-y-3">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">对公抽奖</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 458,200 (35.6%)</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-blue-500 rounded" style="width: 35.6%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">事件营销</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 386,500 (30.0%)</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-emerald-500 rounded" style="width: 30.0%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">领权益</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 268,400 (20.9%)</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-amber-500 rounded" style="width: 20.9%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">发权益</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 173,440 (13.5%)</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-purple-500 rounded" style="width: 13.5%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 按营销场景分析 -->
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03-2</span>
+              <span class="text-[11px] font-medium text-slate-700">按营销场景分析</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">按营销场景（开户有礼、代发薪、存贷联动等）统计费用分布</p>
+          </div>
+          <table class="w-full text-[11px]">
+            <thead class="bg-slate-50 text-slate-600">
+              <tr>
+                <th class="py-2 px-3 text-left font-medium">场景</th>
+                <th class="py-2 px-3 text-right font-medium">费用(元)</th>
+                <th class="py-2 px-3 text-right font-medium">占比</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="py-2 px-3 text-slate-600">开户有礼</td>
+                <td class="py-2 px-3 text-right font-medium">¥ 425,800</td>
+                <td class="py-2 px-3 text-right text-blue-600">33.1%</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 text-slate-600">节日营销</td>
+                <td class="py-2 px-3 text-right font-medium">¥ 365,200</td>
+                <td class="py-2 px-3 text-right text-blue-600">28.4%</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 text-slate-600">代发薪专项</td>
+                <td class="py-2 px-3 text-right font-medium">¥ 286,500</td>
+                <td class="py-2 px-3 text-right text-blue-600">22.3%</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 text-slate-600">存贷联动</td>
+                <td class="py-2 px-3 text-right font-medium">¥ 209,040</td>
+                <td class="py-2 px-3 text-right text-blue-600">16.2%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 按客群分析 -->
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03-3</span>
+              <span class="text-[11px] font-medium text-slate-700">按客群分析</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">按目标客群（新客户、代发客户、企业客户等）统计费用分布</p>
+          </div>
+          <div class="p-4 space-y-3">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">新客户</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 458,200</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-rose-500 rounded" style="width: 35.6%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">代发客户</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 386,500</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-cyan-500 rounded" style="width: 30.0%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">企业客户</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 268,400</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-indigo-500 rounded" style="width: 20.9%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600">VIP客户</span>
+                <span class="text-[11px] font-medium text-slate-700">¥ 173,440</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded">
+                <div class="h-2 bg-amber-500 rounded" style="width: 13.5%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 活动费用明细表 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">06</span>
+              <span class="text-[11px] font-medium text-slate-700">活动费用明细区</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <p class="text-[10px] text-slate-400">展示每个活动的详细费用数据，支持导出Excel</p>
+              <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">
+                <i class="fas fa-download mr-1"></i>导出明细
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-3 text-left font-medium">活动ID</th>
+              <th class="py-2.5 px-3 text-left font-medium">活动名称</th>
+              <th class="py-2.5 px-3 text-left font-medium">活动类型</th>
+              <th class="py-2.5 px-3 text-left font-medium">营销场景</th>
+              <th class="py-2.5 px-3 text-left font-medium">目标客群</th>
+              <th class="py-2.5 px-3 text-right font-medium">权益费用(元)</th>
+              <th class="py-2.5 px-3 text-right font-medium">参与人次</th>
+              <th class="py-2.5 px-3 text-right font-medium">人均成本</th>
+              <th class="py-2.5 px-3 text-right font-medium">费用占比</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">ACT_202606001</td>
+              <td class="py-3 px-3 font-medium text-slate-700">科技型小微开户送红包活动</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">领权益</span></td>
+              <td class="py-3 px-3 text-slate-600">开户有礼</td>
+              <td class="py-3 px-3 text-slate-600">新客户</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 158,500</td>
+              <td class="py-3 px-3 text-right">8,256</td>
+              <td class="py-3 px-3 text-right">¥ 19.20</td>
+              <td class="py-3 px-3 text-right">12.3%</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">ACT_202606002</td>
+              <td class="py-3 px-3 font-medium text-slate-700">代发薪客户专享福利活动</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">对公抽奖</span></td>
+              <td class="py-3 px-3 text-slate-600">代发薪</td>
+              <td class="py-3 px-3 text-slate-600">代发客户</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 286,500</td>
+              <td class="py-3 px-3 text-right">12,358</td>
+              <td class="py-3 px-3 text-right">¥ 23.18</td>
+              <td class="py-3 px-3 text-right">22.3%</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">ACT_202606003</td>
+              <td class="py-3 px-3 font-medium text-slate-700">端午节日营销活动</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">事件营销</span></td>
+              <td class="py-3 px-3 text-slate-600">节日营销</td>
+              <td class="py-3 px-3 text-slate-600">全部客户</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 365,200</td>
+              <td class="py-3 px-3 text-right">15,832</td>
+              <td class="py-3 px-3 text-right">¥ 23.07</td>
+              <td class="py-3 px-3 text-right">28.4%</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">ACT_202606004</td>
+              <td class="py-3 px-3 font-medium text-slate-700">存贷联动企业激励活动</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-[10px]">发权益</span></td>
+              <td class="py-3 px-3 text-slate-600">存贷联动</td>
+              <td class="py-3 px-3 text-slate-600">企业客户</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 209,040</td>
+              <td class="py-3 px-3 text-right">5,628</td>
+              <td class="py-3 px-3 text-right">¥ 37.14</td>
+              <td class="py-3 px-3 text-right">16.2%</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-3 font-mono text-slate-500">ACT_202606005</td>
+              <td class="py-3 px-3 font-medium text-slate-700">VIP客户专属权益活动</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">对公抽奖</span></td>
+              <td class="py-3 px-3 text-slate-600">节日营销</td>
+              <td class="py-3 px-3 text-slate-600">VIP客户</td>
+              <td class="py-3 px-3 text-right font-medium text-blue-600">¥ 173,440</td>
+              <td class="py-3 px-3 text-right">1,256</td>
+              <td class="py-3 px-3 text-right">¥ 138.09</td>
+              <td class="py-3 px-3 text-right">13.5%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400">共 40 条数据</div>
+          <div class="flex items-center gap-1">
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-400 cursor-not-allowed" disabled>上一页</button>
+            <button class="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">1</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">2</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">3</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">下一页</button>
+          </div>
+        </div>
+      </div>
+
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/nav.js"></script>
+
+</body>
+</html>

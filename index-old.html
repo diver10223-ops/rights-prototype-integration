@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益中心概览 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面特定样式 */
+    .kpi-value { font-size: 28px; font-weight: 700; line-height: 1.2; font-family: 'OPPOSans', sans-serif; }
+    .kpi-sub { font-size: 12px; color: #8c95a6; margin-top: 4px; }
+    .kpi-icon-box { width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+    .chart-wrap { position: relative; height: 220px; padding: 0 10px; }
+    .trend-svg { width: 100%; height: 100%; overflow: visible; }
+    .trend-legend { display: flex; gap: 16px; justify-content: flex-end; font-size: 12px; color: #4a5568; padding: 0 20px 10px; }
+    .trend-legend-item { display: flex; align-items: center; gap: 4px; }
+    .trend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .alert-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 8px; background: #fff1f0; border: 1px solid #ffccc7; }
+    .alert-card .alert-icon { width: 24px; height: 24px; border-radius: 50%; background: #ff4d4f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+    .alert-card .alert-name { font-size: 13px; font-weight: 500; color: #1a1a2e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .alert-card .alert-desc { font-size: 12px; color: #ff4d4f; margin-top: 2px; }
+
+    .todo-list { display: flex; flex-direction: column; gap: 10px; }
+    .todo-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 8px; background: #f8fafc; border: 1px solid #e8ecf0; transition: all 0.15s; }
+    .todo-item:hover { background: #f0f7ff; border-color: #bae0ff; }
+    .todo-badge { min-width: 22px; height: 22px; border-radius: 50%; background: #ff4d4f; color: #fff; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .todo-badge.blue { background: #1677ff; }
+    .todo-badge.orange { background: #f0a500; }
+    .todo-badge.green { background: #52c41a; }
+    .todo-content { flex: 1; min-width: 0; }
+    .todo-title { font-size: 13px; color: #1a1a2e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .todo-desc { font-size: 12px; color: #8c95a6; margin-top: 1px; }
+    .todo-action { font-size: 12px; color: #1677ff; cursor: pointer; white-space: nowrap; }
+
+    .hot-chart-wrap { height: 210px; position: relative; padding: 0 20px; }
+    .bar-x-label { font-size: 10px; fill: #8c95a6; text-anchor: end; }
+    .progress-bg { flex: 1; height: 8px; border-radius: 4px; background: #f0f2f5; overflow: hidden; min-width: 80px; }
+    .progress-fill { height: 100%; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页头 -->
+          <div class="mb-4">
+            <h1 style="font-size: 16px; font-weight: 600; color: #1a1a2e;">权益中心概览</h1>
+            <p style="font-size: 12px; color: #8c95a6; margin-top: 2px;">2026年7月20日 · 今日数据实时更新</p>
+          </div>
+
+          <!-- KPI卡片 -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="kpi-cards"></div>
+
+          <!-- 两列布局 3:1 -->
+          <div class="dashboard-two-col" style="display: grid; grid-template-columns: 3fr 1fr; gap: 12px; align-items: start;">
+            <!-- 左列 -->
+            <div class="dashboard-left-col" style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- 近7天发放趋势 -->
+              <div class="mk-list-panel flex flex-col">
+                <div class="mk-list-header" style="border-bottom: none; justify-content: center;">
+                  <span class="mk-list-title" style="display: flex; align-items: center; gap: 4px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2">
+                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                      <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    近7天权益发放趋势
+                  </span>
+                </div>
+                <div class="trend-legend" style="justify-content: center; padding-top: 0;">
+                  <span class="trend-legend-item"><span class="trend-dot" style="background:#1677ff"></span>发放量</span>
+                  <span class="trend-legend-item"><span class="trend-dot" style="background:#52c41a"></span>使用量</span>
+                </div>
+                <div class="chart-wrap" style="display: flex; align-items: center; justify-content: center;">
+                  <svg class="trend-svg" id="trend-chart" style="max-width: 720px;"></svg>
+                </div>
+              </div>
+
+              <!-- 热门权益 Top10 -->
+              <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title" style="display: flex; align-items: center; gap: 4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f0a500" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                热门权益 Top10
+                <span style="font-size: 12px; color: #8c95a6; font-weight: 400; margin-left: 4px;">（按已发放数量排序，展示核销情况）</span>
+              </span>
+            </div>
+
+            <!-- 柱状图 -->
+            <div class="hot-chart-wrap">
+              <svg class="trend-svg" id="hot-equity-chart"></svg>
+            </div>
+
+            <!-- 明细表格 -->
+            <div style="overflow-x: auto;">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th style="width: 48px;">排名</th>
+                    <th>权益名称</th>
+                    <th>来源类型</th>
+                    <th>已发放数量</th>
+                    <th>已核销数量</th>
+                    <th>核销率</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody id="hot-equity-table"></tbody>
+              </table>
+            </div>
+              </div>
+            </div>
+
+            <!-- 右列 -->
+            <div class="dashboard-right-col" style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- 库存预警 -->
+              <div class="mk-list-panel flex flex-col">
+                <div class="mk-list-header" style="border-bottom: none; justify-content: center;">
+                  <span class="mk-list-title" style="display: flex; align-items: center; gap: 4px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    库存预警
+                  </span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 20px;" id="inventory-alerts"></div>
+              </div>
+
+              <!-- 待办信息 -->
+              <div class="mk-list-panel">
+                <div class="mk-list-header">
+                  <span class="mk-list-title" style="display: flex; align-items: center; gap: 4px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    待办信息
+                  </span>
+                </div>
+                <div style="padding: 0 20px 20px;">
+                  <div class="todo-list" id="todo-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const dashboardStats = {
+      totalEquity: 127,
+      onlineEquity: 89,
+      monthlyIssued: 12400,
+      monthlyUsed: 8960,
+      inventoryAlerts: 3
+    };
+
+    const inventoryAlerts = [
+      { id: 'EQ003', name: '星巴克50元饮品券', currentStock: 150, alertThreshold: 200 },
+      { id: 'EQ006', name: '京东实物100元', currentStock: 80, alertThreshold: 100 },
+      { id: 'EQ010', name: '滴滴出行30元券', currentStock: 1800, alertThreshold: 2000 }
+    ];
+
+    const trendData7Days = [
+      { date: '07-03', issued: 1800, used: 1200 },
+      { date: '07-04', issued: 1500, used: 1100 },
+      { date: '07-05', issued: 2200, used: 1600 },
+      { date: '07-06', issued: 2800, used: 2100 },
+      { date: '07-07', issued: 3100, used: 2450 },
+      { date: '07-08', issued: 3450, used: 2680 },
+      { date: '07-09', issued: 2100, used: 1540 }
+    ];
+
+    const hotEquityTop10 = [
+      { rank: 1, id: '1007', name: '新手权益包', source: 'package', issuedCount: 5800, usedCount: 5600, usedRate: 96.6, status: 'offline' },
+      { rank: 2, id: '1001', name: '95折优惠券', source: 'inline', issuedCount: 4100, usedCount: 3842, usedRate: 93.7, status: 'online' },
+      { rank: 3, id: '1010', name: '滴滴出行30元券', source: 'thirdparty', issuedCount: 3400, usedCount: 3200, usedRate: 94.1, status: 'offline' },
+      { rank: 4, id: '1009', name: '9折信用卡年费折扣', source: 'inline', issuedCount: 2200, usedCount: 2100, usedRate: 95.5, status: 'online' },
+      { rank: 5, id: '1004', name: '爱奇艺季卡', source: 'thirdparty', issuedCount: 950, usedCount: 890, usedRate: 93.7, status: 'online' },
+      { rank: 6, id: '1002', name: '满300减50元', source: 'inline', issuedCount: 1350, usedCount: 1200, usedRate: 88.9, status: 'online' },
+      { rank: 7, id: '1005', name: '20元话费券', source: 'inline', issuedCount: 210, usedCount: 200, usedRate: 95.2, status: 'frozen' },
+      { rank: 8, id: '1003', name: '星巴克50元饮品券', source: 'thirdparty', issuedCount: 700, usedCount: 650, usedRate: 92.9, status: 'online' },
+      { rank: 9, id: '100006', name: '京东实物100元', source: 'physical', issuedCount: 130, usedCount: 120, usedRate: 92.3, status: 'online' },
+      { rank: 10, id: '100008', name: '贷款利率优惠券', source: 'inline', issuedCount: 90, usedCount: 88, usedRate: 97.8, status: 'online' }
+    ];
+
+    const todos = [
+      { type: 'red', count: 3, title: '待审批权益上架申请', desc: '您有3条权益上架申请待审批', action: '去审批' },
+      { type: 'blue', count: 5, title: '库存预警待处理', desc: '5个权益库存低于预警阈值', action: '去处理' },
+      { type: 'orange', count: 2, title: '投放任务异常', desc: '2个投放任务触发异常提醒', action: '去查看' },
+      { type: 'green', count: 8, title: '待核销对账单', desc: '8笔第三方权益待核对', action: '去核对' }
+    ];
+
+    const SOURCE_LABEL = { inline: '行内自建', thirdparty: '第三方', physical: '实物奖品', package: '权益包' };
+    const STATUS_LABEL = { online: '已上架', offline: '已下架', frozen: '已冻结', pending: '待审批' };
+    const STATUS_CLASS = { online: 'mk-badge mk-badge-success', offline: 'mk-badge mk-badge-gray', frozen: 'mk-badge mk-badge-info', pending: 'mk-badge mk-badge-warning' };
+    const RANK_COLORS = ['#ff4d4f', '#ff7a45', '#ffa940', '#1677ff', '#1677ff', '#1677ff', '#8c95a6', '#8c95a6', '#8c95a6', '#8c95a6'];
+
+    // 渲染KPI卡片
+    function renderKPICards() {
+      const container = document.getElementById('kpi-cards');
+      const kpis = [
+        { label: '权益总数', value: dashboardStats.totalEquity, sub: `在架 ${dashboardStats.onlineEquity}`, color: '#1677ff', icon: '📦' },
+        { label: '本月发放', value: dashboardStats.monthlyIssued.toLocaleString(), sub: '较上月 +12%', color: '#52c41a', icon: '📈' },
+        { label: '本月核销', value: dashboardStats.monthlyUsed.toLocaleString(), sub: `核销率 ${Math.round(dashboardStats.monthlyUsed / dashboardStats.monthlyIssued * 100)}%`, color: '#f0a500', icon: '📊' },
+        { label: '库存预警', value: dashboardStats.inventoryAlerts, sub: '需要及时补货', color: '#ff4d4f', icon: '⚠️' }
+      ];
+
+      container.innerHTML = kpis.map(kpi => `
+        <div class="mk-kpi-card" style="border-left-color: ${kpi.color};">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+            <div>
+              <p style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">${kpi.label}</p>
+              <p class="kpi-value" style="color: ${kpi.color};">${kpi.value}</p>
+              <p class="kpi-sub">${kpi.sub}</p>
+            </div>
+            <div class="kpi-icon-box" style="background: ${kpi.color}18;">
+              <span>${kpi.icon}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染趋势图（SVG双折线）
+    function renderTrendChart() {
+      const svg = document.getElementById('trend-chart');
+      const rect = svg.getBoundingClientRect();
+      const width = rect.width || 600;
+      const height = 220;
+      const padding = { top: 20, right: 20, bottom: 30, left: 50 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      const maxVal = 3600;
+      const yTicks = [0, 900, 1800, 2700, 3600];
+      const xStep = chartWidth / (trendData7Days.length - 1);
+
+      const issuedPoints = [];
+      const usedPoints = [];
+      trendData7Days.forEach((d, i) => {
+        const x = padding.left + i * xStep;
+        issuedPoints.push(`${x},${padding.top + chartHeight - (d.issued / maxVal * chartHeight)}`);
+        usedPoints.push(`${x},${padding.top + chartHeight - (d.used / maxVal * chartHeight)}`);
+      });
+
+      svg.innerHTML = `
+        <!-- 网格线与Y轴标签 -->
+        ${yTicks.map((v, i) => {
+          const y = padding.top + chartHeight * (1 - i / (yTicks.length - 1));
+          return `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#e8ecf0" stroke-dasharray="3,3"/>
+                  <text x="${padding.left - 8}" y="${y + 3}" text-anchor="end" style="font-size: 11px; fill: #8c95a6;">${v.toLocaleString()}</text>`;
+        }).join('')}
+
+        <!-- X轴标签 -->
+        ${trendData7Days.map((d, i) => {
+          const x = padding.left + i * xStep;
+          return `<text x="${x}" y="${height - 8}" text-anchor="middle" style="font-size: 11px; fill: #8c95a6;">${d.date}</text>`;
+        }).join('')}
+
+        <!-- 发放量折线 -->
+        <polyline fill="none" stroke="#1677ff" stroke-width="2" points="${issuedPoints.join(' ')}"/>
+        ${issuedPoints.map((p, i) => {
+          const [cx, cy] = p.split(',');
+          return `<circle cx="${cx}" cy="${cy}" r="3" fill="#fff" stroke="#1677ff" stroke-width="2"/>`;
+        }).join('')}
+
+        <!-- 使用量折线 -->
+        <polyline fill="none" stroke="#52c41a" stroke-width="2" points="${usedPoints.join(' ')}"/>
+        ${usedPoints.map((p, i) => {
+          const [cx, cy] = p.split(',');
+          return `<circle cx="${cx}" cy="${cy}" r="3" fill="#fff" stroke="#52c41a" stroke-width="2"/>`;
+        }).join('')}
+      `;
+    }
+
+    // 渲染库存预警
+    function renderInventoryAlerts() {
+      const container = document.getElementById('inventory-alerts');
+      container.innerHTML = inventoryAlerts.map((item, index) => `
+        <div class="alert-card" style="align-items: flex-start;">
+          <div class="alert-icon">!</div>
+          <div style="flex: 1; min-width: 0;">
+            <p class="alert-name">${item.name}</p>
+            <p class="alert-desc">剩余 <b>${item.currentStock}</b> / 预警值 ${item.alertThreshold}</p>
+          </div>
+          <button class="mk-btn mk-btn-primary mk-btn-sm" onclick="handleStockIn(${index})">入库</button>
+        </div>
+      `).join('');
+    }
+
+    // 入库操作
+    function handleStockIn(index) {
+      const item = inventoryAlerts[index];
+      item.currentStock += 100;
+      renderInventoryAlerts();
+      showToast(`「${item.name}」已成功入库100件`);
+    }
+
+    // Toast提示
+    function showToast(msg) {
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.style.cssText = 'position: fixed; top: 70px; right: 20px; background: #fff; border: 1px solid #e8ecf0; border-radius: 8px; padding: 12px 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 9999; font-size: 13px; display: flex; align-items: center; gap: 8px;';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    // 渲染待办信息
+    function renderTodos() {
+      const container = document.getElementById('todo-list');
+      container.innerHTML = todos.map(todo => `
+        <div class="todo-item">
+          <div class="todo-badge ${todo.type}">${todo.count}</div>
+          <div class="todo-content">
+            <div class="todo-title">${todo.title}</div>
+            <div class="todo-desc">${todo.desc}</div>
+          </div>
+          <span class="todo-action">${todo.action} →</span>
+        </div>
+      `).join('');
+    }
+
+    // 渲染热门权益柱状图
+    function renderHotEquityChart() {
+      const svg = document.getElementById('hot-equity-chart');
+      const rect = svg.getBoundingClientRect();
+      const width = rect.width || 900;
+      const height = 210;
+      const padding = { top: 20, right: 10, bottom: 60, left: 50 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const maxVal = 6000;
+      const yTicks = [0, 1500, 3000, 4500, 6000];
+
+      const barGroupWidth = chartWidth / hotEquityTop10.length;
+      const barWidth = Math.min(28, barGroupWidth * 0.35);
+      const gap = 2;
+
+      let bars = '';
+      let labels = '';
+      hotEquityTop10.forEach((item, i) => {
+        const groupX = padding.left + i * barGroupWidth + barGroupWidth / 2;
+        const issuedH = (item.issuedCount / maxVal) * chartHeight;
+        const usedH = (item.usedCount / maxVal) * chartHeight;
+
+        bars += `
+          <rect x="${groupX - barWidth - gap/2}" y="${padding.top + chartHeight - issuedH}" width="${barWidth}" height="${issuedH}" fill="${i < 3 ? '#1677ff' : '#91caff'}" rx="2"/>
+          <rect x="${groupX + gap/2}" y="${padding.top + chartHeight - usedH}" width="${barWidth}" height="${usedH}" fill="${i < 3 ? '#52c41a' : '#95de64'}" rx="2"/>
+        `;
+        labels += `<text x="${groupX}" y="${height - 35}" class="bar-x-label" transform="rotate(-30, ${groupX}, ${height - 35})">${item.name}</text>`;
+      });
+
+      svg.innerHTML = `
+        ${yTicks.map((v, i) => {
+          const y = padding.top + chartHeight * (1 - i / (yTicks.length - 1));
+          return `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#e8ecf0" stroke-dasharray="3,3"/>
+                  <text x="${padding.left - 6}" y="${y + 3}" text-anchor="end" style="font-size: 11px; fill: #8c95a6;">${v.toLocaleString()}</text>`;
+        }).join('')}
+        ${bars}
+        ${labels}
+      `;
+    }
+
+    // 渲染热门权益表格
+    function renderHotEquityTable() {
+      const tbody = document.getElementById('hot-equity-table');
+      tbody.innerHTML = hotEquityTop10.map(item => {
+        const usedRateColor = item.usedRate >= 95 ? '#52c41a' : item.usedRate >= 80 ? '#1677ff' : '#faad14';
+        return `
+          <tr>
+            <td>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: 700; background: ${item.rank <= 3 ? RANK_COLORS[item.rank - 1] : '#e8ecf0'}; color: ${item.rank <= 3 ? '#fff' : '#8c95a6'};">
+                ${item.rank}
+              </span>
+            </td>
+            <td style="font-weight: 500; color: #1a1a2e;">${item.name}</td>
+            <td><span class="mk-badge mk-badge-info">${SOURCE_LABEL[item.source]}</span></td>
+            <td style="font-weight: 600; color: #1677ff;">${item.issuedCount.toLocaleString()}</td>
+            <td>${item.usedCount.toLocaleString()}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="progress-bg">
+                  <div class="progress-fill" style="width: ${item.usedRate}%; background: ${usedRateColor};"></div>
+                </div>
+                <span style="font-size: 12px; font-weight: 500; color: ${usedRateColor};">${item.usedRate}%</span>
+              </div>
+            </td>
+            <td><span class="${STATUS_CLASS[item.status]}">${STATUS_LABEL[item.status]}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      renderKPICards();
+      renderTrendChart();
+      renderInventoryAlerts();
+      renderTodos();
+      renderHotEquityChart();
+      renderHotEquityTable();
+    });
+
+    window.addEventListener('resize', () => {
+      renderTrendChart();
+      renderHotEquityChart();
+    });
+  </script>
+</body>
+</html>

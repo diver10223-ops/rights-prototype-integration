@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>组件异常监测 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面标题 -->
+      <div class="mb-5">
+        <h2 class="text-sm font-bold text-slate-800">组件异常监测</h2>
+        <p class="text-[10px] text-slate-400 mt-1">监控权益营销中台各核心组件（活动引擎、规则引擎、权益发放、消息推送等）的健康状态与异常告警</p>
+      </div>
+
+      <!-- 01 组件健康概览区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">01</span>
+              <span class="text-[11px] font-medium text-slate-700">组件健康概览</span>
+            </div>
+            <p class="text-[10px] text-slate-400">实时刷新：<span class="text-emerald-600 font-medium">●正常</span></p>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-5 gap-3">
+            <div class="border border-emerald-200 rounded p-3 bg-emerald-50/50">
+              <div class="text-[10px] text-slate-500">总组件数</div>
+              <div class="text-base font-bold text-slate-700 mt-1">28</div>
+            </div>
+            <div class="border border-emerald-200 rounded p-3 bg-emerald-50/50">
+              <div class="text-[10px] text-slate-500">运行正常</div>
+              <div class="text-base font-bold text-emerald-600 mt-1">25</div>
+              <div class="text-[10px] text-emerald-600 mt-0.5">89.3%</div>
+            </div>
+            <div class="border border-amber-200 rounded p-3 bg-amber-50/50">
+              <div class="text-[10px] text-slate-500">性能预警</div>
+              <div class="text-base font-bold text-amber-600 mt-1">2</div>
+              <div class="text-[10px] text-amber-600 mt-0.5">7.1%</div>
+            </div>
+            <div class="border border-red-200 rounded p-3 bg-red-50/50">
+              <div class="text-[10px] text-slate-500">异常中断</div>
+              <div class="text-base font-bold text-red-600 mt-1">1</div>
+              <div class="text-[10px] text-red-600 mt-0.5">3.6%</div>
+            </div>
+            <div class="border border-blue-200 rounded p-3 bg-blue-50/50">
+              <div class="text-[10px] text-slate-500">整体可用率</div>
+              <div class="text-base font-bold text-blue-600 mt-1">99.85%</div>
+              <div class="text-[10px] text-blue-600 mt-0.5">SLA 99.9%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 组件状态列表区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">02</span>
+              <span class="text-[11px] font-medium text-slate-700">组件状态列表</span>
+            </div>
+            <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">
+              <i class="fas fa-sync mr-1"></i>手动刷新
+            </button>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-4 text-left font-medium">组件名称</th>
+              <th class="py-2.5 px-4 text-center font-medium">状态</th>
+              <th class="py-2.5 px-4 text-center font-medium">CPU使用率</th>
+              <th class="py-2.5 px-4 text-center font-medium">内存使用率</th>
+              <th class="py-2.5 px-4 text-center font-medium">TPS</th>
+              <th class="py-2.5 px-4 text-center font-medium">平均响应(ms)</th>
+              <th class="py-2.5 px-4 text-center font-medium">错误率</th>
+              <th class="py-2.5 px-4 text-left font-medium">最近告警</th>
+              <th class="py-2.5 px-4 text-left font-medium">最近检查</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">活动引擎</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>正常</span></td>
+              <td class="py-3 px-4 text-center">42%</td>
+              <td class="py-3 px-4 text-center">58%</td>
+              <td class="py-3 px-4 text-center">1,250</td>
+              <td class="py-3 px-4 text-center">85</td>
+              <td class="py-3 px-4 text-center text-emerald-600">0.02%</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">-</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:23</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">规则引擎</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>正常</span></td>
+              <td class="py-3 px-4 text-center">38%</td>
+              <td class="py-3 px-4 text-center">62%</td>
+              <td class="py-3 px-4 text-center">2,180</td>
+              <td class="py-3 px-4 text-center">62</td>
+              <td class="py-3 px-4 text-center text-emerald-600">0.01%</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">-</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:21</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">权益发放服务</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>性能预警</span></td>
+              <td class="py-3 px-4 text-center text-amber-600 font-medium">78%</td>
+              <td class="py-3 px-4 text-center text-amber-600 font-medium">85%</td>
+              <td class="py-3 px-4 text-center">1,850</td>
+              <td class="py-3 px-4 text-center text-amber-600">320</td>
+              <td class="py-3 px-4 text-center text-amber-600">0.18%</td>
+              <td class="py-3 px-4 text-[10px] text-amber-600">CPU持续高于75%</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:18</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">消息推送服务</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>正常</span></td>
+              <td class="py-3 px-4 text-center">28%</td>
+              <td class="py-3 px-4 text-center">45%</td>
+              <td class="py-3 px-4 text-center">3,250</td>
+              <td class="py-3 px-4 text-center">42</td>
+              <td class="py-3 px-4 text-center text-emerald-600">0.01%</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">-</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:25</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">客户中心接口</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>正常</span></td>
+              <td class="py-3 px-4 text-center">35%</td>
+              <td class="py-3 px-4 text-center">52%</td>
+              <td class="py-3 px-4 text-center">1,520</td>
+              <td class="py-3 px-4 text-center">95</td>
+              <td class="py-3 px-4 text-center text-emerald-600">0.03%</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">-</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:22</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">三方权益接口</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>异常中断</span></td>
+              <td class="py-3 px-4 text-center text-slate-400">-</td>
+              <td class="py-3 px-4 text-center text-slate-400">-</td>
+              <td class="py-3 px-4 text-center text-slate-400">0</td>
+              <td class="py-3 px-4 text-center text-red-600">超时</td>
+              <td class="py-3 px-4 text-center text-red-600 font-medium">12.50%</td>
+              <td class="py-3 px-4 text-[10px] text-red-600">腾讯权益接口超时</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:48:55</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">活动审批流</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>正常</span></td>
+              <td class="py-3 px-4 text-center">22%</td>
+              <td class="py-3 px-4 text-center">38%</td>
+              <td class="py-3 px-4 text-center">280</td>
+              <td class="py-3 px-4 text-center">125</td>
+              <td class="py-3 px-4 text-center text-emerald-600">0.00%</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">-</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:20</td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">数据统计服务</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] flex items-center gap-1 inline-flex"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>性能预警</span></td>
+              <td class="py-3 px-4 text-center text-amber-600 font-medium">82%</td>
+              <td class="py-3 px-4 text-center">75%</td>
+              <td class="py-3 px-4 text-center">920</td>
+              <td class="py-3 px-4 text-center text-amber-600">580</td>
+              <td class="py-3 px-4 text-center text-amber-600">0.25%</td>
+              <td class="py-3 px-4 text-[10px] text-amber-600">查询响应变慢</td>
+              <td class="py-3 px-4 text-[10px] text-slate-500">14:50:19</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 03 性能趋势区 -->
+      <div class="grid grid-cols-2 gap-5 mb-5">
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03</span>
+                <span class="text-[11px] font-medium text-slate-700">组件响应时间趋势（近24h）</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <canvas id="responseTimeChart" height="200"></canvas>
+          </div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">04</span>
+                <span class="text-[11px] font-medium text-slate-700">组件错误率趋势（近24h）</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <canvas id="errorRateChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 错误日志查看器 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-red-100 text-red-700 font-medium rounded">05</span>
+              <span class="text-[11px] font-medium text-slate-700">错误日志查看器</span>
+              <span class="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">近 24h · 共 86 条</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="text" placeholder="搜索错误消息/堆栈..." class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-56 focus:outline-none focus:border-blue-400" />
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部级别</option><option>FATAL</option><option>ERROR</option><option>WARN</option>
+              </select>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部组件</option><option>活动引擎</option><option>权益发放</option><option>三方权益</option><option>数据统计</option>
+              </select>
+              <button class="px-3 py-1.5 border border-slate-300 hover:bg-slate-50 text-slate-600 rounded text-[10px] font-bold">
+                <i class="fas fa-download mr-1"></i>导出日志
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2 px-3 text-left font-medium w-40">时间戳</th>
+              <th class="py-2 px-3 text-center font-medium w-16">级别</th>
+              <th class="py-2 px-3 text-left font-medium w-24">组件</th>
+              <th class="py-2 px-3 text-left font-medium">错误消息</th>
+              <th class="py-2 px-3 text-left font-medium w-32">关联 traceId</th>
+              <th class="py-2 px-3 text-center font-medium w-16">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-mono">
+            <tr class="hover:bg-red-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 14:32:18.245</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold">FATAL</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">三方权益</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">ConnectionTimeoutException: 美团接口调用超时 (read timeout 30000ms)</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9d12</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+            <tr class="hover:bg-red-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 14:28:42.108</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold">FATAL</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">三方权益</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">DataFormatException: 京东接口返回数据格式错误 (expected JSON, got HTML)</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9d11</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+            <tr class="hover:bg-orange-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 14:18:32.512</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">ERROR</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">权益发放</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">NullPointerException at BenefitGrantService.grant:286</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9d08</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+            <tr class="hover:bg-orange-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 13:55:21.788</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">ERROR</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">权益发放</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">DBConnectionPoolExhausted: 连接池耗尽 (active=50, max=50, waiting=12)</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9d05</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+            <tr class="hover:bg-yellow-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 13:42:08.045</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-semibold">WARN</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">活动引擎</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">SlowQueryWarning: 活动列表查询耗时 2.3s (threshold 1.0s)</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9d02</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+            <tr class="hover:bg-yellow-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 13:25:33.621</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-semibold">WARN</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">数据统计</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">CacheMissRate: 客群标签缓存命中率 78% (target 90%)</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9c98</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+            <tr class="hover:bg-orange-50/30">
+              <td class="py-1.5 px-3 text-slate-500 text-[10px]">2026-07-06 12:48:17.412</td>
+              <td class="py-1.5 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">ERROR</span></td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans">三方权益</td>
+              <td class="py-1.5 px-3 text-slate-700 font-sans text-[11px]">CircuitBreakerOpen: 携程接口熔断器已打开 (5min 内失败 50 次)</td>
+              <td class="py-1.5 px-3 text-blue-600 text-[10px]">tr-7f3a82bc9c91</td>
+              <td class="py-1.5 px-3 text-center text-[10px] font-sans"><span class="text-blue-600 hover:text-blue-800 cursor-pointer">详情</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="p-3 border-t border-slate-200 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400">显示 1-7 条 / 共 86 条</div>
+          <div class="flex items-center gap-1">
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-400 cursor-not-allowed" disabled>上一页</button>
+            <button class="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">1</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">2</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">3</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">下一页</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 告警处理面板 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-purple-100 text-purple-700 font-medium rounded">06</span>
+              <span class="text-[11px] font-medium text-slate-700">告警处理面板</span>
+              <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px]">未处理 3 条 · 升级 1 条</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部状态</option><option>未处理</option><option>处理中</option><option>已处理</option><option>已忽略</option><option>已升级</option>
+              </select>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部级别</option><option>严重</option><option>高</option><option>中</option><option>低</option>
+              </select>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部负责人</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-3 text-left font-medium">告警时间</th>
+              <th class="py-2.5 px-3 text-center font-medium">级别</th>
+              <th class="py-2.5 px-3 text-left font-medium">告警标题</th>
+              <th class="py-2.5 px-3 text-left font-medium">关联组件</th>
+              <th class="py-2.5 px-3 text-left font-medium">告警内容</th>
+              <th class="py-2.5 px-3 text-left font-medium">处理人</th>
+              <th class="py-2.5 px-3 text-center font-medium">状态</th>
+              <th class="py-2.5 px-3 text-center font-medium">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-red-50/30">
+              <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 14:35:08</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold">严重</span></td>
+              <td class="py-2.5 px-3 text-slate-700">三方权益接口全面超时</td>
+              <td class="py-2.5 px-3 text-slate-600">美团 / 京东 / 携程</td>
+              <td class="py-2.5 px-3 text-[10px] text-slate-500">5min 内失败 156 次，错误率飙升至 18%</td>
+              <td class="py-2.5 px-3"><span class="text-blue-600 cursor-pointer">李雪</span> <span class="text-[10px] text-amber-600 ml-1">[已升级]</span></td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">处理中</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">处理</span>
+                <span class="text-[11px] text-purple-600 hover:text-purple-800 cursor-pointer">转交</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-red-50/30">
+              <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 13:55:21</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">高</span></td>
+              <td class="py-2.5 px-3 text-slate-700">权益发放 DB 连接池耗尽</td>
+              <td class="py-2.5 px-3 text-slate-600">权益发放服务</td>
+              <td class="py-2.5 px-3 text-[10px] text-slate-500">连接池已达上限，等待队列堆积 12 个</td>
+              <td class="py-2.5 px-3 text-slate-600">王浩</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">处理中</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">处理</span>
+                <span class="text-[11px] text-slate-400 cursor-not-allowed">已分配</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-red-50/30">
+              <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 12:48:17</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">高</span></td>
+              <td class="py-2.5 px-3 text-slate-700">携程权益接口熔断器打开</td>
+              <td class="py-2.5 px-3 text-slate-600">携程接口</td>
+              <td class="py-2.5 px-3 text-[10px] text-slate-500">5min 内失败 50 次，自动熔断</td>
+              <td class="py-2.5 px-3 text-slate-600">陈刚</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">处理中</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">处理</span>
+                <span class="text-[11px] text-slate-400 cursor-not-allowed">已分配</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 11:08:42</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-semibold">中</span></td>
+              <td class="py-2.5 px-3 text-slate-700">活动引擎慢查询</td>
+              <td class="py-2.5 px-3 text-slate-600">活动引擎</td>
+              <td class="py-2.5 px-3 text-[10px] text-slate-500">活动列表查询 P95 耗时 2.3s</td>
+              <td class="py-2.5 px-3 text-slate-600">张敏</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已处理</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-slate-400 cursor-not-allowed">已完成</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 09:32:18</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] font-semibold">低</span></td>
+              <td class="py-2.5 px-3 text-slate-700">客群标签缓存命中率下降</td>
+              <td class="py-2.5 px-3 text-slate-600">数据统计</td>
+              <td class="py-2.5 px-3 text-[10px] text-slate-500">命中率 78% < 目标 90%</td>
+              <td class="py-2.5 px-3 text-slate-600">—</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">已忽略</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer">查看</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">2026-07-05 18:15:36</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">高</span></td>
+              <td class="py-2.5 px-3 text-slate-700">权益发放引擎 OOM 风险</td>
+              <td class="py-2.5 px-3 text-slate-600">权益发放服务</td>
+              <td class="py-2.5 px-3 text-[10px] text-slate-500">堆内存使用率突增至 92%</td>
+              <td class="py-2.5 px-3 text-slate-600">李雪</td>
+              <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已处理</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-slate-400 cursor-not-allowed">已完成</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/nav.js"></script>
+
+
+</body>
+</html>

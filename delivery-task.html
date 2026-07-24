@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益投放任务 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面特定样式 */
+    .mk-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 24px;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .w-3\.5 { width: 14px; height: 14px; }
+    .accent-primary { accent-color: #1677ff; }
+    .space-y-3 > * + * { margin-top: 12px; }
+    .mt-3 { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page" style="padding: 0;">
+          <!-- 查询栏 -->
+          <div style="background: #fff; border-radius: 8px; border: 1px solid var(--border); padding: 16px 24px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: #555;">任务名称</span>
+                <input class="mk-input" style="width: 180px;" placeholder="请输入任务名称" id="searchKeyword">
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: #555;">状态</span>
+                <select class="mk-select" style="width: 120px;" id="searchStatus">
+                  <option>全部</option>
+                  <option>处理中</option>
+                  <option>成功</option>
+                  <option>失败</option>
+                  <option>待执行</option>
+                </select>
+              </div>
+              <div style="margin-left: auto; display: flex; gap: 8px;">
+                <button class="mk-btn mk-btn-primary" onclick="searchTasks()">查询</button>
+                <button class="mk-btn mk-btn-default" onclick="resetSearch()">重置</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">投放任务列表</span>
+              <button class="mk-btn mk-btn-primary" onclick="location.href='delivery-task-create.html'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                新增投放任务
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" id="taskTable">
+                <thead>
+                  <tr>
+                    <th>任务名称</th>
+                    <th>权益名称</th>
+                    <th>投放客群</th>
+                    <th>发放数量</th>
+                    <th>状态</th>
+                    <th>触发方式</th>
+                    <th>提交时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="taskTableBody">
+                  <!-- 动态生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 详情弹窗 -->
+  <div class="mk-modal-overlay" id="detailModal" style="display: none;">
+    <div class="mk-modal" style="max-width: 480px;">
+      <div class="mk-modal-header">
+        <span>投放任务详情</span>
+        <button class="mk-modal-close" onclick="closeDetailModal()">✕</button>
+      </div>
+      <div class="mk-modal-body" id="detailModalBody">
+        <!-- 动态生成 -->
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeDetailModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="mk-toast" id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const mockTasks = [
+      { id: 'T001', taskName: '618大促全客群发放', equityName: '满100减20券', targetType: '全客群', targetDesc: '全行客户', quantity: 50000, status: '成功', triggerType: '立即发放', submitTime: '2024-06-01 09:00:00', remark: '618活动专项' },
+      { id: 'T002', taskName: '贷款客户专属优惠', equityName: '贷款利率优惠券', targetType: '客群圈选', targetDesc: '近6月有贷款意向客户', quantity: 3000, status: '处理中', triggerType: '立即发放', submitTime: '2024-06-15 14:30:00', remark: '' },
+      { id: 'T003', taskName: '新客注册礼包', equityName: '京东E卡50元', targetType: '客群圈选', targetDesc: '注册30天内新客', quantity: 10000, status: '待执行', triggerType: '事件达标', submitTime: '2024-06-20 10:00:00', remark: '新客激活' },
+      { id: 'T004', taskName: '理财到期回访', equityName: '理财利率折扣券', targetType: '客群圈选', targetDesc: '理财产品到期客群', quantity: 5000, status: '失败', triggerType: '立即发放', submitTime: '2024-05-10 08:00:00', remark: '库存不足失败' },
+    ];
+
+    let filteredTasks = [...mockTasks];
+
+    function getStatusClass(status) {
+      if (status === '成功') return 'mk-badge mk-badge-success';
+      if (status === '失败') return 'mk-badge mk-badge-danger';
+      if (status === '处理中') return 'mk-badge mk-badge-primary';
+      return 'mk-badge mk-badge-warning';
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('taskTableBody');
+      if (filteredTasks.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted-foreground" style="padding: 40px;">暂无数据</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filteredTasks.map(t => `
+        <tr>
+          <td class="font-medium">${t.taskName}</td>
+          <td>${t.equityName}</td>
+          <td><span style="font-size: 12px;">${t.targetDesc}</span></td>
+          <td>${t.quantity.toLocaleString()}</td>
+          <td><span class="${getStatusClass(t.status)}">${t.status}</span></td>
+          <td>${t.triggerType}</td>
+          <td class="text-muted-foreground">${t.submitTime}</td>
+          <td>
+            <button class="mk-icon-btn" title="查看" onclick="showDetail('${t.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function searchTasks() {
+      const keyword = document.getElementById('searchKeyword').value;
+      const status = document.getElementById('searchStatus').value;
+      filteredTasks = mockTasks.filter(t => {
+        if (keyword && !t.taskName.includes(keyword) && !t.equityName.includes(keyword)) return false;
+        if (status !== '全部' && t.status !== status) return false;
+        return true;
+      });
+      renderTable();
+    }
+
+    function resetSearch() {
+      document.getElementById('searchKeyword').value = '';
+      document.getElementById('searchStatus').value = '全部';
+      filteredTasks = [...mockTasks];
+      renderTable();
+    }
+
+    function showDetail(id) {
+      const task = mockTasks.find(t => t.id === id);
+      if (!task) return;
+      const modal = document.getElementById('detailModal');
+      const body = document.getElementById('detailModalBody');
+      const fields = [
+        ['任务名称', task.taskName],
+        ['权益名称', task.equityName],
+        ['投放客群', task.targetDesc],
+        ['发放数量', task.quantity],
+        ['状态', task.status],
+        ['触发方式', task.triggerType],
+        ['提交时间', task.submitTime],
+        ['备注', task.remark || '—']
+      ];
+      body.innerHTML = fields.map(([k, v]) => `
+        <div style="display: flex; gap: 8px;">
+          <span style="min-width: 80px; color: #8c95a6; font-size: 13px;">${k}：</span>
+          <span style="font-size: 13px; color: #333;">${v}</span>
+        </div>
+      `).join('');
+      modal.style.display = 'flex';
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+      if (e.target === this) closeDetailModal();
+    });
+
+    // 初始化
+    renderTable();
+  </script>
+</body>
+</html>

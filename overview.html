@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>首页概览 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 漏斗图样式 */
+    .funnel-bar {
+      height: 32px;
+      background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .funnel-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+    /* 图表占位符 */
+    .chart-placeholder {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+    }
+    /* 健康标签 */
+    .health-excellent { background: #dcfce7; color: #166534; }
+    .health-normal { background: #fef9c3; color: #854d0e; }
+    .health-low { background: #fed7aa; color: #c2410c; }
+    .health-critical { background: #fecaca; color: #dc2626; }
+    /* 数据表格 */
+    .data-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      font-size: 10px;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .data-table td {
+      font-size: 11px;
+    }
+    .data-positive { color: #16a34a; font-weight: 500; }
+    .data-negative { color: #dc2626; font-weight: 500; }
+    .data-highlight { background: #fef9c3; }
+    /* 导出图标按钮 */
+    .export-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      color: #64748b;
+      font-size: 10px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .export-icon:hover {
+      background: #f1f5f9;
+      color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <!-- 中部主体：侧边栏 + 内容区 -->
+  <div class="main">
+    <!-- 侧边栏 -->
+
+    <!-- 主内容区 -->
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面目标说明 -->
+      <!-- 页面目标 已简化融入页面 -->
+
+      <!-- ==================== 01 指标总览区 ==================== -->
+      <div class="mk-list-panel">
+  <div><!-- 卡片标题栏 -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 font-medium">01</span>
+            <span class="text-xs font-semibold text-slate-700">指标总览区</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <!-- 筛选控件 -->
+            <div class="flex items-center gap-2">
+              <select class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white">
+                <option>近7天</option>
+                <option selected>近30天</option>
+                <option>近90天</option>
+              </select>
+              <select class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white">
+                <option selected>全部权益</option>
+                <option>礼包资源</option>
+                <option>券码资源</option>
+                <option>服务资源</option>
+                <option>实物资源</option>
+                <option>金融资源</option>
+              </select>
+            </div>
+            <!-- 导出图标 -->
+            <button class="export-icon">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              导出
+            </button>
+          </div>
+        </div>
+        
+        <div class="p-4">
+          <!-- 核心指标卡片 -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <!-- 领取人数 -->
+            <div class="border border-dashed border-slate-300 bg-slate-50/50 p-4 rounded-lg">
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-[11px] text-slate-500 font-medium block">领取人数</span>
+                  <span class="text-2xl font-mono font-bold text-slate-900 mt-1 block">12,450</span>
+                  <span class="text-[10px] text-emerald-600 font-medium mt-1 block flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                    ↑ 8.2%
+                  </span>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded health-normal font-semibold">正常</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-2">近7日新增 946 人</div>
+            </div>
+            
+            <!-- 领取率 -->
+            <div class="border border-dashed border-slate-300 bg-slate-50/50 p-4 rounded-lg">
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-[11px] text-slate-500 font-medium block">领取率</span>
+                  <span class="text-2xl font-mono font-bold text-slate-900 mt-1 block">61%</span>
+                  <span class="text-[10px] text-red-500 font-medium mt-1 block flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                    ↓ 3.5%
+                  </span>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded health-low font-semibold">偏低</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-2">领取率61%｜偏低，近4成客户未触发领取动作</div>
+            </div>
+            
+            <!-- 使用率 -->
+            <div class="border border-dashed border-slate-300 bg-slate-50/50 p-4 rounded-lg">
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-[11px] text-slate-500 font-medium block">使用率</span>
+                  <span class="text-2xl font-mono font-bold text-slate-900 mt-1 block">47%</span>
+                  <span class="text-[10px] text-emerald-600 font-medium mt-1 block flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                    ↑ 2.1%
+                  </span>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded health-normal font-semibold">正常</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-2">大盘均值 45%，当前高于均值</div>
+            </div>
+            
+            <!-- 核销率 -->
+            <div class="border border-dashed border-slate-300 bg-slate-50/50 p-4 rounded-lg">
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-[11px] text-slate-500 font-medium block">核销率</span>
+                  <span class="text-2xl font-mono font-bold text-slate-900 mt-1 block">43%</span>
+                  <span class="text-[10px] text-emerald-600 font-medium mt-1 block flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                    ↑ 5.8%
+                  </span>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded health-normal font-semibold">正常</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-2">核销率43%｜正常，核销链路畅通</div>
+            </div>
+          </div>
+          
+          <!-- 全链路漏斗可视化 -->
+          <div class="border-t border-slate-200 pt-4">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] text-slate-600 font-semibold">全链路转化漏斗</span>
+              <span class="text-[10px] text-slate-400">定位流失最大环节</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] text-slate-500 w-20 text-right">可触达客户</span>
+                <div class="flex-1">
+                  <div class="funnel-bar" style="width: 100%; background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);">20,400 人</div>
+                </div>
+                <span class="text-[10px] text-slate-400 w-16">100%</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="w-20"></span>
+                <div class="flex-1 flex items-center">
+                  <span class="funnel-arrow text-[10px]">↓ 流失 39%</span>
+                </div>
+                <span class="text-[10px] text-red-500 w-16">-39%</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] text-slate-500 w-20 text-right">领取客户</span>
+                <div class="flex-1">
+                  <div class="funnel-bar" style="width: 61%; background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);">12,450 人</div>
+                </div>
+                <span class="text-[10px] text-slate-600 w-16">61%</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="w-20"></span>
+                <div class="flex-1 flex items-center">
+                  <span class="funnel-arrow text-[10px]">↓ 流失 23%</span>
+                </div>
+                <span class="text-[10px] text-red-500 w-16">-23%</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] text-slate-500 w-20 text-right">使用客户</span>
+                <div class="flex-1">
+                  <div class="funnel-bar" style="width: 47%; background: linear-gradient(135deg, #10b981 0%, #34d399 100%);">5,851 人</div>
+                </div>
+                <span class="text-[10px] text-slate-600 w-16">47%</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="w-20"></span>
+                <div class="flex-1 flex items-center">
+                  <span class="funnel-arrow text-[10px]">↓ 流失 9%</span>
+                </div>
+                <span class="text-[10px] text-red-500 w-16">-9%</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] text-slate-500 w-20 text-right">核销客户</span>
+                <div class="flex-1">
+                  <div class="funnel-bar" style="width: 43%; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">5,353 人</div>
+                </div>
+                <span class="text-[10px] text-slate-600 w-16">43%</span>
+              </div>
+            </div>
+            <div class="mt-3 p-2 bg-amber-50 border border-amber-200 rounded text-[10px] text-amber-700">
+              <strong>流失分析：</strong>领取环节流失最大(39%)，建议优化领取触达链路，增加短信/APP推送频次
+            </div>
+          </div>
+        </div></div>
+</div>
+
+      <!-- ==================== 02 趋势分析区 ==================== -->
+      <div class="mk-list-panel">
+  <div><!-- 卡片标题栏 -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 font-medium">02</span>
+            <span class="text-xs font-semibold text-slate-700">趋势分析区</span>
+          </div>
+          <button class="export-icon">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            导出
+          </button>
+        </div>
+        
+        <div class="p-4">
+          <!-- 筛选控件 -->
+          <div class="flex flex-wrap items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] text-slate-500">时间粒度:</label>
+              <div class="flex rounded-lg overflow-hidden border border-slate-300">
+                <button class="px-3 py-1 text-[10px] bg-slate-100 text-slate-700 font-medium">日</button>
+                <button class="px-3 py-1 text-[10px] bg-white text-slate-600 hover:bg-slate-50">周</button>
+                <button class="px-3 py-1 text-[10px] bg-white text-slate-600 hover:bg-slate-50">月</button>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] text-slate-500">指标:</label>
+              <label class="flex items-center gap-1 text-[10px] text-slate-600 cursor-pointer">
+                <input type="checkbox" checked class="w-3 h-3 rounded">领取权益数量
+              </label>
+              <label class="flex items-center gap-1 text-[10px] text-slate-600 cursor-pointer">
+                <input type="checkbox" checked class="w-3 h-3 rounded">使用权益数量
+              </label>
+              <label class="flex items-center gap-1 text-[10px] text-slate-600 cursor-pointer">
+                <input type="checkbox" checked class="w-3 h-3 rounded">领取人数
+              </label>
+              <label class="flex items-center gap-1 text-[10px] text-slate-600 cursor-pointer">
+                <input type="checkbox" checked class="w-3 h-3 rounded">使用人数
+              </label>
+            </div>
+          </div>
+          
+          <!-- 图表区域 -->
+          <div class="chart-placeholder mb-4" style="min-height: 180px;">
+            <svg class="w-10 h-10 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4v16h16"/>
+            </svg>
+            <span class="text-[11px] text-slate-400">趋势图表展示区域</span>
+            <div class="flex gap-6 mt-3">
+              <div class="text-center">
+                <div class="w-3 h-3 bg-blue-500 rounded-full mx-auto mb-1"></div>
+                <span class="text-[10px] text-slate-500">领取权益数量</span>
+              </div>
+              <div class="text-center">
+                <div class="w-3 h-3 bg-emerald-500 rounded-full mx-auto mb-1"></div>
+                <span class="text-[10px] text-slate-500">使用权益数量</span>
+              </div>
+              <div class="text-center">
+                <div class="w-3 h-3 bg-purple-500 rounded-full mx-auto mb-1"></div>
+                <span class="text-[10px] text-slate-500">领取人数</span>
+              </div>
+              <div class="text-center">
+                <div class="w-3 h-3 bg-amber-500 rounded-full mx-auto mb-1"></div>
+                <span class="text-[10px] text-slate-500">使用人数</span>
+              </div>
+            </div>
+            <div class="flex gap-4 mt-3">
+              <span class="text-[9px] px-2 py-0.5 bg-purple-100 text-purple-700 rounded">6.1 活动上线</span>
+            </div>
+          </div>
+          
+          <!-- 数据小结 -->
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+            <div class="flex items-start gap-2">
+              <svg class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <div class="text-[11px] text-slate-600">
+                <span class="font-semibold text-slate-700">周期结论：</span>本周领取量环比下降12%，无新增推送活动为主要影响因素。建议下周增加定向推送频次，预期可提升领取转化5-8%。
+              </div>
+            </div>
+          </div>
+        </div></div>
+</div>
+
+      <!-- ==================== 03 客群分层分析 ==================== -->
+      <div class="mk-list-panel">
+  <div><!-- 卡片标题栏 -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 font-medium">03</span>
+            <span class="text-xs font-semibold text-slate-700">客群分层分析</span>
+          </div>
+          <button class="export-icon">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            导出
+          </button>
+        </div>
+        
+        <div class="p-4">
+          <!-- 客群多指标表格 -->
+          <div class="overflow-x-auto">
+            <table class="w-full data-table">
+              <thead>
+                <tr>
+                  <th class="px-3 py-2 text-left">客群名称</th>
+                  <th class="px-3 py-2 text-center">客群规模</th>
+                  <th class="px-3 py-2 text-center">进行中活动数</th>
+                  <th class="px-3 py-2 text-center">领取率</th>
+                  <th class="px-3 py-2 text-center">使用率</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-700">
+                <tr class="border-b border-slate-100">
+                  <td class="px-3 py-2 font-medium">VIP对公客户</td>
+                  <td class="px-3 py-2 text-center">1,250</td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium">3</span>
+                  </td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="data-positive">78%</span>
+                    <span class="text-[9px] text-emerald-600 block">+17%</span>
+                  </td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="data-positive">49%</span>
+                    <span class="text-[9px] text-emerald-600 block">+2%</span>
+                  </td>
+                </tr>
+                <tr class="border-b border-slate-100">
+                  <td class="px-3 py-2 font-medium">代发企业客户</td>
+                  <td class="px-3 py-2 text-center">3,480</td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium">5</span>
+                  </td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="data-positive">65%</span>
+                    <span class="text-[9px] text-emerald-600 block">+4%</span>
+                  </td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="data-positive">52%</span>
+                    <span class="text-[9px] text-emerald-600 block">+5%</span>
+                  </td>
+                </tr>
+                <tr class="border-b border-slate-100">
+                  <td class="px-3 py-2 font-medium">杭州地区客户</td>
+                  <td class="px-3 py-2 text-center">892</td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[10px] font-medium">2</span>
+                  </td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="text-slate-700">58%</span>
+                    <span class="text-[9px] text-red-500 block">-3%</span>
+                  </td>
+                  <td class="px-3 py-2 text-center">
+                    <span class="data-negative">38%</span>
+                    <span class="text-[9px] text-red-500 block">-9%</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- 分层运营提示 -->
+          <div class="mt-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+            <div class="text-[10px] font-semibold text-blue-700 mb-2">分层运营建议</div>
+            <ul class="text-[10px] text-slate-600 space-y-1">
+              <li>• <span class="text-blue-600 font-medium">VIP客户：</span>领取意愿强，需补充核销激励提升最终转化</li>
+              <li>• <span class="text-purple-600 font-medium">代发客户：</span>使用率表现优异，可扩大白名单规模</li>
+              <li>• <span class="text-amber-600 font-medium">杭州客户：</span>使用率偏低，建议增加线下核销引导</li>
+            </ul>
+          </div>
+        </div></div>
+</div>
+
+      <!-- ==================== 04 活动效果排行 ==================== -->
+      <div class="mk-list-panel">
+  <div><!-- 卡片标题栏 -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 font-medium">04</span>
+            <span class="text-xs font-semibold text-slate-700">活动效果排行</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <select class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white">
+              <option>按领取率排序</option>
+              <option>按核销率排序</option>
+              <option>按单客成本排序</option>
+              <option>按总成本排序</option>
+            </select>
+            <button class="export-icon">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              导出
+            </button>
+          </div>
+        </div>
+        
+        <div class="p-4 overflow-x-auto">
+          <table class="w-full data-table">
+            <thead>
+              <tr>
+                <th class="px-2 py-2 text-left">活动名称</th>
+                <th class="px-2 py-2 text-center">参与对象</th>
+                <th class="px-2 py-2 text-center">活动类型</th>
+                <th class="px-2 py-2 text-center">活动场景</th>
+                <th class="px-2 py-2 text-center">覆盖客群</th>
+                <th class="px-2 py-2 text-center">覆盖人数</th>
+                <th class="px-2 py-2 text-center">领取/率</th>
+                <th class="px-2 py-2 text-center">使用/率</th>
+                <th class="px-2 py-2 text-center">核销/率</th>
+                <th class="px-2 py-2 text-center">总预算</th>
+                <th class="px-2 py-2 text-center">核销金额</th>
+                <th class="px-2 py-2 text-center">单客成本</th>
+              </tr>
+            </thead>
+            <tbody class="text-slate-700">
+              <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="px-2 py-2 font-medium text-[10px]">科技型小微开户送红包</td>
+                <td class="px-2 py-2 text-center">
+                  <span class="text-[9px] px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">企业活动</span>
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">领权益</td>
+                <td class="px-2 py-2 text-center text-[10px]">开户有礼</td>
+                <td class="px-2 py-2 text-center text-[10px]">VIP客户, 代发客户</td>
+                <td class="px-2 py-2 text-center text-[10px]">85家企业</td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-positive">1,248</span>/72%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-positive">724</span>/58%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-positive">649</span>/52%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">¥156,000</td>
+                <td class="px-2 py-2 text-center text-[10px]">¥81,125</td>
+                <td class="px-2 py-2 text-center text-[10px] text-emerald-600">¥125</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="px-2 py-2 font-medium text-[10px]">年中代发薪专项权益</td>
+                <td class="px-2 py-2 text-center">
+                  <span class="text-[9px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">员工活动</span>
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">发权益</td>
+                <td class="px-2 py-2 text-center text-[10px]">代发薪专项</td>
+                <td class="px-2 py-2 text-center text-[10px]">代发客户</td>
+                <td class="px-2 py-2 text-center text-[10px]">3,280人</td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-positive">2,230</span>/68%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-positive">1,138</span>/51%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-positive">1,009</span>/46%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">¥500,000</td>
+                <td class="px-2 py-2 text-center text-[10px]">¥498,000</td>
+                <td class="px-2 py-2 text-center text-[10px] text-emerald-600">¥152</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="px-2 py-2 font-medium text-[10px]">对公事件营销-开户有礼</td>
+                <td class="px-2 py-2 text-center">
+                  <span class="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">高管活动</span>
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">事件营销</td>
+                <td class="px-2 py-2 text-center text-[10px]">开户有礼</td>
+                <td class="px-2 py-2 text-center text-[10px]">VIP客户</td>
+                <td class="px-2 py-2 text-center text-[10px]">128人</td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span>85</span>/66%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span>62</span>/73%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span>58</span>/68%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">¥150,000</td>
+                <td class="px-2 py-2 text-center text-[10px]">¥102,000</td>
+                <td class="px-2 py-2 text-center text-[10px] text-emerald-600">¥340</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-slate-50 data-highlight">
+                <td class="px-2 py-2 font-medium text-[10px]">新客首绑有礼活动</td>
+                <td class="px-2 py-2 text-center">
+                  <span class="text-[9px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">员工活动</span>
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">领权益</td>
+                <td class="px-2 py-2 text-center text-[10px]">新客专项</td>
+                <td class="px-2 py-2 text-center text-[10px]">代发客户, 杭州客户...</td>
+                <td class="px-2 py-2 text-center text-[10px]">2,180人</td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span>1,199</span>/55%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span>504</span>/42%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span>312</span>/35%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">¥280,000</td>
+                <td class="px-2 py-2 text-center text-[10px]">¥98,064</td>
+                <td class="px-2 py-2 text-center text-[10px] text-red-500 font-medium">¥314</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="px-2 py-2 font-medium text-[10px]">企业员工生日福利</td>
+                <td class="px-2 py-2 text-center">
+                  <span class="text-[9px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">员工活动</span>
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">抽奖</td>
+                <td class="px-2 py-2 text-center text-[10px]">生日福利</td>
+                <td class="px-2 py-2 text-center text-[10px]">代发客户</td>
+                <td class="px-2 py-2 text-center text-[10px]">892人</td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-negative">339</span>/38%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-negative">95</span>/28%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">
+                  <span class="data-negative">75</span>/22%
+                </td>
+                <td class="px-2 py-2 text-center text-[10px]">¥180,000</td>
+                <td class="px-2 py-2 text-center text-[10px]">¥29,625</td>
+                <td class="px-2 py-2 text-center text-[10px] text-red-500 font-medium">¥395</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <!-- 效果结论说明 -->
+          <div class="mt-3 p-2 bg-slate-50 rounded text-[10px] text-slate-500 flex flex-wrap gap-4">
+            <span><span class="inline-block w-2 h-2 bg-blue-500 rounded-full mr-1"></span>企业活动：覆盖企业数去重</span>
+            <span><span class="inline-block w-2 h-2 bg-purple-500 rounded-full mr-1"></span>员工活动：覆盖人数去重</span>
+            <span><span class="inline-block w-2 h-2 bg-amber-500 rounded-full mr-1"></span>高管活动：覆盖人数去重</span>
+          </div>
+        </div></div>
+</div>
+
+      <!-- ==================== 05 资源消耗区 ==================== -->
+      <div class="mk-list-panel">
+  <div><!-- 卡片标题栏 -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 font-medium">05</span>
+            <span class="text-xs font-semibold text-slate-700">资源消耗区</span>
+          </div>
+          <button class="export-icon">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            导出
+          </button>
+        </div>
+        
+        <div class="p-4">
+          <!-- 成本总览卡片 -->
+          <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+              <div class="text-[10px] text-blue-600 font-medium">本期总投放成本</div>
+              <div class="text-xl font-bold text-blue-800 mt-1">¥2,450,000</div>
+            </div>
+            <div class="p-3 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200">
+              <div class="text-[10px] text-emerald-600 font-medium">核销分摊成本</div>
+              <div class="text-xl font-bold text-emerald-800 mt-1">¥1,680,000</div>
+            </div>
+            <div class="p-3 bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg border border-amber-200">
+              <div class="text-[10px] text-amber-600 font-medium">预算剩余占比</div>
+              <div class="text-xl font-bold text-amber-800 mt-1">31.4% <span class="text-[10px] font-normal">（正常）</span></div>
+            </div>
+          </div>
+          
+          <!-- 三块图表分区 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 库存消耗趋势 -->
+            <div class="border border-slate-200 rounded-lg p-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-semibold text-slate-700">库存消耗趋势</span>
+                <span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-600 rounded">3项预警</span>
+              </div>
+              <div class="chart-placeholder" style="min-height: 120px;">
+                <svg class="w-6 h-6 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span class="text-[10px] text-slate-400">库存消耗图表</span>
+              </div>
+              <div class="mt-2 space-y-1">
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-slate-500">券码资源</span>
+                  <span class="text-emerald-600">78% 剩余</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5">
+                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 78%"></div>
+                </div>
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-slate-500">实物资源</span>
+                  <span class="text-red-500">12% 预警</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5">
+                  <div class="bg-red-500 h-1.5 rounded-full" style="width: 12%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 供应商核销金额排行榜 -->
+            <div class="border border-slate-200 rounded-lg p-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-semibold text-slate-700">供应商核销金额排行</span>
+                <span class="text-[10px] text-slate-400">Top 10</span>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-600">星巴克</span>
+                  <span class="text-[10px] font-medium text-emerald-600">¥486,000</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 100%"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-600">话费充值</span>
+                  <span class="text-[10px] font-medium text-emerald-600">¥358,000</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 74%"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-600">商超购物卡</span>
+                  <span class="text-[10px] font-medium text-blue-600">¥286,000</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                  <div class="bg-blue-500 h-1.5 rounded-full" style="width: 59%"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-600">实物礼品</span>
+                  <span class="text-[10px] font-medium text-amber-600">¥215,000</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                  <div class="bg-amber-500 h-1.5 rounded-full" style="width: 44%"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400">...</span>
+                  <span class="text-[10px] text-slate-400">¥335,000</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 权益资源分类核销成本饼图 -->
+            <div class="border border-slate-200 rounded-lg p-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-semibold text-slate-700">权益资源核销成本</span>
+              </div>
+              <div class="chart-placeholder" style="min-height: 120px;">
+                <svg class="w-6 h-6 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                </svg>
+                <span class="text-[10px] text-slate-400">核销成本饼图</span>
+              </div>
+              <div class="mt-2 space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    <span class="text-[10px] text-slate-600">券码资源</span>
+                  </div>
+                  <span class="text-[10px] font-medium text-slate-700">¥892,000 <span class="text-slate-400">(53%)</span></span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                    <span class="text-[10px] text-slate-600">实物资源</span>
+                  </div>
+                  <span class="text-[10px] font-medium text-slate-700">¥425,000 <span class="text-slate-400">(25%)</span></span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <span class="text-[10px] text-slate-600">服务资源</span>
+                  </div>
+                  <span class="text-[10px] font-medium text-slate-700">¥268,000 <span class="text-slate-400">(16%)</span></span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-amber-500 rounded-full"></span>
+                    <span class="text-[10px] text-slate-600">金融资源</span>
+                  </div>
+                  <span class="text-[10px] font-medium text-slate-700">¥95,000 <span class="text-slate-400">(6%)</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+</div>
+
+    
+      </div>
+    </div>
+  </div>
+  <!-- 底部 Footer -->
+</div>
+
+<script src="js/nav.js"></script>
+
+</body>
+</html>

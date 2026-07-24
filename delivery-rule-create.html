@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新建规则 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 24px;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e8ecf0;
+      padding: 24px 32px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #222;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e8ecf0;
+    }
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .form-row.center { align-items: center; }
+    .form-row .label {
+      min-width: 110px;
+      text-align: right;
+      padding-right: 16px;
+      font-size: 14px;
+      color: #555;
+      flex-shrink: 0;
+      padding-top: 6px;
+    }
+    .form-row.center .label { padding-top: 0; }
+    .form-row .label .required { color: #ff4d4f; margin-right: 2px; }
+    .form-row .content { flex: 1; }
+    .radio-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .radio-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .cond-group-card {
+      flex: 1;
+      border: 1px solid #e8ecf0;
+      border-radius: 8px;
+      padding: 16px 20px;
+      background: #fafbfc;
+    }
+    .cond-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .cond-row:last-child { margin-bottom: 0; }
+    .logic-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 20px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+    .logic-btn.and { background: #1677ff; color: #fff; }
+    .logic-btn.or { background: #ff7a00; color: #fff; }
+    .event-panel {
+      margin-top: 16px;
+      border: 1px solid #bae0ff;
+      border-radius: 8px;
+      background: #f0f7ff;
+      overflow: hidden;
+    }
+    .event-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: #e6f4ff;
+      border-bottom: 1px solid #bae0ff;
+    }
+    .event-card {
+      background: #fff;
+      border: 1px solid #e8ecf0;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 0;
+    }
+    .w-3\.5 { width: 14px; height: 14px; accent-color: #1677ff; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content" style="background: #f5f7fa;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 24px;">
+          <!-- 基本信息 -->
+          <div class="section-card">
+            <h4 class="section-title">基本信息</h4>
+            <div style="display: flex; gap: 32px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 260px;">
+                <div style="font-size: 13px; color: #555; margin-bottom: 6px;"><span style="color: #ff4d4f; margin-right: 2px;">*</span>规则名称</div>
+                <input class="mk-input" id="ruleName" placeholder="请输入规则名称">
+              </div>
+              <div style="flex: 1; min-width: 260px;">
+                <div style="font-size: 13px; color: #555; margin-bottom: 6px;">有效期</div>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="validType" value="长期有效" checked onchange="changeValidType(this.value)" class="w-3.5"> 长期有效</label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="validType" value="指定时间" onchange="changeValidType(this.value)" class="w-3.5"> 指定时间</label>
+                </div>
+                <div id="validTimeRange" style="display: none; margin-top: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="date" class="mk-input" id="validStart" style="width: 140px;">
+                    <span style="color: #aaa;">—</span>
+                    <input type="date" class="mk-input" id="validEnd" style="width: 140px;">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 20px;">
+              <div style="font-size: 13px; color: #555; margin-bottom: 6px;">规则描述</div>
+              <textarea class="mk-textarea" id="ruleDesc" rows="3" style="width: 100%; max-width: 680px;" placeholder="请输入规则描述"></textarea>
+            </div>
+          </div>
+
+          <!-- 发放条件 -->
+          <div class="section-card">
+            <h4 class="section-title">发放条件</h4>
+            <div id="condSummary" style="margin-bottom: 16px; font-size: 13px; color: #555; display: flex; align-items: center; flex-wrap: wrap; gap: 4px;"></div>
+            <div id="condGroupsContainer" style="position: relative;"></div>
+            <button class="mk-btn mk-btn-default" style="margin-top: 8px; display: flex; align-items: center; gap: 4px; font-size: 13px;" onclick="addCondGroup()" id="addGroupBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              添加条件组
+            </button>
+          </div>
+
+          <!-- 发放方式 -->
+          <div class="section-card">
+            <h4 class="section-title">发放方式</h4>
+            <div style="font-size: 13px; color: #555; margin-bottom: 10px;"><span style="color: #ff4d4f; margin-right: 2px;">*</span>发放类型</div>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 0;" id="issueTypeRadios">
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="issueType" value="直接发放" checked onchange="changeIssueType(this.value)" class="w-3.5"> 直接发放</label>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="issueType" value="活动触发" onchange="changeIssueType(this.value)" class="w-3.5"> 活动触发</label>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <input type="radio" name="issueType" value="事件触发对接" onchange="changeIssueType(this.value)" class="w-3.5">
+                事件触发对接
+                <span style="display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; line-height: 16px;">高级</span>
+              </label>
+            </div>
+            <div id="eventTriggerPanel" style="display: none;"></div>
+          </div>
+
+          <!-- 领取规则 -->
+          <div class="section-card">
+            <h4 class="section-title">领取规则</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px 40px;">
+              <div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">领取方式</div>
+                <div class="radio-row">
+                  <label><input type="radio" name="receiveType" value="手动领取" checked class="w-3.5"> 手动领取</label>
+                  <label><input type="radio" name="receiveType" value="自动发放" class="w-3.5"> 自动发放</label>
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">每人限额次数</div>
+                <input class="mk-input" id="limitPerPerson" style="max-width: 240px;" placeholder="留空则不限" type="number" min="1">
+              </div>
+              <div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">领取截止</div>
+                <div class="radio-row">
+                  <label><input type="radio" name="receiveDeadline" value="当日有效" class="w-3.5"> 当日有效</label>
+                  <label><input type="radio" name="receiveDeadline" value="按活动期" checked class="w-3.5"> 按活动期</label>
+                  <label><input type="radio" name="receiveDeadline" value="自定义" onchange="toggleCustomDeadline(this.value)" class="w-3.5"> 自定义</label>
+                </div>
+                <div id="customDeadlineInput" style="display: none; margin-top: 8px;">
+                  <input type="datetime-local" class="mk-input" id="customDeadline" style="width: 220px;">
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">每日限额次数</div>
+                <input class="mk-input" id="dailyLimit" style="max-width: 240px;" placeholder="留空则不限" type="number" min="1">
+              </div>
+            </div>
+          </div>
+
+          <!-- 使用门槛 & 失效期 -->
+          <div class="section-card">
+            <h4 class="section-title">使用门槛 & 失效期</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px 40px;">
+              <div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">使用门槛</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <input class="mk-input" id="threshold" style="flex: 1; max-width: 180px;" placeholder="如：100" type="number" min="0">
+                  <select class="mk-select" id="thresholdUnit" style="width: 80px;">
+                    <option>元</option>
+                    <option>次</option>
+                    <option>分</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">领后失效期</div>
+                <div>
+                  <div class="radio-row" style="margin-bottom: 8px;">
+                    <label><input type="radio" name="expireType" value="天数" checked onchange="toggleExpireType(this.value)" class="w-3.5"> 天数</label>
+                    <label><input type="radio" name="expireType" value="指定日期" onchange="toggleExpireType(this.value)" class="w-3.5"> 指定日期</label>
+                  </div>
+                  <div id="expireDaysInput">
+                    <input class="mk-input" id="expireDays" style="max-width: 180px;" placeholder="如：30天" type="number" min="1">
+                  </div>
+                  <div id="expireDateInput" style="display: none;">
+                    <input type="date" class="mk-input" id="expireDate" style="width: 180px;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 底部按钮 -->
+          <div style="display: flex; justify-content: flex-end; gap: 10px; padding-bottom: 32px;">
+            <button class="mk-btn mk-btn-default" onclick="location.href='delivery-rule.html'">取消</button>
+            <button class="mk-btn mk-btn-primary" onclick="saveRule()">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="mk-toast" id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // 条件字段选项
+    const COND_FIELD_OPTS = ['客户等级', '账户余额', '年龄', '性别', '开户时长', '信用卡状态', '贷款余额', '理财资产'];
+    const COND_OP_OPTS = ['等于', '大于', '小于', '大于等于', '小于等于', '不等于', '包含'];
+    const GRADE_OPTS = ['钻石', '黄金', '白银', '普通'];
+    const EVENT_TRIGGER_OPTS = ['信用卡账单消费', '注册开户', '购买理财产品', '首次贷款申请', '消费达标', '活期存款达标', '信用卡绑定'];
+    const EVENT_METRIC_OPTS = ['交易次数', '交易金额', '账户余额', '持仓金额'];
+    const EVENT_OP_OPTS = ['=', '>', '<', '>=', '<='];
+    const GROUP_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+    let condGroups = [];
+    let eventConds = [];
+    let condUid = 0;
+    let eventUid = 0;
+
+    // 初始化一个条件组
+    function initCondGroups() {
+      condGroups = [createCondGroup('A')];
+      renderCondGroups();
+    }
+
+    function createCondGroup(label) {
+      return {
+        id: `g${++condUid}`,
+        label: `条件${label}`,
+        innerLogic: 'AND',
+        items: [{ id: `c${++condUid}`, field: '客户等级', op: '等于', value: '' }]
+      };
+    }
+
+    function createEventCond() {
+      return {
+        id: `ev${++eventUid}`,
+        triggerEvent: '信用卡账单消费',
+        condType: 'quantitative',
+        metric: '交易次数',
+        op: '=',
+        value: '',
+        completionStatus: 1,
+        dayRange: '30',
+        logic: 'AND'
+      };
+    }
+
+    function renderCondGroups() {
+      const container = document.getElementById('condGroupsContainer');
+      const summary = document.getElementById('condSummary');
+      const totalConds = condGroups.reduce((a, g) => a + g.items.length, 0);
+
+      // 渲染汇总
+      summary.innerHTML = `<span>总计 ${totalConds} 条：</span>` + condGroups.map((g, gi) => `
+        <span style="display: inline-flex; align-items: center; justify-content: center; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; background: #1677ff; color: #fff;">${g.label}</span>
+        ${gi < condGroups.length - 1 ? '<span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 18px; border-radius: 3px; font-size: 11px; font-weight: 700; background: #1677ff; color: #fff;">且</span>' : ''}
+      `).join('');
+
+      // 渲染条件组
+      container.innerHTML = condGroups.map((g, gi) => `
+        <div style="display: flex; align-items: flex-start; gap: 0; margin-bottom: 12px;">
+          ${gi > 0 ? `
+            <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px; padding-top: 16px;">
+              <div style="width: 1px; height: 16px; background: #d9dee6;"></div>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #1677ff; color: #fff; flex-shrink: 0;">且</span>
+              <span style="font-size: 11px; color: #aaa; margin-top: 2px;">或</span>
+            </div>
+          ` : '<div style="width: 32px;"></div>'}
+          <div class="cond-group-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+              <span style="font-size: 14px; font-weight: 600; color: #333;">${g.label}</span>
+              ${condGroups.length > 1 ? `<button style="background: none; border: none; cursor: pointer; font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 4px;" onclick="removeCondGroup('${g.id}')">🗑 移除</button>` : ''}
+            </div>
+            <div style="padding-left: 8px; border-left: 2px solid #e8ecf0;">
+              ${g.items.map((item, ci) => `
+                <div class="cond-row">
+                  <select class="mk-select" style="width: 120px;" onchange="updateCondItem('${g.id}', '${item.id}', 'field', this.value)">
+                    ${COND_FIELD_OPTS.map(f => `<option ${item.field === f ? 'selected' : ''}>${f}</option>`).join('')}
+                  </select>
+                  <select class="mk-select" style="width: 100px;" onchange="updateCondItem('${g.id}', '${item.id}', 'op', this.value)">
+                    ${COND_OP_OPTS.map(o => `<option ${item.op === o ? 'selected' : ''}>${o}</option>`).join('')}
+                  </select>
+                  ${item.field === '客户等级' ? `
+                    <select class="mk-select" style="flex: 1; max-width: 240px;" onchange="updateCondItem('${g.id}', '${item.id}', 'value', this.value)">
+                      <option value="">选择等级</option>
+                      ${GRADE_OPTS.map(grade => `<option ${item.value === grade ? 'selected' : ''}>${grade}</option>`).join('')}
+                    </select>
+                  ` : `
+                    <input class="mk-input" style="flex: 1; max-width: 240px;" placeholder="请输入条件值" value="${item.value}" onchange="updateCondItem('${g.id}', '${item.id}', 'value', this.value)">
+                  `}
+                  <button style="background: none; border: none; cursor: pointer; color: #aaa; display: flex; align-items: center;" onclick="removeCondItem('${g.id}', '${item.id}')">🗑</button>
+                </div>
+                ${g.items.length > 1 && ci < g.items.length - 1 ? `
+                  <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; padding-left: 4px;">
+                    <button class="logic-btn ${g.innerLogic === 'AND' ? 'and' : 'or'}" onclick="toggleInnerLogic('${g.id}')">${g.innerLogic === 'AND' ? '且' : '或'}</button>
+                    <span style="font-size: 12px; color: #aaa;">${g.innerLogic === 'AND' ? '或' : '且'}满足下一条件</span>
+                  </div>
+                ` : ''}
+              `).join('')}
+            </div>
+            <button class="mk-btn mk-btn-default" style="margin-top: 12px; font-size: 12px; height: 28px; padding: 0 12px; display: flex; align-items: center; gap: 4px;" onclick="addCondItem('${g.id}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              添加条件
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // 更新添加按钮状态
+      document.getElementById('addGroupBtn').disabled = condGroups.length >= 6;
+    }
+
+    function addCondGroup() {
+      if (condGroups.length >= 6) return;
+      condGroups.push(createCondGroup(GROUP_LABELS[condGroups.length]));
+      renderCondGroups();
+    }
+
+    function removeCondGroup(gid) {
+      condGroups = condGroups.filter(g => g.id !== gid);
+      condGroups.forEach((g, i) => { g.label = `条件${GROUP_LABELS[i]}`; });
+      renderCondGroups();
+    }
+
+    function addCondItem(gid) {
+      const group = condGroups.find(g => g.id === gid);
+      if (group) {
+        group.items.push({ id: `c${++condUid}`, field: '客户等级', op: '等于', value: '' });
+        renderCondGroups();
+      }
+    }
+
+    function removeCondItem(gid, cid) {
+      const group = condGroups.find(g => g.id === gid);
+      if (group) {
+        group.items = group.items.filter(c => c.id !== cid);
+        renderCondGroups();
+      }
+    }
+
+    function updateCondItem(gid, cid, field, value) {
+      const group = condGroups.find(g => g.id === gid);
+      if (group) {
+        const item = group.items.find(c => c.id === cid);
+        if (item) item[field] = value;
+        if (field === 'field') renderCondGroups(); // 切换字段时重新渲染（可能需要切换输入类型）
+      }
+    }
+
+    function toggleInnerLogic(gid) {
+      const group = condGroups.find(g => g.id === gid);
+      if (group) {
+        group.innerLogic = group.innerLogic === 'AND' ? 'OR' : 'AND';
+        renderCondGroups();
+      }
+    }
+
+    // 有效期切换
+    function changeValidType(type) {
+      document.getElementById('validTimeRange').style.display = type === '指定时间' ? 'block' : 'none';
+    }
+
+    // 发放类型切换
+    function changeIssueType(type) {
+      const panel = document.getElementById('eventTriggerPanel');
+      if (type === '事件触发对接') {
+        eventConds = [createEventCond()];
+        renderEventPanel();
+        panel.style.display = 'block';
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    function renderEventPanel() {
+      const panel = document.getElementById('eventTriggerPanel');
+      panel.innerHTML = `
+        <div class="event-panel">
+          <div class="event-panel-header">
+            <span style="font-size: 13px; font-weight: 600; color: #1677ff;">事件触发对接配置（高级）</span>
+            <span style="font-size: 12px; color: #8c95a6;">满足所有事件条件时，自动触发权益发放</span>
+          </div>
+          <div style="padding: 16px 20px;" id="eventCardsContainer">
+            ${eventConds.map((ev, idx) => `
+              <div style="margin-bottom: 0;">
+                <div class="event-card">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                    <span style="font-size: 13px; font-weight: 600; color: #333;">事件 ${idx + 1}</span>
+                    ${eventConds.length > 1 ? `<button style="background: none; border: none; cursor: pointer; color: #aaa;" onclick="removeEventCond('${ev.id}')">🗑</button>` : ''}
+                  </div>
+                  <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; color: #8c95a6; margin-bottom: 6px;">触发事件</div>
+                    <select class="mk-select" style="width: 100%; max-width: 360px;" onchange="updateEventCond('${ev.id}', 'triggerEvent', this.value)">
+                      ${EVENT_TRIGGER_OPTS.map(o => `<option ${ev.triggerEvent === o ? 'selected' : ''}>${o}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div style="margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #8c95a6; margin-bottom: 8px;">达标条件</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                      <button style="padding: 3px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: ${ev.condType === 'quantitative' ? '#1677ff' : '#f0f0f0'}; color: ${ev.condType === 'quantitative' ? '#fff' : '#666'};" onclick="updateEventCond('${ev.id}', 'condType', 'quantitative')">量化型事件</button>
+                      <button style="padding: 3px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: ${ev.condType === 'completion' ? '#1677ff' : '#f0f0f0'}; color: ${ev.condType === 'completion' ? '#fff' : '#666'};" onclick="updateEventCond('${ev.id}', 'condType', 'completion')">完成型事件</button>
+                    </div>
+                    ${ev.condType === 'quantitative' ? `
+                      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <select class="mk-select" style="width: 110px;" onchange="updateEventCond('${ev.id}', 'metric', this.value)">
+                          ${EVENT_METRIC_OPTS.map(m => `<option ${ev.metric === m ? 'selected' : ''}>${m}</option>`).join('')}
+                        </select>
+                        <select class="mk-select" style="width: 80px;" onchange="updateEventCond('${ev.id}', 'op', this.value)">
+                          ${EVENT_OP_OPTS.map(o => `<option ${ev.op === o ? 'selected' : ''}>${o}</option>`).join('')}
+                        </select>
+                        <input class="mk-input" style="width: 120px;" type="number" min="0" placeholder="如：1000" value="${ev.value}" onchange="updateEventCond('${ev.id}', 'value', this.value)">
+                        <span style="font-size: 13px; color: #555;">${ev.metric === '交易次数' ? '次' : '元'}</span>
+                      </div>
+                    ` : `
+                      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <div style="font-size: 13px; color: #555;">完成状态</div>
+                        <button style="padding: 4px 14px; border-radius: 4px; font-size: 13px; cursor: pointer; border: none; font-weight: 500; background: ${ev.completionStatus === 1 ? '#1677ff' : '#f0f0f0'}; color: ${ev.completionStatus === 1 ? '#fff' : '#666'};" onclick="updateEventCond('${ev.id}', 'completionStatus', 1)">≥ 1（已完成）</button>
+                        <button style="padding: 4px 14px; border-radius: 4px; font-size: 13px; cursor: pointer; border: none; font-weight: 500; background: ${ev.completionStatus === 0 ? '#8c95a6' : '#f0f0f0'}; color: ${ev.completionStatus === 0 ? '#fff' : '#666'};" onclick="updateEventCond('${ev.id}', 'completionStatus', 0)">≥ 0（未完成）</button>
+                      </div>
+                    `}
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 13px; color: #555;">统计时间范围</span>
+                    <input class="mk-input" style="width: 80px;" type="number" min="1" value="${ev.dayRange}" onchange="updateEventCond('${ev.id}', 'dayRange', this.value)">
+                    <span style="font-size: 13px; color: #555;">天内</span>
+                  </div>
+                </div>
+                ${idx < eventConds.length - 1 ? `
+                  <div style="display: flex; align-items: center; gap: 10px; padding: 10px 4px;">
+                    <button class="logic-btn ${ev.logic === 'AND' ? 'and' : 'or'}" onclick="toggleEventLogic('${ev.id}')">${ev.logic === 'AND' ? '且' : '或'}</button>
+                    <button style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 24px; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #d9dee6; background: #f5f5f5; color: #666;" onclick="toggleEventLogic('${ev.id}')">${ev.logic === 'AND' ? '或' : '且'}</button>
+                    <span style="font-size: 12px; color: #8c95a6;">需同时满足下一事件条件</span>
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+          <button class="mk-btn mk-btn-default" style="margin: 12px 20px; display: flex; align-items: center; gap: 6px; font-size: 13px;" onclick="addEventCond()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            添加事件条件
+          </button>
+        </div>
+      `;
+    }
+
+    function addEventCond() {
+      eventConds.push(createEventCond());
+      renderEventPanel();
+    }
+
+    function removeEventCond(id) {
+      eventConds = eventConds.filter(e => e.id !== id);
+      renderEventPanel();
+    }
+
+    function updateEventCond(id, field, value) {
+      const ev = eventConds.find(e => e.id === id);
+      if (ev) {
+        ev[field] = value;
+        if (field === 'condType') renderEventPanel();
+      }
+    }
+
+    function toggleEventLogic(id) {
+      const ev = eventConds.find(e => e.id === id);
+      if (ev) ev.logic = ev.logic === 'AND' ? 'OR' : 'AND';
+      renderEventPanel();
+    }
+
+    // 领取截止切换
+    function toggleCustomDeadline(value) {
+      document.getElementById('customDeadlineInput').style.display = value === '自定义' ? 'block' : 'none';
+    }
+
+    // 失效期切换
+    function toggleExpireType(value) {
+      document.getElementById('expireDaysInput').style.display = value === '天数' ? 'block' : 'none';
+      document.getElementById('expireDateInput').style.display = value === '指定日期' ? 'block' : 'none';
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // 保存规则
+    function saveRule() {
+      const ruleName = document.getElementById('ruleName').value;
+      if (!ruleName) {
+        showToast('请填写规则名称');
+        return;
+      }
+      showToast('规则已保存');
+      setTimeout(() => { location.href = 'delivery-rule.html'; }, 1200);
+    }
+
+    // 初始化
+    initCondGroups();
+  </script>
+</body>
+</html>

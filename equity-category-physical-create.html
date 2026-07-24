@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新建实物奖品品类 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      background: #f5f7fa;
+    }
+    .form-container {
+      max-width: 900px;
+      margin: 32px auto;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e8ecf0;
+      padding: 32px 48px;
+    }
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .form-label {
+      min-width: 112px;
+      text-align: right;
+      padding-right: 12px;
+      padding-top: 6px;
+      font-size: 13px;
+      color: #555;
+      flex-shrink: 0;
+    }
+    .form-label-required::before {
+      content: '*';
+      color: #ff4d4f;
+      margin-right: 2px;
+    }
+    .form-content {
+      flex: 1;
+    }
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding-top: 2px;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .radio-item input[type="radio"] {
+      accent-color: #1677ff;
+    }
+    .inline-form-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .inline-label {
+      min-width: 80px;
+      text-align: right;
+      padding-right: 8px;
+      font-size: 13px;
+      color: #555;
+    }
+    .inline-label-required::before {
+      content: '*';
+      color: #ff4d4f;
+      margin-right: 2px;
+    }
+    .image-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .image-upload-box {
+      width: 60px;
+      height: 60px;
+      border: 1px dashed #d9dee6;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+    }
+    .image-preview {
+      position: relative;
+      display: inline-block;
+    }
+    .image-preview img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #e8ecf0;
+    }
+    .image-remove {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #d9dee6;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .textarea-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .char-count {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="form-container">
+          <!-- 实物奖品类型 -->
+          <div class="form-row">
+            <label class="form-label form-label-required">实物奖品类型:</label>
+            <div class="form-content">
+              <div class="radio-group" id="physical-types"></div>
+            </div>
+          </div>
+
+          <!-- 奖品名称 -->
+          <div class="form-row">
+            <label class="form-label form-label-required">奖品名称:</label>
+            <div class="form-content">
+              <input type="text" class="mk-input" id="prize-name" placeholder="请输入奖品名称">
+            </div>
+          </div>
+
+          <!-- 奖品品牌 + 奖品型号 -->
+          <div class="form-row">
+            <label class="form-label form-label-required">奖品品牌:</label>
+            <input type="text" class="mk-input" style="width: 240px;" id="brand" placeholder="请输入品牌">
+            <label class="form-label form-label-required" style="min-width: 90px;">奖品型号:</label>
+            <div class="form-content">
+              <input type="text" class="mk-input" id="model" placeholder="请输入型号">
+            </div>
+          </div>
+
+          <!-- 权益图片 -->
+          <div class="form-row">
+            <label class="form-label">权益图片</label>
+            <div class="form-content" id="image-area">
+              <div class="image-upload" onclick="uploadImage()">
+                <div class="image-upload-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8c95a6" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <span style="font-size: 12px; color: #8c95a6; margin-top: 4px;">（120x120）px</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 详细信息 -->
+          <div class="form-row">
+            <label class="form-label">详细信息:</label>
+            <div class="form-content">
+              <!-- 商品面值 -->
+              <div class="inline-form-row">
+                <span class="inline-label inline-label-required">商品面值</span>
+                <input type="text" class="mk-input" style="width: 340px;" id="price" placeholder="请输入商品面值">
+                <span style="font-size: 13px; color: #8c95a6;">元</span>
+              </div>
+              <!-- 权益成本 -->
+              <div class="inline-form-row">
+                <span class="inline-label inline-label-required">权益成本:</span>
+                <input type="text" class="mk-input" style="width: 340px;" id="cost" placeholder="请输入权益成本">
+                <span style="font-size: 13px; color: #8c95a6;">元</span>
+              </div>
+              <!-- 领取方式 -->
+              <div class="inline-form-row">
+                <span class="inline-label inline-label-required">领取方式:</span>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" name="pickupMethod" value="邮寄" checked>
+                    邮寄
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" name="pickupMethod" value="自取">
+                    自取
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 领取说明 -->
+          <div class="form-row">
+            <label class="form-label form-label-required">领取说明:</label>
+            <div class="form-content">
+              <div class="textarea-wrap">
+                <textarea class="mk-textarea" id="pickup-desc" placeholder="请输入200字以下的使用说明" maxlength="200" style="width: 100%; min-height: 80px;" oninput="updateCharCount()"></textarea>
+                <span class="char-count" id="char-count">0/200</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 按钮 -->
+          <div class="btn-group">
+            <button class="mk-btn mk-btn-default" style="width: 80px;" onclick="goBack()">取消</button>
+            <button class="mk-btn mk-btn-primary" style="width: 80px;" onclick="handleCreate()" id="create-btn">创建</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    const PHYSICAL_TYPES = ['食品/特产', '家用电器', '日常生活用品', '箱包服饰', '出行和汽车用品', '玩具娱乐用品'];
+
+    let hasImage = false;
+
+    // 渲染实物奖品类型
+    function renderPhysicalTypes() {
+      const container = document.getElementById('physical-types');
+      container.innerHTML = PHYSICAL_TYPES.map((t, i) => `
+        <label class="radio-item">
+          <input type="radio" name="physicalType" value="${t}" ${i === 0 ? 'checked' : ''}>
+          ${t}
+        </label>
+      `).join('');
+    }
+
+    // 更新字数统计
+    function updateCharCount() {
+      const textarea = document.getElementById('pickup-desc');
+      const count = document.getElementById('char-count');
+      count.textContent = `${textarea.value.length}/200`;
+    }
+
+    // 模拟上传图片
+    function uploadImage() {
+      // 模拟上传成功
+      hasImage = true;
+      const area = document.getElementById('image-area');
+      area.innerHTML = `
+        <div class="image-preview">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect fill='%23f0f2f5' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%238c95a6' font-size='12'%3E示例图片%3C/text%3E%3C/svg%3E" alt="权益图片">
+          <button class="image-remove" onclick="removeImage(event)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      `;
+    }
+
+    // 移除图片
+    function removeImage(e) {
+      e.stopPropagation();
+      hasImage = false;
+      const area = document.getElementById('image-area');
+      area.innerHTML = `
+        <div class="image-upload" onclick="uploadImage()">
+          <div class="image-upload-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8c95a6" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <span style="font-size: 12px; color: #8c95a6; margin-top: 4px;">（120x120）px</span>
+        </div>
+      `;
+    }
+
+    // 返回
+    function goBack() {
+      // 在实际应用中会返回上一页，这里模拟跳转
+      if (confirm('确定要取消创建吗？')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // 创建
+    function handleCreate() {
+      const physicalType = document.querySelector('input[name="physicalType"]:checked')?.value;
+      const prizeName = document.getElementById('prize-name').value;
+      const brand = document.getElementById('brand').value;
+      const model = document.getElementById('model').value;
+      const price = document.getElementById('price').value;
+      const cost = document.getElementById('cost').value;
+      const pickupMethod = document.querySelector('input[name="pickupMethod"]:checked')?.value;
+      const pickupDesc = document.getElementById('pickup-desc').value;
+
+      if (!prizeName || !brand || !model || !price || !cost || !pickupDesc) {
+        alert('请填写所有必填项');
+        return;
+      }
+
+      const btn = document.getElementById('create-btn');
+      btn.textContent = '创建中...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        alert('创建成功！');
+        window.location.href = 'index.html';
+      }, 1200);
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPhysicalTypes();
+    });
+  </script>
+</body>
+</html>

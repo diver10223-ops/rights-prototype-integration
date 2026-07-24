@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益核销总对账 - 对公权益营销中台</title>
+  <!-- 全局统一样式 -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面专属Tab局部样式，复用全局变量无冲突 */
+    .tab-wrap {
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      padding: 8px 20px;
+      border: 1px solid var(--mk-border);
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+    .tab-btn:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+    .tab-btn.active {
+      background: #e6f4ff;
+      border-color: var(--mk-primary);
+      color: var(--mk-primary);
+      font-weight: 500;
+    }
+    .tab-content-item {
+      display: none;
+    }
+    .tab-content-item.active {
+      display: block;
+    }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .mk-kpi-card {
+      background: #fff;
+      border: 1px solid #e8ecf0;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .kpi-card-total { border-left:4px solid #333; }
+    .kpi-card-success { border-left:4px solid #52c41a; background:#f0fff4; }
+    .kpi-card-error { border-left:4px solid #f5222d; background:#fff1f0; }
+    .kpi-card-ing { border-left:4px solid #1677ff; background:#f0f7ff; }
+    .kpi-card-refund { border-left:4px solid #faad14; background:#fff7e6; }
+    .kpi-value {
+      font-size:28px;
+      font-weight:700;
+      margin:4px 0;
+    }
+    .status-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .tag-success { background:#d9f7be; color:#389e0d; }
+    .tag-error { background:#fff1f0; color:#f5222d; }
+    .tag-processing { background:#e6f7ff; color:#1677ff; }
+    .tag-refund { background:#fff7e6; color:#fa8c16; }
+    .tag-gray { background:#f0f0f0; color:#666; }
+    /* 修复筛选表单统一间距 */
+    .mk-search-form {
+      display:grid;
+      gap:16px 20px;
+      align-items:end;
+    }
+    .form-row {
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .form-label {
+      font-size:13px;
+      color:#4a5568;
+    }
+    .form-actions {
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+    }
+  </style>
+</head>
+<body>
+  <!-- 标准外层布局 -->
+  <div class="app layout-v2">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <div class="top-shell">
+        <header class="app-header" id="header"></header>
+        <div class="page-tabs" id="pageTabs"></div>
+      </div>
+      <div class="content">
+        <div class="mk-page">
+          <!-- 页面主标题 -->
+          <div style="margin-bottom:12px;">
+            <h1 style="font-size:28px; font-weight:600; color:#1a1a2e; margin:0;">权益核销总对账</h1>
+          </div>
+          <!-- 【修复：功能说明卡片，匹配截图样式】 -->
+          <div class="mk-list-panel" style="margin-bottom:12px; padding:30px 10px;">
+            <div style="text-align:center;">
+              <p style="font-size:16px; color:#8c95a6; line-height:2;">
+                统一查询行内、第三方、实物全品类权益核销对账记录，支持多维度筛选导出
+              </p>
+            </div>
+          </div>
+
+          <!-- 4个切换Tab按钮区 -->
+          <div class="tab-wrap">
+            <button class="tab-btn active" data-tab="tab1">核销总记录</button>
+            <button class="tab-btn" data-tab="tab2">行内权益核销记录</button>
+            <button class="tab-btn" data-tab="tab3">三方权益核销记录</button>
+            <button class="tab-btn" data-tab="tab4">实物权益核销记录</button>
+          </div>
+
+          <!-- Tab1：核销总记录（图1内容） -->
+          <div class="tab-content-item active" id="tab1">
+            <!-- 顶部KPI统计卡片 -->
+            <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr);">
+              <div class="mk-kpi-card kpi-card-total">
+                <p style="font-size:12px; color:#8c95a6;">总记录数</p>
+                <p class="kpi-value">1,247</p>
+              </div>
+              <div class="mk-kpi-card kpi-card-success">
+                <p style="font-size:12px; color:#389e0d;">已成功</p>
+                <p class="kpi-value" style="color:#389e0d;">1,189</p>
+              </div>
+              <div class="mk-kpi-card kpi-card-error">
+                <p style="font-size:12px; color:#f5222d;">异常挂死</p>
+                <p class="kpi-value" style="color:#f5222d;">12</p>
+              </div>
+              <div class="mk-kpi-card kpi-card-ing">
+                <p style="font-size:12px; color:#1677ff;">结算中</p>
+                <p class="kpi-value" style="color:#1677ff;">28</p>
+              </div>
+              <div class="mk-kpi-card kpi-card-refund">
+                <p style="font-size:12px; color:#fa8c16;">退单/冲正</p>
+                <p class="kpi-value" style="color:#fa8c16;">18</p>
+              </div>
+            </div>
+            <!-- 筛选面板 -->
+            <div class="mk-search-panel">
+              <div class="mk-search-form" style="grid-template-columns:220px 220px 180px 180px auto;">
+                <div class="form-row">
+                  <label class="form-label">核销编号</label>
+                  <input class="el-input__inner" placeholder="核销编号...">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">企业名称</label>
+                  <input class="el-input__inner" placeholder="企业名称...">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">全部状态</label>
+                  <select class="el-input__inner">
+                    <option>全部状态</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label class="form-label">对账状态</label>
+                  <select class="el-input__inner">
+                    <option>对账状态</option>
+                  </select>
+                </div>
+                <div class="form-actions" style="align-items:end;">
+                  <button class="mk-btn mk-btn--primary">搜索</button>
+                  <button class="mk-btn mk-btn--default">重置</button>
+                </div>
+              </div>
+            </div>
+            <!-- 核销记录表格 -->
+            <div class="mk-list-panel" style="margin-top:12px;">
+              <div class="mk-panel-header">
+                <span class="mk-panel-title">核销记录列表</span>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="mk-compact-table">
+                  <thead>
+                    <tr>
+                      <th>核销编号</th>
+                      <th>企业名称</th>
+                      <th>权益名称</th>
+                      <th>数量</th>
+                      <th>金额</th>
+                      <th>核销时间</th>
+                      <th>供应商</th>
+                      <th>状态</th>
+                      <th>对账状态</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>V202605001</td>
+                      <td>上海申通地铁集团</td>
+                      <td>微信50元代金券</td>
+                      <td>1</td>
+                      <td>¥50</td>
+                      <td>06-22 11:24</td>
+                      <td>微信支付商户中心</td>
+                      <td><span class="status-tag tag-success">已成功</span></td>
+                      <td><span class="status-tag tag-success">无差错</span></td>
+                    </tr>
+                    <tr>
+                      <td>V202605002</td>
+                      <td>腾讯科技（上海）</td>
+                      <td>年费100元减免券</td>
+                      <td>2</td>
+                      <td>¥200</td>
+                      <td>06-22 10:45</td>
+                      <td>易诚商行计财部</td>
+                      <td><span class="status-tag tag-success">已成功</span></td>
+                      <td><span class="status-tag tag-success">无差错</span></td>
+                    </tr>
+                    <tr style="background:#fff1f040;">
+                      <td>V202605003</td>
+                      <td>拼多多（上海）</td>
+                      <td>定制拉杆箱实物</td>
+                      <td>1</td>
+                      <td>¥388</td>
+                      <td>06-21 17:30</td>
+                      <td>美德物化供应商</td>
+                      <td><span class="status-tag tag-error">异常挂死</span></td>
+                      <td><span class="status-tag tag-error">自动挂起</span></td>
+                    </tr>
+                    <tr>
+                      <td>V202605004</td>
+                      <td>上海蔚来汽车销售</td>
+                      <td>微企普惠贷利息抵扣券</td>
+                      <td>1</td>
+                      <td>--</td>
+                      <td>06-22 09:15</td>
+                      <td>易诚普惠金融部</td>
+                      <td><span class="status-tag tag-processing">结算中</span></td>
+                      <td><span class="status-tag tag-processing">待对账</span></td>
+                    </tr>
+                    <tr style="background:#fff7e640;">
+                      <td>V202605005</td>
+                      <td>浙江某制造有限公司</td>
+                      <td>微信50元代金券</td>
+                      <td>3</td>
+                      <td>¥150</td>
+                      <td>06-20 14:20</td>
+                      <td>微信支付商户中心</td>
+                      <td><span class="status-tag tag-refund">退单</span></td>
+                      <td><span class="status-tag tag-gray">手工补平</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#8c95a6;">
+                <span>共1,247条记录，当前第1/250页</span>
+                <div class="page-btn-group">
+                  <button class="mk-btn mk-btn--default" style="padding:2px 8px;">«</button>
+                  <button class="mk-btn mk-btn--primary" style="padding:2px 8px;">1</button>
+                  <button class="mk-btn mk-btn--default" style="padding:2px 8px;">2</button>
+                  <button class="mk-btn mk-btn--default" style="padding:2px 8px;">3</button>
+                  <button class="mk-btn mk-btn--default" style="padding:2px 8px;">»</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab2：行内权益核销记录（图2内容） -->
+          <div class="tab-content-item" id="tab2">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h2 style="font-size:16px; font-weight:600; margin:0;">行内权益核销对账</h2>
+              <button class="mk-btn mk-btn--default">导出流水</button>
+            </div>
+            <p style="font-size:12px; color:#8c95a6; margin-bottom:12px;">查询行内卡券权益的全生命周期流水记录</p>
+            <!-- 快捷时间按钮 -->
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <button class="mk-btn mk-btn--primary">今日</button>
+              <button class="mk-btn mk-btn--default">近7天</button>
+              <button class="mk-btn mk-btn--default">近30天</button>
+              <button class="mk-btn mk-btn--default">近3个月</button>
+              <button class="mk-btn mk-btn--default">近一年</button>
+            </div>
+            <!-- 筛选面板 -->
+            <div class="mk-search-panel">
+              <div class="mk-search-form" style="grid-template-columns:320px 200px 240px; gap:16px;">
+                <div class="form-row">
+                  <label class="form-label">用户ID</label>
+                  <input class="el-input__inner" placeholder="精准查询">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">操作类型</label>
+                  <select class="el-input__inner">
+                    <option>全部</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label class="form-label">开始时间</label>
+                  <input class="el-input__inner" type="date">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">结束时间</label>
+                  <input class="el-input__inner" type="date">
+                </div>
+                <div class="form-row" style="grid-column:1/-1;">
+                  <span style="color:#1677ff; cursor:pointer;">∨ 高级查询</span>
+                  <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+                    <button class="mk-btn mk-btn--default">重置</button>
+                    <button class="mk-btn mk-btn--primary">查询</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 行内KPI卡片 -->
+            <div class="kpi-row">
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">今日领取笔数</p>
+                <p class="kpi-value" style="color:#1677ff;">3,245</p>
+              </div>
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">今日使用笔数</p>
+                <p class="kpi-value" style="color:#52c41a;">1,892</p>
+              </div>
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">今日占用预算</p>
+                <p class="kpi-value" style="color:#faad14;">¥52,800</p>
+              </div>
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">今日作废笔数</p>
+                <p class="kpi-value" style="color:#f5222d;">128</p>
+              </div>
+            </div>
+            <!-- 流水表格 -->
+            <div class="mk-list-panel" style="margin-top:12px;">
+              <div class="mk-panel-header">
+                <span class="mk-panel-title">流水记录</span>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <span style="font-size:12px; color:#8c95a6;">共6条</span>
+                  <button class="mk-btn mk-btn--default">下载</button>
+                </div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="mk-compact-table">
+                  <thead>
+                    <tr>
+                      <th>序号</th>
+                      <th>时间</th>
+                      <th>用户ID</th>
+                      <th>流水ID</th>
+                      <th>操作</th>
+                      <th>发行机构</th>
+                      <th>权益类型</th>
+                      <th>权益名称</th>
+                      <th>数量</th>
+                      <th>占用预算</th>
+                      <th>状态</th>
+                      <th>备注</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>2024-06-20 10:23:45</td>
+                      <td>U100001</td>
+                      <td>FL2024062001</td>
+                      <td><span class="status-tag tag-processing">领取</span></td>
+                      <td>零售银行部</td>
+                      <td>满减券</td>
+                      <td>满100减20券</td>
+                      <td>1</td>
+                      <td>¥20.00</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                      <td>618活动领取</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>2024-06-20 11:15:30</td>
+                      <td>U100002</td>
+                      <td>FL2024062002</td>
+                      <td><span class="status-tag tag-success">使用</span></td>
+                      <td>信用卡中心</td>
+                      <td>折扣券</td>
+                      <td>信用卡年费折扣券</td>
+                      <td>1</td>
+                      <td>¥200.00</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                      <td>年费减免核销</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>2024-06-20 14:02:10</td>
+                      <td>U100003</td>
+                      <td>FL2024062003</td>
+                      <td><span class="status-tag tag-processing">领取</span></td>
+                      <td>零售银行部</td>
+                      <td>抵扣券</td>
+                      <td>现金抵扣50元券</td>
+                      <td>2</td>
+                      <td>¥100.00</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>2024-06-20 15:30:00</td>
+                      <td>U100004</td>
+                      <td>FL2024062004</td>
+                      <td><span class="status-tag tag-gray">到期作废</span></td>
+                      <td>公司金融部</td>
+                      <td>折扣券</td>
+                      <td>贷款利率折扣券</td>
+                      <td>1</td>
+                      <td>¥0.00</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                      <td>超期未使用</td>
+                    </tr>
+                    <tr style="background:#fff1f040;">
+                      <td>5</td>
+                      <td>2024-06-20 16:45:22</td>
+                      <td>U100005</td>
+                      <td>FL2024062005</td>
+                      <td><span class="status-tag tag-success">使用</span></td>
+                      <td>零售银行部</td>
+                      <td>兑换券</td>
+                      <td>兑换券</td>
+                      <td>1</td>
+                      <td>¥0.00</td>
+                      <td><span class="status-tag tag-error">失败</span></td>
+                      <td>余额不足</td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>2024-06-20 17:00:05</td>
+                      <td>U100001</td>
+                      <td>FL2024062006</td>
+                      <td><span class="status-tag tag-refund">退款</span></td>
+                      <td>零售银行部</td>
+                      <td>满减券</td>
+                      <td>满100减20券</td>
+                      <td>1</td>
+                      <td>¥20.00</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                      <td>订单退款冲正</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px; display:flex; justify-content:flex-end; font-size:12px; color:#8c95a6;">
+                <span>共6条</span>
+                <div class="page-btn-group" style="margin-left:12px;">
+                  <button class="mk-btn mk-btn--primary" style="padding:2px 8px;">1</button>
+                  <button class="mk-btn mk-btn--default" style="padding:2px 8px;">2</button>
+                  <button class="mk-btn mk-btn--default" style="padding:2px 8px;">3</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab3：三方权益核销记录（图3内容） -->
+          <div class="tab-content-item" id="tab3">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h2 style="font-size:16px; font-weight:600; margin:0;">第三方权益核销对账</h2>
+              <button class="mk-btn mk-btn--default">导出流水</button>
+            </div>
+            <p style="font-size:12px; color:#8c95a6; margin-bottom:12px;">查询第三方权益账户变动流水，支持按商户、用户、时间筛选</p>
+            <!-- 筛选面板 -->
+            <div class="mk-search-panel">
+              <div class="mk-search-form" style="grid-template-columns:240px 240px 260px auto;">
+                <div class="form-row">
+                  <label class="form-label">交易时间(起)</label>
+                  <input class="el-input__inner" type="date">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">交易时间(止)</label>
+                  <input class="el-input__inner" type="date">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">用户ID</label>
+                  <input class="el-input__inner" placeholder="精准查询">
+                </div>
+                <div class="form-row" style="grid-column:1/-1;">
+                  <label class="form-label">商户</label>
+                  <select class="el-input__inner">
+                    <option>全部</option>
+                  </select>
+                  <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:-32px;">
+                    <button class="mk-btn mk-btn--default">重置</button>
+                    <button class="mk-btn mk-btn--primary">查询</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 三方KPI卡片 -->
+            <div class="kpi-row">
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">今日兑换总笔数</p>
+                <p class="kpi-value" style="color:#1677ff;">1,247</p>
+              </div>
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">成功发货笔数</p>
+                <p class="kpi-value" style="color:#52c41a;">1,180</p>
+              </div>
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">发货中笔数</p>
+                <p class="kpi-value" style="color:#faad14;">48</p>
+              </div>
+              <div class="mk-kpi-card">
+                <p style="font-size:12px; color:#8c95a6;">失败笔数</p>
+                <p class="kpi-value" style="color:#f5222d;">19</p>
+              </div>
+            </div>
+            <!-- 三方流水表格 -->
+            <div class="mk-list-panel" style="margin-top:12px;">
+              <div class="mk-panel-header">
+                <span class="mk-panel-title">第三方权益流水</span>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <span style="font-size:12px; color:#8c95a6;">共5条</span>
+                  <button class="mk-btn mk-btn--default">下载</button>
+                </div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="mk-compact-table">
+                  <thead>
+                    <tr>
+                      <th>序号</th>
+                      <th>交易时间</th>
+                      <th>商户名称</th>
+                      <th>商品名称</th>
+                      <th>权益名称</th>
+                      <th>用户ID</th>
+                      <th>订单状态</th>
+                      <th>支付流水</th>
+                      <th>支付状态</th>
+                      <th>发货类型</th>
+                      <th>发货时间</th>
+                      <th>发货结果</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>2024-06-20 10:05:00</td>
+                      <td>商户一</td>
+                      <td>电话充值50元</td>
+                      <td>话费充值券50元</td>
+                      <td>U100001</td>
+                      <td><span class="status-tag tag-success">已完成</span></td>
+                      <td>PAY20240620001</td>
+                      <td>支付成功</td>
+                      <td>直充</td>
+                      <td>2024-06-20 10:05:33</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>2024-06-20 11:10:00</td>
+                      <td>商户一</td>
+                      <td>腾讯视频月卡</td>
+                      <td>腾讯视频月会员</td>
+                      <td>U100002</td>
+                      <td><span class="status-tag tag-success">已完成</span></td>
+                      <td>PAY20240620002</td>
+                      <td>支付成功</td>
+                      <td>卡密</td>
+                      <td>2024-06-20 11:10:20</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                    </tr>
+                    <tr style="background:#fff7e640;">
+                      <td>3</td>
+                      <td>2024-06-20 14:30:00</td>
+                      <td>商户二</td>
+                      <td>美团外卖30元</td>
+                      <td>美团外卖优惠券</td>
+                      <td>U100003</td>
+                      <td><span class="status-tag tag-processing">发货中</span></td>
+                      <td>PAY20240620003</td>
+                      <td>支付成功</td>
+                      <td>直充</td>
+                      <td>-</td>
+                      <td><span class="status-tag tag-processing">处理中</span></td>
+                    </tr>
+                    <tr style="background:#fff1f040;">
+                      <td>4</td>
+                      <td>2024-06-20 14:50:00</td>
+                      <td>商户一</td>
+                      <td>加油卡100元</td>
+                      <td>中石化加油卡充值</td>
+                      <td>U100004</td>
+                      <td><span class="status-tag tag-error">已退款</span></td>
+                      <td>PAY20240620004</td>
+                      <td>已退款</td>
+                      <td>直充</td>
+                      <td>2024-06-20 15:00:00</td>
+                      <td><span class="status-tag tag-error">失败</span></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>2024-06-20 16:18:00</td>
+                      <td>商户二</td>
+                      <td>爱奇艺季卡</td>
+                      <td>爱奇艺季度会员</td>
+                      <td>U100005</td>
+                      <td><span class="status-tag tag-success">已完成</span></td>
+                      <td>PAY20240620005</td>
+                      <td>支付成功</td>
+                      <td>卡密</td>
+                      <td>2024-06-20 16:20:00</td>
+                      <td><span class="status-tag tag-success">成功</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px; display:flex; justify-content:flex-end; font-size:12px; color:#8c95a6;">
+                <span>共5条</span>
+                <div class="page-btn-group" style="margin-left:12px;">
+                  <button class="mk-btn mk-btn--primary" style="padding:2px 8px;">1</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab4：实物权益核销记录（【修复筛选栅格错乱】图4内容） -->
+          <div class="tab-content-item" id="tab4">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h2 style="font-size:16px; font-weight:600; margin:0;">实物奖品核销对账</h2>
+              <div style="display:flex; gap:8px;">
+                <button class="mk-btn mk-btn--default">导入物流单号</button>
+                <button class="mk-btn mk-btn--default">导出提交商户</button>
+                <button class="mk-btn mk-btn--default">导出发放结果</button>
+              </div>
+            </div>
+            <p style="font-size:12px; color:#8c95a6; margin-bottom:12px;">查询实物奖品兑换记录，支持导入物流单号及导出结算文件</p>
+            <!-- 【修复：实物筛选栅格布局，匹配截图单列竖排样式】 -->
+            <div class="mk-search-panel">
+              <div class="mk-search-form" style="grid-template-columns: 280px;">
+                <div class="form-row">
+                  <label class="form-label">商户</label>
+                  <select class="el-input__inner">
+                    <option>全部</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label class="form-label">奖品名称</label>
+                  <input class="el-input__inner" placeholder="请输入">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">品牌</label>
+                  <input class="el-input__inner" placeholder="请输入品牌">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">品类</label>
+                  <input class="el-input__inner" placeholder="请输入品类">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">兑换时间(起)</label>
+                  <input class="el-input__inner" type="date">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">兑换时间(止)</label>
+                  <input class="el-input__inner" type="date">
+                </div>
+                <div class="form-row">
+                  <label class="form-label">状态</label>
+                  <select class="el-input__inner">
+                    <option>全部</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button class="mk-btn mk-btn--default">重置</button>
+                  <button class="mk-btn mk-btn--primary">查询</button>
+                </div>
+              </div>
+            </div>
+            <!-- 实物兑换表格 -->
+            <div class="mk-list-panel" style="margin-top:12px;">
+              <div class="mk-panel-header">
+                <span class="mk-panel-title">兑换记录列表</span>
+                <span style="font-size:12px; color:#8c95a6;">共4条</span>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="mk-compact-table">
+                  <thead>
+                    <tr>
+                      <th>序号</th>
+                      <th>商户</th>
+                      <th>兑换时间</th>
+                      <th>奖品名称</th>
+                      <th>品牌</th>
+                      <th>型号</th>
+                      <th>流水号</th>
+                      <th>商品成本</th>
+                      <th>领取方式</th>
+                      <th>状态</th>
+                      <th>客户姓名</th>
+                      <th>联系电话</th>
+                      <th>地址</th>
+                      <th>物流单号</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>商户一</td>
+                      <td>2024-06-20 10:00:00</td>
+                      <td>蓝牙耳机</td>
+                      <td>索尼</td>
+                      <td>WH-1000XM5</td>
+                      <td>PHY2024062001</td>
+                      <td>¥299.00</td>
+                      <td><span class="status-tag tag-processing">邮寄</span></td>
+                      <td><span class="status-tag tag-refund">未提交商户</span></td>
+                      <td>张三</td>
+                      <td>138****0001</td>
+                      <td>北京市朝阳区XXX路1号</td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>商户一</td>
+                      <td>2024-06-20 11:30:00</td>
+                      <td>保温杯</td>
+                      <td>膳魔师</td>
+                      <td>JNL-502</td>
+                      <td>PHY2024062002</td>
+                      <td>¥128.00</td>
+                      <td><span class="status-tag tag-processing">邮寄</span></td>
+                      <td><span class="status-tag tag-success">已提交商户</span></td>
+                      <td>李四</td>
+                      <td>139****0002</td>
+                      <td>上海市浦东新区XXX大道...</td>
+                      <td>SF1234567890</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>商户二</td>
+                      <td>2024-06-20 14:00:00</td>
+                      <td>米家空气净化器</td>
+                      <td>小米</td>
+                      <td>AC-M6-SC</td>
+                      <td>PHY2024062003</td>
+                      <td>¥699.00</td>
+                      <td><span class="status-tag tag-gray">自取</span></td>
+                      <td><span class="status-tag tag-refund">未提交商户</span></td>
+                      <td>王五</td>
+                      <td>137****0003</td>
+                      <td>广州市天河区XXX广场</td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>商户二</td>
+                      <td>2024-06-19 09:00:00</td>
+                      <td>京东E卡</td>
+                      <td>京东</td>
+                      <td>100元</td>
+                      <td>PHY2024061901</td>
+                      <td>¥100.00</td>
+                      <td><span class="status-tag tag-processing">邮寄</span></td>
+                      <td><span class="status-tag tag-success">已提交商户</span></td>
+                      <td>赵六</td>
+                      <td>136****0004</td>
+                      <td>深圳市南山区XXX科技园</td>
+                      <td>YTO9876543210</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px; display:flex; justify-content:flex-end; font-size:12px; color:#8c95a6;">
+                <span>共4条</span>
+                <div class="page-btn-group" style="margin-left:12px;">
+                  <button class="mk-btn mk-btn--primary" style="padding:2px 8px;">1</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全局导航脚本 -->
+  <script src="js/nav.js"></script>
+  <!-- Tab切换交互JS -->
+  <script>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content-item');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 清除所有激活态
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        // 激活当前Tab
+        btn.classList.add('active');
+        const targetId = btn.dataset.tab;
+        document.getElementById(targetId).classList.add('active');
+      })
+    })
+  </script>
+</body>
+</html>

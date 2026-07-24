@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>重要数据分析 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-stat-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      position: relative;
+    }
+    .mk-stat-label { font-size: 12px; color: #8c95a6; }
+    .mk-stat-value { font-size: 26px; font-weight: 700; line-height: 1.2; }
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .view-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #555;
+    }
+    .view-tab.active {
+      border-color: #1677ff;
+      color: #1677ff;
+      background: #e8f4ff;
+      font-weight: 500;
+    }
+    .progress-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-bar-bg {
+      width: 80px;
+      height: 6px;
+      background: #e8ecf0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #1677ff;
+      border-radius: 3px;
+    }
+    .bar-group {
+      display: flex;
+      gap: 4px;
+      height: 120px;
+      align-items: flex-end;
+      padding: 16px 20px;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .bar-col-bar {
+      width: 100%;
+      max-width: 28px;
+      border-radius: 3px 3px 0 0;
+    }
+    .pie-gauge {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(#1677ff 0% 73.7%, #e8ecf0 73.7% 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pie-gauge::after {
+      content: '';
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .pie-gauge-center {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页头 -->
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">重要数据分析</h1>
+              <p class="mk-page-subtitle">全行权益、机构权益及单个权益多维度数据统计分析</p>
+            </div>
+          </div>
+
+          <!-- 视图切换 -->
+          <div class="view-tabs" id="view-tabs">
+            <button class="view-tab active" data-view="全行权益数据">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-6h6v6"/></svg>
+              全行权益数据
+            </button>
+            <button class="view-tab" data-view="机构权益">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              机构权益
+            </button>
+            <button class="view-tab" data-view="单个权益统计">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4M18 12a2 2 0 0 0 0 4h4v-4h-4z"/></svg>
+              单个权益统计
+            </button>
+          </div>
+
+          <!-- 全行权益数据视图 -->
+          <div id="view-bank" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- KPI卡片 -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;" id="bank-kpi-grid"></div>
+
+            <!-- 图表区 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <!-- 权益类型发放与核销 -->
+              <div class="mk-list-panel" style="margin-bottom: 0;">
+                <div class="mk-list-header">
+                  <span class="mk-list-title">权益类型发放与核销</span>
+                </div>
+                <div style="padding: 12px 20px;">
+                  <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #555;">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #1677ff;"></span>发放量
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #555;">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #52c41a;"></span>核销量
+                    </span>
+                  </div>
+                  <div class="bar-group" id="type-bar-chart"></div>
+                </div>
+              </div>
+
+              <!-- 综合核销率 -->
+              <div class="mk-list-panel" style="margin-bottom: 0;">
+                <div class="mk-list-header">
+                  <span class="mk-list-title">综合核销率</span>
+                </div>
+                <div style="padding: 20px; display: flex; align-items: center; justify-content: center; gap: 24px;">
+                  <div class="pie-gauge">
+                    <div class="pie-gauge-center">
+                      <div style="font-size: 22px; font-weight: 700; color: #1677ff;">73.7%</div>
+                      <div style="font-size: 11px; color: #8c95a6;">核销率</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                      <span style="width: 10px; height: 10px; border-radius: 50%; background: #1677ff;"></span>
+                      <span style="font-size: 13px; color: #555; width: 48px;">已核销</span>
+                      <span style="font-size: 14px; font-weight: 600; color: #1677ff;">73.7%</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="width: 10px; height: 10px; border-radius: 50%; background: #e8ecf0;"></span>
+                      <span style="font-size: 13px; color: #555; width: 48px;">未核销</span>
+                      <span style="font-size: 14px; font-weight: 600; color: #8c95a6;">26.3%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 机构权益视图 -->
+          <div id="view-org" style="display: none;">
+            <div class="mk-list-panel">
+              <div class="mk-list-header">
+                <span class="mk-list-title">机构权益数据</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="mk-table">
+                  <thead>
+                    <tr>
+                      <th>机构名称</th>
+                      <th>发放笔数</th>
+                      <th>核销笔数</th>
+                      <th>核销率</th>
+                      <th>总成本</th>
+                      <th>ROI</th>
+                      <th>覆盖用户数</th>
+                    </tr>
+                  </thead>
+                  <tbody id="org-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 单个权益统计视图 -->
+          <div id="view-equity" style="display: none; display: none; flex-direction: column; gap: 16px;">
+            <!-- 搜索面板 -->
+            <div class="mk-search-panel">
+              <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                <div class="mk-form-item">
+                  <label class="mk-label">权益名称</label>
+                  <input class="mk-input" style="width: 200px;" placeholder="输入权益名称搜索" id="equity-filter">
+                </div>
+                <div class="mk-form-item">
+                  <label class="mk-label">发行部门</label>
+                  <input class="mk-input" style="width: 180px;" placeholder="输入部门搜索" id="dept-filter">
+                </div>
+                <button class="mk-btn mk-btn-primary" id="equity-search-btn">查询</button>
+                <button class="mk-btn mk-btn-default" id="equity-reset-btn">重置</button>
+              </div>
+            </div>
+
+            <!-- 列表 -->
+            <div class="mk-list-panel">
+              <div class="mk-list-header">
+                <span class="mk-list-title">单个权益统计明细</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="mk-table">
+                  <thead>
+                    <tr>
+                      <th>权益名称</th>
+                      <th>发行部门</th>
+                      <th>发放数量</th>
+                      <th>核销数量</th>
+                      <th>核销率</th>
+                      <th>总成本</th>
+                      <th>ROI</th>
+                      <th>关联收入</th>
+                      <th>平均成本/张</th>
+                      <th>活跃用户</th>
+                    </tr>
+                  </thead>
+                  <tbody id="equity-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // 全行KPI数据
+    const bankKPIs = [
+      { label: '累计发放权益笔数', value: '128.4万', sub: '笔', color: '#1677ff' },
+      { label: '累计核销笔数', value: '94.6万', sub: '笔', color: '#52c41a' },
+      { label: '总权益成本', value: '8,426', sub: '万元', color: '#722ed1' },
+      { label: '综合核销率', value: '73.7', sub: '%', color: '#fa8c16' },
+      { label: '权益覆盖用户数', value: '32.8万', sub: '人', color: '#13c2c2' },
+      { label: '全行综合ROI', value: '9.82', sub: '', color: '#52c41a' },
+    ];
+
+    // 权益类型柱状图数据
+    const typeBarData = [
+      { type: '满减券', issued: 52.3, used: 41.0 },
+      { type: '折扣券', issued: 31.3, used: 24.9 },
+      { type: '抵扣券', issued: 28.5, used: 19.0 },
+      { type: '兑换券', issued: 16.4, used: 9.8 },
+    ];
+
+    // 机构数据
+    const orgData = [
+      { org: '零售银行部', issued: 428600, used: 328700, useRate: 76.7, cost: '324.0万', roi: 10.2, users: 128400 },
+      { org: '信用卡中心', issued: 312800, used: 248600, useRate: 79.5, cost: '248.0万', roi: 8.6, users: 96800 },
+      { org: '公司金融部', issued: 186400, used: 142800, useRate: 76.6, cost: '186.0万', roi: 12.4, users: 54200 },
+      { org: '私人银行部', issued: 98600, used: 84200, useRate: 85.4, cost: '84.6万', roi: 15.8, users: 28400 },
+      { org: '电子银行部', issued: 258160, used: 142520, useRate: 55.2, cost: '75.6万', roi: 7.1, users: 98600 },
+    ];
+
+    // 单个权益数据
+    const equityDetails = [
+      { name: '满100减20券', dept: '零售银行部', issued: 8430, used: 6540, useRate: 77.6, cost: '12.9万', roi: '12.3', relatedRev: '158.2万', avgCost: '¥15.24', activeUsers: 6120 },
+      { name: '理财利率折扣券', dept: '零售银行部', issued: 2100, used: 1820, useRate: 86.7, cost: '9.8万', roi: '18.6', relatedRev: '182.3万', avgCost: '¥46.67', activeUsers: 1750 },
+      { name: '信用卡年费抵扣', dept: '信用卡中心', issued: 320, used: 280, useRate: 87.5, cost: '6.4万', roi: '5.6', relatedRev: '35.8万', avgCost: '¥200.00', activeUsers: 268 },
+      { name: '京东E卡50元', dept: '第三方供应', issued: 2100, used: 1890, useRate: 90.0, cost: '10.5万', roi: '7.2', relatedRev: '75.6万', avgCost: '¥50.00', activeUsers: 1890 },
+      { name: '贷款利率折扣券', dept: '公司金融部', issued: 450, used: 398, useRate: 88.4, cost: '44.7万', roi: '9.1', relatedRev: '406.8万', avgCost: '¥993.33', activeUsers: 380 },
+    ];
+
+    let currentView = '全行权益数据';
+
+    // 渲染全行KPI
+    function renderBankKPIs() {
+      const grid = document.getElementById('bank-kpi-grid');
+      grid.innerHTML = bankKPIs.map(k => `
+        <div class="mk-stat-card" style="border-left: 4px solid ${k.color};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="mk-stat-label">${k.label}</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 4px;">
+            <span style="font-size: 26px; font-weight: 700; color: ${k.color};">${k.value}</span>
+            <span class="mk-stat-label">${k.sub}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染权益类型柱状图
+    function renderTypeBarChart() {
+      const chart = document.getElementById('type-bar-chart');
+      const maxVal = Math.max(...typeBarData.map(d => d.issued));
+      chart.innerHTML = typeBarData.map(d => `
+        <div class="bar-col">
+          <div class="bar-col-bar" style="height: ${(d.issued / maxVal) * 100}px; background: #1677ff;"></div>
+          <div class="bar-col-bar" style="height: ${(d.used / maxVal) * 100}px; background: #52c41a;"></div>
+          <span style="font-size: 11px; color: #8c95a6; white-space: nowrap;">${d.type}</span>
+        </div>
+      `).join('');
+    }
+
+    // 渲染机构表格
+    function renderOrgTable() {
+      const tbody = document.getElementById('org-table-body');
+      tbody.innerHTML = orgData.map(o => `
+        <tr>
+          <td style="font-weight: 500;">${o.org}</td>
+          <td>${o.issued.toLocaleString()}</td>
+          <td>${o.used.toLocaleString()}</td>
+          <td>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${o.useRate}%;"></div></div>
+              <span style="font-size: 12px; color: #555;">${o.useRate}%</span>
+            </div>
+          </td>
+          <td style="font-weight: 600;">${o.cost}</td>
+          <td><span style="font-weight: 600; color: #52c41a;">${o.roi}</span></td>
+          <td>${o.users.toLocaleString()}</td>
+        </tr>
+      `).join('');
+    }
+
+    // 渲泄件权益表格
+    function renderEquityTable(filter = {}) {
+      const tbody = document.getElementById('equity-table-body');
+      let filtered = equityDetails.filter(e => {
+        if (filter.name && !e.name.includes(filter.name)) return false;
+        if (filter.dept && !e.dept.includes(filter.dept)) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #8c95a6; padding: 40px;">暂无数据</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(e => `
+        <tr>
+          <td style="font-weight: 500;">${e.name}</td>
+          <td>${e.dept}</td>
+          <td>${e.issued.toLocaleString()}</td>
+          <td>${e.used.toLocaleString()}</td>
+          <td>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${e.useRate}%;"></div></div>
+              <span style="font-size: 12px; color: #555;">${e.useRate}%</span>
+            </div>
+          </td>
+          <td style="font-weight: 600;">${e.cost}</td>
+          <td><span style="font-weight: 600; color: #52c41a;">${e.roi}</span></td>
+          <td>${e.relatedRev}</td>
+          <td>${e.avgCost}</td>
+          <td>${e.activeUsers.toLocaleString()}</td>
+        </tr>
+      `).join('');
+    }
+
+    // 视图切换
+    document.querySelectorAll('.view-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentView = this.dataset.view;
+
+        document.getElementById('view-bank').style.display = currentView === '全行权益数据' ? 'flex' : 'none';
+        document.getElementById('view-org').style.display = currentView === '机构权益' ? 'block' : 'none';
+        document.getElementById('view-equity').style.display = currentView === '单个权益统计' ? 'flex' : 'none';
+      });
+    });
+
+    // 权益搜索
+    document.getElementById('equity-search-btn').addEventListener('click', function() {
+      renderEquityTable({
+        name: document.getElementById('equity-filter').value,
+        dept: document.getElementById('dept-filter').value
+      });
+    });
+
+    document.getElementById('equity-reset-btn').addEventListener('click', function() {
+      document.getElementById('equity-filter').value = '';
+      document.getElementById('dept-filter').value = '';
+      renderEquityTable({});
+    });
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderBankKPIs();
+      renderTypeBarChart();
+      renderOrgTable();
+      renderEquityTable({});
+    });
+  </script>
+</body>
+</html>

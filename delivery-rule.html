@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投放规则设置 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mk-toggle {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+    .mk-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .mk-toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 22px;
+    }
+    .mk-toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    .mk-toggle input:checked + .mk-toggle-slider {
+      background-color: #1677ff;
+    }
+    .mk-toggle input:checked + .mk-toggle-slider:before {
+      transform: translateX(18px);
+    }
+    .w-3\.5 { width: 14px; height: 14px; accent-color: #1677ff; }
+    .text-red-500 { color: #ff4d4f; }
+    .mt-3 { margin-top: 12px; }
+    .mb-3 { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">投放规则设置</h1>
+              <p class="mk-page-subtitle">配置权益投放规则，包括客群圈选、事件达标、领取限制等</p>
+            </div>
+          </div>
+
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">规则名称</label>
+                <input class="mk-input" id="searchKeyword" placeholder="请输入规则名称">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">状态</label>
+                <select class="mk-select" id="searchStatus">
+                  <option>全部</option>
+                  <option>启用</option>
+                  <option>停用</option>
+                </select>
+              </div>
+            </div>
+            <div class="mk-search-actions">
+              <button class="mk-btn mk-btn-default" onclick="resetSearch()">重置</button>
+              <button class="mk-btn mk-btn-primary" onclick="searchRules()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 规则列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="mk-list-title">规则列表</span>
+                <span style="font-size: 13px; color: #8c95a6;">共 <b id="totalCount">4</b> 条</span>
+                <button class="mk-btn mk-btn-primary mk-btn-sm" onclick="location.href='delivery-rule-create.html'">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  新增规则
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" id="ruleTable">
+                <thead>
+                  <tr>
+                    <th>规则名称</th>
+                    <th>目标客群</th>
+                    <th>触发方式</th>
+                    <th>领取方式</th>
+                    <th>每人上限</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="ruleTableBody">
+                  <!-- 动态生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑弹窗 -->
+  <div class="mk-modal-overlay" id="editModal" style="display: none;">
+    <div class="mk-modal" style="max-width: 580px;">
+      <div class="mk-modal-header">
+        <span>编辑规则</span>
+        <button class="mk-modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="mk-modal-body" id="editModalBody">
+        <!-- 表单内容 -->
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeEditModal()">取消</button>
+        <button class="mk-btn mk-btn-primary" onclick="saveEdit()">✓ 保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div class="mk-modal-overlay" id="deleteModal" style="display: none;">
+    <div class="mk-modal" style="max-width: 400px;">
+      <div class="mk-modal-header">
+        <span>删除确认</span>
+        <button class="mk-modal-close" onclick="closeDeleteModal()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <p style="font-size: 13px; color: #4a5568;">此操作将永久删除规则 <b id="deleteRuleName" style="color: #1a1a2e;"></b>，是否继续？</p>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeDeleteModal()">取消</button>
+        <button class="mk-btn mk-btn-danger" onclick="confirmDelete()">确定删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    let rules = [
+      { id: 'R001', ruleName: '全客群新客礼包规则', targetType: '全客群', triggerType: '立即发放', receiveType: '自动发放', limitPerUser: 1, status: '启用', createTime: '2024-05-01 10:00:00', remark: '适用于所有新客户' },
+      { id: 'R002', ruleName: '贷款事件达标规则', targetType: '客群圈选', triggerType: '事件达标', receiveType: '用户领取', limitPerUser: 2, status: '启用', createTime: '2024-05-15 14:00:00', remark: '贷款完成触发' },
+      { id: 'R003', ruleName: '理财客群专项规则', targetType: '客群圈选', triggerType: '立即发放', receiveType: '自动发放', limitPerUser: 3, status: '停用', createTime: '2024-03-10 09:00:00', remark: '理财产品到期回访' },
+      { id: 'R004', ruleName: '节日活动通用规则', targetType: '全客群', triggerType: '立即发放', receiveType: '用户领取', limitPerUser: 1, status: '启用', createTime: '2024-06-01 08:00:00', remark: '节日活动' },
+    ];
+
+    let filteredRules = [...rules];
+    let editingRule = null;
+    let deletingRule = null;
+
+    function getTargetClass(type) {
+      return type === '全客群' ? 'mk-badge mk-badge-default' : 'mk-badge mk-badge-primary';
+    }
+
+    function getTriggerClass(type) {
+      return type === '事件达标' ? 'mk-badge mk-badge-warning' : 'mk-badge mk-badge-default';
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('ruleTableBody');
+      document.getElementById('totalCount').textContent = filteredRules.length;
+      if (filteredRules.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted-foreground" style="padding: 40px;">暂无数据</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filteredRules.map(rule => `
+        <tr>
+          <td class="font-medium">${rule.ruleName}</td>
+          <td><span class="${getTargetClass(rule.targetType)}">${rule.targetType}</span></td>
+          <td><span class="${getTriggerClass(rule.triggerType)}">${rule.triggerType}</span></td>
+          <td>${rule.receiveType}</td>
+          <td>${rule.limitPerUser} 次</td>
+          <td>
+            <label class="mk-toggle" style="cursor: pointer;">
+              <input type="checkbox" ${rule.status === '启用' ? 'checked' : ''} onchange="toggleStatus('${rule.id}')">
+              <span class="mk-toggle-slider"></span>
+            </label>
+          </td>
+          <td class="text-muted-foreground">${rule.createTime}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="mk-link" onclick="openEditModal('${rule.id}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                编辑
+              </button>
+              <button class="mk-link" title="复制规则" onclick="copyRule('${rule.id}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                复制
+              </button>
+              <button class="mk-link mk-link-danger" onclick="openDeleteModal('${rule.id}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                删除
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function searchRules() {
+      const keyword = document.getElementById('searchKeyword').value;
+      const status = document.getElementById('searchStatus').value;
+      filteredRules = rules.filter(r => {
+        if (keyword && !r.ruleName.includes(keyword)) return false;
+        if (status !== '全部' && r.status !== status) return false;
+        return true;
+      });
+      renderTable();
+    }
+
+    function resetSearch() {
+      document.getElementById('searchKeyword').value = '';
+      document.getElementById('searchStatus').value = '全部';
+      filteredRules = [...rules];
+      renderTable();
+    }
+
+    function toggleStatus(id) {
+      const rule = rules.find(r => r.id === id);
+      if (rule) {
+        rule.status = rule.status === '启用' ? '停用' : '启用';
+        searchRules();
+      }
+    }
+
+    function openEditModal(id) {
+      editingRule = rules.find(r => r.id === id);
+      if (!editingRule) return;
+      const body = document.getElementById('editModalBody');
+      body.innerHTML = `
+        <div class="mk-form-item" style="margin-bottom: 16px;">
+          <label class="mk-label">规则名称 <span class="text-red-500">*</span></label>
+          <input class="mk-input" id="editRuleName" value="${editingRule.ruleName}">
+        </div>
+        <div style="padding: 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;">
+          <p style="font-size: 13px; font-weight: 500; margin-bottom: 12px;">客群设置</p>
+          <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="editTargetType" value="全客群" ${editingRule.targetType === '全客群' ? 'checked' : ''} class="w-3.5"> 全客群</label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="editTargetType" value="客群圈选" ${editingRule.targetType === '客群圈选' ? 'checked' : ''} class="w-3.5"> 客群圈选</label>
+          </div>
+        </div>
+        <div style="padding: 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;">
+          <p style="font-size: 13px; font-weight: 500; margin-bottom: 12px;">触发条件</p>
+          <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="editTriggerType" value="立即发放" ${editingRule.triggerType === '立即发放' ? 'checked' : ''} class="w-3.5"> 立即发放</label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="editTriggerType" value="事件达标" ${editingRule.triggerType === '事件达标' ? 'checked' : ''} class="w-3.5"> 事件达标</label>
+          </div>
+        </div>
+        <div style="padding: 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;">
+          <p style="font-size: 13px; font-weight: 500; margin-bottom: 12px;">发放与领取设置</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="mk-form-item">
+              <label class="mk-label">领取/发放方式</label>
+              <select class="mk-select" id="editReceiveType">
+                <option ${editingRule.receiveType === '自动发放' ? 'selected' : ''}>自动发放</option>
+                <option ${editingRule.receiveType === '用户领取' ? 'selected' : ''}>用户领取</option>
+              </select>
+            </div>
+            <div class="mk-form-item">
+              <label class="mk-label">每人领取上限</label>
+              <input class="mk-input" type="number" min="1" id="editLimitPerUser" value="${editingRule.limitPerUser}">
+            </div>
+          </div>
+        </div>
+        <div class="mk-form-item">
+          <label class="mk-label">备注说明</label>
+          <textarea class="mk-textarea" rows="2" id="editRemark" placeholder="可选，描述规则用途">${editingRule.remark}</textarea>
+        </div>
+      `;
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+      editingRule = null;
+    }
+
+    function saveEdit() {
+      if (!editingRule) return;
+      editingRule.ruleName = document.getElementById('editRuleName').value;
+      editingRule.targetType = document.querySelector('input[name="editTargetType"]:checked').value;
+      editingRule.triggerType = document.querySelector('input[name="editTriggerType"]:checked').value;
+      editingRule.receiveType = document.getElementById('editReceiveType').value;
+      editingRule.limitPerUser = parseInt(document.getElementById('editLimitPerUser').value) || 1;
+      editingRule.remark = document.getElementById('editRemark').value;
+      searchRules();
+      closeEditModal();
+    }
+
+    function openDeleteModal(id) {
+      deletingRule = rules.find(r => r.id === id);
+      if (!deletingRule) return;
+      document.getElementById('deleteRuleName').textContent = deletingRule.ruleName;
+      document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+      deletingRule = null;
+    }
+
+    function confirmDelete() {
+      if (!deletingRule) return;
+      rules = rules.filter(r => r.id !== deletingRule.id);
+      searchRules();
+      closeDeleteModal();
+    }
+
+    function copyRule(id) {
+      const rule = rules.find(r => r.id === id);
+      if (!rule) return;
+      const newRule = {
+        ...rule,
+        id: `R${Date.now()}`,
+        ruleName: `${rule.ruleName}（副本）`,
+        createTime: new Date().toISOString().replace('T', ' ').slice(0, 19)
+      };
+      rules.push(newRule);
+      searchRules();
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeEditModal();
+    });
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+      if (e.target === this) closeDeleteModal();
+    });
+
+    // 初始化
+    renderTable();
+  </script>
+</body>
+</html>

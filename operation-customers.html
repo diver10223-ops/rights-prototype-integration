@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客户列表 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Toast提示 */
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      animation: fadeIn 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: #8c95a6; white-space: nowrap;">用户号：</span>
+                <input class="mk-input" style="width: 220px;" placeholder="请输入用户号" id="userIdInput">
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: #8c95a6; white-space: nowrap;">权益名称：</span>
+                <select class="mk-select" style="width: 180px;" id="equityFilter">
+                  <option value="">所有权益</option>
+                  <option>满100减20券</option>
+                  <option>理财利率折扣券</option>
+                  <option>信用卡年费抵扣券</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 8px; margin-left: auto;">
+                <button class="mk-btn mk-btn-primary" onclick="handleSearch()">查询</button>
+                <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表面板 -->
+          <div class="mk-list-panel">
+            <div class="overflow-x-auto">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>用户号</th>
+                    <th>累计获得卡券</th>
+                    <th>持有卡券</th>
+                    <th>已使用卡券</th>
+                    <th>过期卡券</th>
+                    <th>结算资金（元）</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span style="font-size: 13px; color: #8c95a6;" id="totalCount">共 0 条</span>
+              <button class="mk-page-btn" id="prevBtn" onclick="changePage(-1)">‹</button>
+              <div id="pageNumbers"></div>
+              <button class="mk-page-btn" id="nextBtn" onclick="changePage(1)">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据 - 客户卡券记录
+    const CUSTOMER_COUPONS = {
+      '100000000012': [
+        { id: '1', name: '满100减20券', type: '满减券', status: '可用', issueTime: '2026-06-01', expiry: '2026-12-31', purchaseCost: 20 },
+        { id: '2', name: '理财加息券', type: '抵扣券', status: '已使用', issueTime: '2026-05-01', expiry: '2026-09-30', purchaseCost: 20 },
+        { id: '3', name: '爱奇艺季卡', type: '兑换券', status: '已过期', issueTime: '2026-03-10', expiry: '2026-06-09', purchaseCost: 28 },
+      ],
+      '100000000017': [
+        { id: '4', name: '星巴克50元饮品券', type: '兑换券', status: '可用', issueTime: '2026-06-10', expiry: '2026-08-31', purchaseCost: 35 },
+        { id: '5', name: '9折信用卡年费折扣', type: '折扣券', status: '已使用', issueTime: '2026-05-15', expiry: '2026-12-31', purchaseCost: 30 },
+      ],
+      '100000000574': [],
+      '100000000575': [],
+      '100000000576': [],
+      '100000000577': [],
+      '100000000578': [],
+    };
+
+    // 客户列表
+    const mockCustomers = [
+      { id: '1', userId: '100000000012' },
+      { id: '2', userId: '100000000017' },
+      { id: '3', userId: '100000000574' },
+      { id: '4', userId: '100000000575' },
+      { id: '5', userId: '100000000576' },
+      { id: '6', userId: '100000000577' },
+      { id: '7', userId: '100000000578' },
+    ];
+
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+    let filteredData = [];
+
+    // 计算统计数据
+    function calcStats(records) {
+      const total = records.length;
+      const holding = records.filter(r => r.status === '可用').length;
+      const used = records.filter(r => r.status === '已使用').length;
+      const expired = records.filter(r => r.status === '已过期').length;
+      const settleFund = records.filter(r => r.status === '已使用').reduce((s, r) => s + r.purchaseCost, 0);
+      return { total, holding, used, expired, settleFund };
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const userId = document.getElementById('userIdInput').value;
+      filteredData = mockCustomers.filter(c => {
+        if (userId && !c.userId.includes(userId)) return false;
+        return true;
+      });
+
+      const totalPages = Math.ceil(filteredData.length / PAGE_SIZE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const paged = filteredData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+      const tbody = document.getElementById('tableBody');
+      if (paged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #8c95a6; padding: 40px;">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = paged.map(item => {
+          const records = CUSTOMER_COUPONS[item.userId] || [];
+          const s = calcStats(records);
+          return `
+            <tr>
+              <td style="font-family: monospace; font-size: 13px;">${item.userId}</td>
+              <td>${s.total}</td>
+              <td>${s.holding}</td>
+              <td>${s.used}</td>
+              <td>${s.expired}</td>
+              <td>${s.settleFund.toFixed(2)}</td>
+              <td>
+                <button class="mk-icon-btn" title="查看详情" onclick="viewDetail('${item.userId}')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 渲染分页
+      document.getElementById('totalCount').textContent = `共 ${filteredData.length} 条`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+
+      let pageHtml = '';
+      for (let i = 1; i <= totalPages; i++) {
+        pageHtml += `<button class="mk-page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+      }
+      document.getElementById('pageNumbers').innerHTML = pageHtml;
+    }
+
+    function viewDetail(userId) {
+      window.location.href = `operation-customer-detail.html?userId=${userId}`;
+    }
+
+    function handleSearch() {
+      currentPage = 1;
+      renderTable();
+    }
+
+    function handleReset() {
+      document.getElementById('userIdInput').value = '';
+      document.getElementById('equityFilter').value = '';
+      currentPage = 1;
+      renderTable();
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+    }
+
+    function changePage(delta) {
+      const totalPages = Math.ceil(filteredData.length / PAGE_SIZE) || 1;
+      const newPage = currentPage + delta;
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderTable();
+      }
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

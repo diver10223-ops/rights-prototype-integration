@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益流水 - 对公权益营销中台</title>
+  <!-- 唯一合并后标准样式 -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面专属查询表单局部样式 */
+    .mk-search-form {
+      display: grid;
+      grid-template-columns: 240px 240px 220px;
+      gap: 16px 20px;
+      align-items: end;
+    }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 13px;
+      color: #4a5568;
+    }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+    }
+    .empty-tip {
+      padding: 40px 0;
+      text-align: center;
+      color: #8c95a6;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 标准外层布局容器 -->
+  <div class="app layout-v2">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <div class="top-shell">
+        <header class="app-header" id="header"></header>
+        <div class="page-tabs" id="pageTabs"></div>
+      </div>
+      <div class="content">
+        <div class="mk-page">
+          <!-- 1. 查询筛选面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-form">
+              <div class="form-row">
+                <label class="form-label">权益名称</label>
+                <select class="el-input__inner">
+                  <option>所有权益</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">用户号</label>
+                <input class="el-input__inner" placeholder="请输入用户号">
+              </div>
+              <div class="form-actions">
+                <button class="mk-btn mk-btn--primary">查询</button>
+                <button class="mk-btn mk-btn--default">重置</button>
+                <span style="color:#1677ff; cursor:pointer; font-size:13px;">高级筛选</span>
+              </div>
+
+              <div class="form-row">
+                <label class="form-label">操作类型</label>
+                <select class="el-input__inner">
+                  <option>领取</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">操作状态</label>
+                <select class="el-input__inner">
+                  <option>全部</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">操作时间</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input class="el-input__inner" value="2026-07-21">
+                  <span>-</span>
+                  <input class="el-input__inner" value="2026-07-21">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 流水表格面板 -->
+          <div class="mk-list-panel" style="margin-top:12px;">
+            <div class="mk-panel-header">
+              <span class="mk-panel-title">权益流水</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="mk-compact-table">
+                <thead>
+                  <tr>
+                    <th>操作时间</th>
+                    <th>流水号</th>
+                    <th>用户号</th>
+                    <th>操作类型</th>
+                    <th>卡券名称</th>
+                    <th>卡券类型</th>
+                    <th>数量</th>
+                    <th>操作状态</th>
+                    <th>发行机构</th>
+                    <th>预算(元)</th>
+                    <th>备注</th>
+                    <th>分摊明细</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="12" class="empty-tip">暂无数据</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导航脚本固定不动 -->
+  <script src="js/nav.js"></script>
+  <!-- 页面业务JS（查询、分页、弹窗逻辑后续可补充） -->
+  <script>
+    // 页面基础交互示例
+    document.querySelector('.mk-btn--default').addEventListener('click', () => {
+      // 重置表单逻辑
+      document.querySelectorAll('.el-input__inner').forEach(el => {
+        if(el.tagName === 'INPUT') el.value = '';
+      })
+    })
+  </script>
+</body>

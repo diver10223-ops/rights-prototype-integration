@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>权益库存监控 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边�?-->
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容�?-->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面标题 -->
+      <div class="mb-5">
+        <h2 class="text-sm font-bold text-slate-800">权益库存监控</h2>
+        <p class="text-[10px] text-slate-400 mt-1">实时监控各类权益的库存数量、消耗速度、预警阈值及库存使用趋势，防范权益超发或积压风险</p>
+      </div>
+
+      <!-- 01 库存概览�?-->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">01</span>
+              <span class="text-[11px] font-medium text-slate-700">库存概览�?/span>
+            </div>
+            <p class="text-[10px] text-slate-400">各品类权益库存状态汇�?/p>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-6 gap-3">
+            <div class="border border-slate-200 rounded p-3 bg-slate-50">
+              <div class="text-[10px] text-slate-400">权益品类总数</div>
+              <div class="text-base font-bold text-slate-700 mt-1">126</div>
+            </div>
+            <div class="border border-emerald-200 rounded p-3 bg-emerald-50/50">
+              <div class="text-[10px] text-slate-500">库存充足</div>
+              <div class="text-base font-bold text-emerald-600 mt-1">98</div>
+            </div>
+            <div class="border border-amber-200 rounded p-3 bg-amber-50/50">
+              <div class="text-[10px] text-slate-500">库存预警</div>
+              <div class="text-base font-bold text-amber-600 mt-1">18</div>
+            </div>
+            <div class="border border-red-200 rounded p-3 bg-red-50/50">
+              <div class="text-[10px] text-slate-500">库存不足</div>
+              <div class="text-base font-bold text-red-600 mt-1">7</div>
+            </div>
+            <div class="border border-slate-200 rounded p-3 bg-slate-50">
+              <div class="text-[10px] text-slate-500">已下�?/div>
+              <div class="text-base font-bold text-slate-500 mt-1">3</div>
+            </div>
+            <div class="border border-blue-200 rounded p-3 bg-blue-50/50">
+              <div class="text-[10px] text-slate-500">今日新增</div>
+              <div class="text-base font-bold text-blue-600 mt-1">+5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 库存筛选区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">02</span>
+              <span class="text-[11px] font-medium text-slate-700">库存筛选区</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-4 items-end mt-3">
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">权益品类</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部品类</option>
+                <option>红包</option>
+                <option>券类</option>
+                <option>实物</option>
+                <option>三方权益</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">库存状�?/label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部状�?/option>
+                <option>库存充足</option>
+                <option>库存预警</option>
+                <option>库存不足</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">归属部门</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部部门</option>
+                <option>零售�?/option>
+                <option>公司�?/option>
+                <option>卡部</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">权益名称</label>
+              <input type="text" placeholder="搜索权益名称" class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-36 focus:outline-none focus:border-blue-400" />
+            </div>
+            <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-[11px] hover:bg-blue-700">查询</button>
+            <button class="px-4 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 库存列表�?-->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03</span>
+              <span class="text-[11px] font-medium text-slate-700">权益库存列表</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">
+                <i class="fas fa-download mr-1"></i>导出
+              </button>
+              <button class="px-3 py-1.5 border border-amber-300 rounded text-[11px] text-amber-600 hover:bg-amber-50">
+                <i class="fas fa-bell mr-1"></i>预警设置
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-4 text-left font-medium">权益编码</th>
+              <th class="py-2.5 px-4 text-left font-medium">权益名称</th>
+              <th class="py-2.5 px-4 text-left font-medium">品类</th>
+              <th class="py-2.5 px-4 text-right font-medium">总库�?/th>
+              <th class="py-2.5 px-4 text-right font-medium">已发�?/th>
+              <th class="py-2.5 px-4 text-right font-medium">剩余库存</th>
+              <th class="py-2.5 px-4 text-center font-medium">使用�?/th>
+              <th class="py-2.5 px-4 text-center font-medium">日均消�?/th>
+              <th class="py-2.5 px-4 text-center font-medium">预计可用天数</th>
+              <th class="py-2.5 px-4 text-center font-medium">库存状�?/th>
+              <th class="py-2.5 px-4 text-center font-medium">预警阈�?/th>
+              <th class="py-2.5 px-4 text-center font-medium">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">BQ202601001</td>
+              <td class="py-3 px-4 font-medium text-slate-700">开户红�?�?/td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 bg-rose-100 text-rose-700 rounded text-[10px]">红包</span></td>
+              <td class="py-3 px-4 text-right">50,000</td>
+              <td class="py-3 px-4 text-right">47,820</td>
+              <td class="py-3 px-4 text-right font-medium text-red-600">2,180</td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-12 h-1.5 bg-slate-100 rounded">
+                    <div class="h-1.5 bg-red-500 rounded" style="width: 95.6%"></div>
+                  </div>
+                  <span class="text-[10px] text-red-600 font-medium">95.6%</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">580</td>
+              <td class="py-3 px-4 text-center text-red-600 font-medium">3.8�?/td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px]">库存不足</span></td>
+              <td class="py-3 px-4 text-center text-[10px]">10%</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">补货</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">趋势</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">CP202602015</td>
+              <td class="py-3 px-4 font-medium text-slate-700">代发薪客户专属券</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">券类</span></td>
+              <td class="py-3 px-4 text-right">20,000</td>
+              <td class="py-3 px-4 text-right">15,500</td>
+              <td class="py-3 px-4 text-right font-medium text-amber-600">4,500</td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-12 h-1.5 bg-slate-100 rounded">
+                    <div class="h-1.5 bg-amber-500 rounded" style="width: 77.5%"></div>
+                  </div>
+                  <span class="text-[10px] text-amber-600 font-medium">77.5%</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">320</td>
+              <td class="py-3 px-4 text-center text-amber-600 font-medium">14.1�?/td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">库存预警</span></td>
+              <td class="py-3 px-4 text-center text-[10px]">20%</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">补货</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">趋势</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">GW202603008</td>
+              <td class="py-3 px-4 font-medium text-slate-700">小米充电�?/td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">实物</span></td>
+              <td class="py-3 px-4 text-right">5,000</td>
+              <td class="py-3 px-4 text-right">1,250</td>
+              <td class="py-3 px-4 text-right font-medium text-emerald-600">3,750</td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-12 h-1.5 bg-slate-100 rounded">
+                    <div class="h-1.5 bg-emerald-500 rounded" style="width: 25%"></div>
+                  </div>
+                  <span class="text-[10px] text-emerald-600 font-medium">25%</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">45</td>
+              <td class="py-3 px-4 text-center text-emerald-600 font-medium">83.3�?/td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">库存充足</span></td>
+              <td class="py-3 px-4 text-center text-[10px]">15%</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">补货</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">趋势</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">TP202604022</td>
+              <td class="py-3 px-4 font-medium text-slate-700">视频会员月卡</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-[10px]">三方权益</span></td>
+              <td class="py-3 px-4 text-right">10,000</td>
+              <td class="py-3 px-4 text-right">9,580</td>
+              <td class="py-3 px-4 text-right font-medium text-red-600">420</td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-12 h-1.5 bg-slate-100 rounded">
+                    <div class="h-1.5 bg-red-500 rounded" style="width: 95.8%"></div>
+                  </div>
+                  <span class="text-[10px] text-red-600 font-medium">95.8%</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">85</td>
+              <td class="py-3 px-4 text-center text-red-600 font-medium">4.9�?/td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px]">库存不足</span></td>
+              <td class="py-3 px-4 text-center text-[10px]">10%</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">补货</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">趋势</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">CP202605033</td>
+              <td class="py-3 px-4 font-medium text-slate-700">企业网银手续费减免券</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">券类</span></td>
+              <td class="py-3 px-4 text-right">15,000</td>
+              <td class="py-3 px-4 text-right">12,000</td>
+              <td class="py-3 px-4 text-right font-medium text-amber-600">3,000</td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-12 h-1.5 bg-slate-100 rounded">
+                    <div class="h-1.5 bg-amber-500 rounded" style="width: 80%"></div>
+                  </div>
+                  <span class="text-[10px] text-amber-600 font-medium">80%</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">210</td>
+              <td class="py-3 px-4 text-center text-amber-600 font-medium">14.3�?/td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">库存预警</span></td>
+              <td class="py-3 px-4 text-center text-[10px]">20%</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">补货</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">趋势</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">BQ202606019</td>
+              <td class="py-3 px-4 font-medium text-slate-700">推荐有礼红包</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 bg-rose-100 text-rose-700 rounded text-[10px]">红包</span></td>
+              <td class="py-3 px-4 text-right">30,000</td>
+              <td class="py-3 px-4 text-right">8,500</td>
+              <td class="py-3 px-4 text-right font-medium text-emerald-600">21,500</td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-12 h-1.5 bg-slate-100 rounded">
+                    <div class="h-1.5 bg-emerald-500 rounded" style="width: 28.3%"></div>
+                  </div>
+                  <span class="text-[10px] text-emerald-600 font-medium">28.3%</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">120</td>
+              <td class="py-3 px-4 text-center text-emerald-600 font-medium">179.2�?/td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">库存充足</span></td>
+              <td class="py-3 px-4 text-center text-[10px]">10%</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">补货</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">趋势</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- 分页 -->
+        <div class="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400">�?126 条数�?/div>
+          <div class="flex items-center gap-1">
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">上一�?/button>
+            <button class="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">1</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">2</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">3</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">下一�?/button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 库存趋势�?-->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">04</span>
+              <span class="text-[11px] font-medium text-slate-700">库存消耗趋�?/span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select class="border border-slate-300 rounded px-2 py-1 text-[10px]">
+                <option>�?�?/option>
+                <option>�?0�?/option>
+                <option>�?0�?/option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-[11px] font-medium text-slate-700 mb-2">日均权益消耗趋�?/div>
+              <canvas id="consumeTrendChart" height="200"></canvas>
+            </div>
+            <div>
+              <div class="text-[11px] font-medium text-slate-700 mb-2">品类消耗占�?/div>
+              <canvas id="categoryPieChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 库存预警通知中心 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-700 font-medium rounded">05</span>
+              <span class="text-[11px] font-medium text-slate-700">库存预警通知中心</span>
+              <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px]">已发�?28 �?/ �?7 �?/span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部状�?/option><option>已发�?/option><option>已读</option><option>已处�?/option><option>已忽�?/option>
+              </select>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] focus:outline-none focus:border-blue-400">
+                <option>全部级别</option><option>紧�?/option><option>�?/option><option>�?/option><option>�?/option>
+              </select>
+              <button class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold">
+                <i class="fas fa-cog mr-1"></i>预警规则配置
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- 05-1 通知渠道规则 -->
+        <div class="p-4 border-b border-slate-100">
+          <div class="text-[11px] font-medium text-slate-700 mb-2">通知渠道与阈�?/div>
+          <div class="grid grid-cols-4 gap-3">
+            <div class="p-2 border border-slate-200 rounded bg-slate-50/50">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">紧�?(剩余 <span class="text-red-600 font-bold">5%</span>)</span>
+                <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">启用</span>
+              </div>
+              <div class="text-[10px] text-slate-600 mt-1"><i class="fas fa-sms mr-1 text-amber-500"></i>短信 + <i class="fas fa-bell mr-1 text-blue-500"></i>企微 + <i class="fas fa-phone mr-1 text-red-500"></i>外呼</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">收件人：权益主管 + 业务部门负责�?/div>
+            </div>
+            <div class="p-2 border border-slate-200 rounded bg-slate-50/50">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">�?(剩余 <span class="text-orange-600 font-bold">15%</span>)</span>
+                <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">启用</span>
+              </div>
+              <div class="text-[10px] text-slate-600 mt-1"><i class="fas fa-bell mr-1 text-blue-500"></i>企微 + <i class="fas fa-envelope mr-1 text-emerald-500"></i>邮件</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">收件人：权益主管 + 活动负责�?/div>
+            </div>
+            <div class="p-2 border border-slate-200 rounded bg-slate-50/50">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">�?(剩余 <span class="text-amber-600 font-bold">30%</span>)</span>
+                <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">启用</span>
+              </div>
+              <div class="text-[10px] text-slate-600 mt-1"><i class="fas fa-envelope mr-1 text-emerald-500"></i>邮件</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">收件人：活动负责�?/div>
+            </div>
+            <div class="p-2 border border-slate-200 rounded bg-slate-50/50">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">�?(剩余 <span class="text-blue-600 font-bold">50%</span>)</span>
+                <span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">关闭</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">仅系统内提醒，不发送通知</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">收件人：�?/div>
+            </div>
+          </div>
+        </div>
+        <!-- 05-2 已发送通知列表 -->
+        <div class="p-4">
+          <div class="text-[11px] font-medium text-slate-700 mb-2">已发送通知列表（按时间倒序�?/div>
+          <table class="w-full text-[11px]">
+            <thead class="bg-slate-50 text-slate-600">
+              <tr>
+                <th class="py-2 px-3 text-left font-medium">通知时间</th>
+                <th class="py-2 px-3 text-center font-medium">级别</th>
+                <th class="py-2 px-3 text-left font-medium">权益名称</th>
+                <th class="py-2 px-3 text-right font-medium">剩余�?/th>
+                <th class="py-2 px-3 text-left font-medium">通知渠道</th>
+                <th class="py-2 px-3 text-left font-medium">收件�?/th>
+                <th class="py-2 px-3 text-center font-medium">状�?/th>
+                <th class="py-2 px-3 text-left font-medium">处理记录</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-blue-50/30">
+                <td class="py-2 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 14:28:32</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold">紧�?/span></td>
+                <td class="py-2 px-3 text-slate-700">微信支付立减�?50�?/td>
+                <td class="py-2 px-3 text-right text-red-600 font-medium">3.2%</td>
+                <td class="py-2 px-3 text-slate-600">短信 + 企微 + 外呼</td>
+                <td class="py-2 px-3 text-slate-600">李雪、赵琳、张�?/td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已处�?/span></td>
+                <td class="py-2 px-3 text-slate-600">李雪 14:42 调拨补充 2,000 �?/td>
+              </tr>
+              <tr class="hover:bg-blue-50/30">
+                <td class="py-2 px-3 text-slate-500 font-mono text-[10px]">2026-07-06 11:15:08</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">�?/span></td>
+                <td class="py-2 px-3 text-slate-700">美团差旅福利�?100元券</td>
+                <td class="py-2 px-3 text-right text-orange-600 font-medium">12.6%</td>
+                <td class="py-2 px-3 text-slate-600">企微 + 邮件</td>
+                <td class="py-2 px-3 text-slate-600">王浩、陈�?/td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">已读</span></td>
+                <td class="py-2 px-3 text-slate-400">�?/td>
+              </tr>
+              <tr class="hover:bg-blue-50/30">
+                <td class="py-2 px-3 text-slate-500 font-mono text-[10px]">2026-07-05 16:42:51</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">�?/span></td>
+                <td class="py-2 px-3 text-slate-700">对公账户礼包-小微</td>
+                <td class="py-2 px-3 text-right text-orange-600 font-medium">14.8%</td>
+                <td class="py-2 px-3 text-slate-600">企微 + 邮件</td>
+                <td class="py-2 px-3 text-slate-600">李雪、王�?/td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已处�?/span></td>
+                <td class="py-2 px-3 text-slate-600">李雪 17:10 通知供应商补�?500 �?/td>
+              </tr>
+              <tr class="hover:bg-blue-50/30">
+                <td class="py-2 px-3 text-slate-500 font-mono text-[10px]">2026-07-05 10:08:14</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-semibold">�?/span></td>
+                <td class="py-2 px-3 text-slate-700">端午抽奖-五芳斋粽子礼�?/td>
+                <td class="py-2 px-3 text-right text-amber-600 font-medium">28.6%</td>
+                <td class="py-2 px-3 text-slate-600">邮件</td>
+                <td class="py-2 px-3 text-slate-600">陈刚</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">已忽�?/span></td>
+                <td class="py-2 px-3 text-slate-400">�?（活动进入收尾期，库存充足）</td>
+              </tr>
+              <tr class="hover:bg-blue-50/30">
+                <td class="py-2 px-3 text-slate-500 font-mono text-[10px]">2026-07-04 09:32:48</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold">紧�?/span></td>
+                <td class="py-2 px-3 text-slate-700">生日蛋糕�?200�?/td>
+                <td class="py-2 px-3 text-right text-red-600 font-medium">2.8%</td>
+                <td class="py-2 px-3 text-slate-600">短信 + 企微 + 外呼</td>
+                <td class="py-2 px-3 text-slate-600">张敏、赵�?/td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已处�?/span></td>
+                <td class="py-2 px-3 text-slate-600">张敏 09:48 紧急调�?300 �?/td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * 对公权益营销中台 - MPA 布局生成�?v5
+ * 适配《产�?UI规范文档.md》：.app.layout-v2 结构
+ *   .app.layout-v2 > .sidebar + .main(.top-shell(header + pageTabs) + .content > .mk-page)
+ *
+ * 顶部布局�?
+ *   - 侧边栏顶部：产品 LOGO + 产品名称
+ *   - 右侧顶部：通知 / 登录用户名称 / 设置下拉
+ *   - 顶部下方：所有通过左侧导航打开的页�?Tab 切换�?
+ */
+
+// ========== 菜单配置 ==========
+// type: internal=本地HTML | product=外部链接(window.open新标签页)
+</script>
+<script src="../assets/js/layout-new.js"></script>
+<script>
+
+// ========== 工具函数 ==========
+function getCurrentPagePath() {
+  var path = window.location.pathname;
+  return path.replace(/\\/g, '/').split('/').pop() || 'overview.html';
+}
+
+function getCurrentPageFullPath() {
+  // 获取完整相对路径（如 pages/activity/list.html�?
+  var path = window.location.pathname.replace(/\\/g, '/');
+  var idx = path.indexOf('/pages/');
+  if (idx === -1) return getCurrentPagePath();
+  return path.substring(idx + 1);
+}
+
+function isMenuActive(menu) {
+  return menu.subMenus.some(function(sub) {
+    if (!sub.href || sub.type === 'product') {
+      if (sub.subMenus) {
+        return sub.subMenus.some(function(s2) {
+          if (!s2.href || s2.type === 'product') return false;
+          var p = s2.href.split('/').pop();
+          return getCurrentPagePath() === p;
+        });
+      }
+      return false;
+    }
+    var subPath = sub.href.split('/').pop();
+    return getCurrentPagePath() === subPath;
+  });
+}
+
+function isSubmenuActive(subMenu) {
+  if (!subMenu.href || subMenu.type === 'product') return false;
+  var subPath = subMenu.href.split('/').pop();
+  return getCurrentPagePath() === subPath;
+}
+
+function findCurrentMenuPath() {
+  for (var mi = 0; mi < MENU_CONFIG.length; mi++) {
+    var menu = MENU_CONFIG[mi];
+    for (var si = 0; si < menu.subMenus.length; si++) {
+      var sub = menu.subMenus[si];
+      if (sub.subMenus) {
+        for (var s2i = 0; s2i < sub.subMenus.length; s2i++) {
+          if (isSubmenuActive(sub.subMenus[s2i])) {
+            return { group: menu.name, parent: sub.name, name: sub.subMenus[s2i].name, href: sub.subMenus[s2i].href };
+          }
+        }
+      } else if (isSubmenuActive(sub)) {
+        return { group: menu.name, parent: null, name: sub.name, href: sub.href };
+      }
+    }
+  }
+  return null;
+}
+
+// ========== 渲染侧边栏（�?LOGO 头） ==========
+function renderSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+
+  // 侧边栏头部：产品 LOGO + 产品名称
+  var html = '<div class="sidebar-header">';
+  html += '  <div class="sidebar-logo-icon">ECB</div>';
+  html += '  <div class="sidebar-title-wrap">';
+  html += '    <div class="sidebar-title">对公权益营销中台</div>';
+  html += '    <div class="sidebar-title-sub">Corporate Benefit Platform</div>';
+  html += '  </div>';
+  html += '</div>';
+
+  html += '<nav class="sidebar-nav">';
+
+  MENU_CONFIG.forEach(function(menu) {
+    var active = isMenuActive(menu);
+    html += '<div class="menu-group">';
+    html += '<button class="menu-btn ' + (active ? 'active' : '') + '" onclick="toggleMenu(this)" data-menu="' + menu.name + '">' +
+      '<span class="menu-left"><span class="menu-icon">' + menu.icon + '</span><span>' + menu.name + '</span></span>' +
+      '<span class="menu-arrow">&#9660;</span></button>';
+
+    html += '<div class="submenu-list' + (active ? '' : ' submenu-collapsed') + '">';
+
+    menu.subMenus.forEach(function(sub) {
+      var subActive = isSubmenuActive(sub);
+
+      if (sub.subMenus) {
+        var anyActive = sub.subMenus.some(function(s2) { return isSubmenuActive(s2); });
+        html += '<button class="submenu-item submenu-parent' + (anyActive ? ' active submenu-open' : '') + '" onclick="toggleSubmenu(this)">' +
+          '<span>' + sub.name + '</span>' +
+          '<span class="submenu-arrow">&#9658;</span></button>';
+        html += '<div class="submenu-list-second' + (anyActive ? '' : ' submenu-collapsed') + '">';
+        sub.subMenus.forEach(function(sub2) {
+          var sub2Active = isSubmenuActive(sub2);
+          html += '<a href="' + sub2.href + '" class="submenu-item-second' + (sub2Active ? ' active' : '') + '">' + sub2.name + '</a>';
+        });
+        html += '</div>';
+      } else if (sub.type === 'product') {
+        html += '<button class="submenu-item' + (subActive ? ' active' : '') + ' submenu-product" ' +
+          'onclick="window.open(\'' + sub.url + '\', \'_blank\')" title="打开外部产品系统">' +
+          sub.name + '</button>';
+      } else {
+        html += '<a href="' + sub.href + '" class="submenu-item' + (subActive ? ' active' : '') + '">' + sub.name + '</a>';
+      }
+    });
+
+    html += '</div></div>';
+  });
+
+  html += '</nav>';
+  html += '<div class="sidebar-footer"><button class="sidebar-menu-cfg" onclick="openMenuVisibilityModal()" title="配置左侧导航菜单的显示与隐藏"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>菜单显示控制</button></div>';
+  sidebar.innerHTML = html;
+}
+
+// 展开/收起一级菜�?
+function toggleMenu(btn) {
+  var group = btn.closest('.menu-group');
+  if (!group) return;
+  var submenu = group.querySelector('.submenu-list');
+  if (!submenu) return;
+
+  btn.classList.toggle('active');
+  submenu.classList.toggle('submenu-collapsed');
+
+  var arrow = btn.querySelector('.menu-arrow');
+  if (arrow) arrow.style.transform = btn.classList.contains('active') ? 'rotate(180deg)' : '';
+}
+
+// 展开/收起二级子菜�?
+function toggleSubmenu(btn) {
+  var submenuList = btn.nextElementSibling;
+  if (!submenuList || !submenuList.classList.contains('submenu-list-second')) return;
+
+  btn.classList.toggle('submenu-open');
+  submenuList.classList.toggle('submenu-collapsed');
+
+  var arrow = btn.querySelector('.submenu-arrow');
+  if (arrow) arrow.style.transform = btn.classList.contains('submenu-open') ? 'rotate(90deg)' : '';
+}
+
+// ========== 渲染顶部 Header（通知 / 用户 / 设置�?==========
+function renderHeader() {
+  var header = document.getElementById('header');
+  if (!header) return;
+
+  header.innerHTML =
+    '<div class="header-right">' +
+      // 通知铃铛
+      '<div class="header-notification" onclick="toggleNotificationDropdown(event)" title="消息通知">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+          '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>' +
+          '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
+        '</svg>' +
+        '<span class="header-notification-dot">3</span>' +
+        '<div class="notification-dropdown" id="notificationDropdown">' +
+          '<div class="dropdown-header">' +
+            '<span>消息通知</span>' +
+            '<a href="javascript:;" class="dropdown-action">全部已读</a>' +
+          '</div>' +
+          '<div class="notification-list">' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">活动审批待处�?/div>' +
+                '<div class="notification-desc">您有 2 个活动申请待审批，请尽快处理</div>' +
+                '<div class="notification-time">10 分钟�?/div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">权益库存预警</div>' +
+                '<div class="notification-desc">美团差旅福利券库存不�?10%</div>' +
+                '<div class="notification-time">1 小时�?/div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">系统升级通知</div>' +
+                '<div class="notification-desc">v2.6.0 已发布，新增多项功能</div>' +
+                '<div class="notification-time">今天 09:00</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item">' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">活动数据周报</div>' +
+                '<div class="notification-desc">上周活动数据已生成，点击查看详情</div>' +
+                '<div class="notification-time">昨天 18:00</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="dropdown-footer">' +
+            '<a href="javascript:;">查看全部消息</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      // 用户信息（点击显示下拉）
+      '<div class="header-user-info" onclick="toggleUserDropdown(event)">' +
+        '<div class="header-avatar">�?/div>' +
+        '<span class="header-user-name">管理�?/span>' +
+        '<svg class="header-user-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+          '<polyline points="6 9 12 15 18 9"/>' +
+        '</svg>' +
+        '<div class="user-dropdown" id="userDropdown">' +
+          '<div class="user-dropdown-header">' +
+            '<div class="header-avatar">�?/div>' +
+            '<div>' +
+              '<div class="user-dropdown-name">系统管理�?/div>' +
+              '<div class="user-dropdown-role">超级管理�?/div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'profile\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+            '<span>个人中心</span>' +
+          '</button>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'changePwd\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+            '<span>修改密码</span>' +
+          '</button>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'theme\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="5.64"/></svg>' +
+            '<span>主题切换</span>' +
+          '</button>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button class="user-dropdown-item user-dropdown-logout" onclick="handleUserAction(\'logout\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+            '<span>退出登�?/span>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function toggleNotificationDropdown(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('notificationDropdown');
+  if (!dd) return;
+  // 关闭其他下拉
+  var userDD = document.getElementById('userDropdown');
+  if (userDD) userDD.classList.remove('show');
+  dd.classList.toggle('show');
+}
+
+function toggleUserDropdown(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('userDropdown');
+  if (!dd) return;
+  // 关闭其他下拉
+  var notifDD = document.getElementById('notificationDropdown');
+  if (notifDD) notifDD.classList.remove('show');
+  dd.classList.toggle('show');
+}
+
+function handleUserAction(action) {
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.classList.remove('show');
+  switch(action) {
+    case 'profile': alert('打开个人中心'); break;
+    case 'changePwd': alert('打开修改密码'); break;
+    case 'theme': alert('切换主题（浅�?深色�?); break;
+    case 'logout': if(confirm('确定退出登录？')) { alert('已退出登�?); } break;
+  }
+}
+
+// 点击外部关闭下拉
+document.addEventListener('click', function(e) {
+  var notifDD = document.getElementById('notificationDropdown');
+  if (notifDD && !e.target.closest('.header-notification')) notifDD.classList.remove('show');
+  var userDD = document.getElementById('userDropdown');
+  if (userDD && !e.target.closest('.header-user-info')) userDD.classList.remove('show');
+});
+
+// ========== 渲染页面 Tab 切换�?==========
+const TABS_STORAGE_KEY = 'mk_open_tabs';
+
+function getOpenTabs() {
+  try {
+    var raw = localStorage.getItem(TABS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function setOpenTabs(tabs) {
+  try {
+    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(tabs));
+  } catch (e) {}
+}
+
+function getCurrentTabInfo() {
+  var info = findCurrentMenuPath();
+  if (info) {
+    return { name: info.name, href: info.href };
+  }
+  // 找不到菜单时使用 title 作为兜底
+  var titleEl = document.querySelector('title');
+  var title = titleEl ? titleEl.textContent : '';
+  var pageName = title.split('-')[0].trim() || getCurrentPagePath();
+  return { name: pageName, href: getCurrentPagePath() };
+}
+
+function syncCurrentTab() {
+  var tabs = getOpenTabs();
+  var info = getCurrentTabInfo();
+  var currentPath = getCurrentPagePath();
+
+  // 如果当前页不在列表中，添�?
+  var exists = tabs.some(function(t) { return t.path === currentPath; });
+  if (!exists) {
+    tabs.push({ name: info.name, path: currentPath, href: info.href, ts: Date.now() });
+    setOpenTabs(tabs);
+  } else {
+    // 更新已存�?tab 的名称（防止菜单改名�?
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].path === currentPath) {
+        tabs[i].name = info.name;
+        tabs[i].href = info.href;
+        tabs[i].ts = Date.now();
+        break;
+      }
+    }
+    setOpenTabs(tabs);
+  }
+}
+
+function closeTab(path, e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  var tabs = getOpenTabs();
+  tabs = tabs.filter(function(t) { return t.path !== path; });
+  setOpenTabs(tabs);
+
+  var currentPath = getCurrentPagePath();
+  if (currentPath === path) {
+    // 关闭的是当前 tab，跳转到剩余的第一个或首页
+    if (tabs.length > 0) {
+      window.location.href = tabs[0].href || ('./' + tabs[0].path);
+    } else {
+      window.location.href = '../dashboard/overview.html';
+    }
+  } else {
+    renderPageTabs();
+  }
+}
+
+function closeAllTabs() {
+  setOpenTabs([]);
+  window.location.href = '../dashboard/overview.html';
+}
+
+function closeOtherTabs(path) {
+  var tabs = getOpenTabs();
+  tabs = tabs.filter(function(t) { return t.path === path; });
+  setOpenTabs(tabs);
+  renderPageTabs();
+}
+
+function renderPageTabs() {
+  var tabBar = document.getElementById('pageTabs');
+  if (!tabBar) return;
+
+  var tabs = getOpenTabs();
+  var currentPath = getCurrentPagePath();
+
+  if (tabs.length === 0) {
+    tabBar.innerHTML = '';
+    tabBar.classList.add('empty');
+    return;
+  }
+  tabBar.classList.remove('empty');
+
+  var html = '';
+  tabs.forEach(function(t) {
+    var isActive = t.path === currentPath;
+    var href = t.href || ('./' + t.path);
+    html += '<div class="page-tab' + (isActive ? ' active' : '') + '">' +
+      '<a href="' + href + '" class="page-tab-link" title="' + t.name + '">' +
+        '<span class="page-tab-name">' + t.name + '</span>' +
+      '</a>' +
+      '<button class="page-tab-close" onclick="closeTab(\'' + t.path + '\', event)" title="关闭">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button>' +
+    '</div>';
+  });
+
+  // 右侧操作按钮
+  html += '<div class="page-tabs-actions">' +
+    '<button class="page-tabs-action" onclick="closeOtherTabs(\'' + currentPath + '\')" title="关闭其他">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '<span>关闭其他</span>' +
+    '</button>' +
+    '<button class="page-tabs-action" onclick="closeAllTabs()" title="关闭全部">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '<span>关闭全部</span>' +
+    '</button>' +
+  '</div>';
+
+  tabBar.innerHTML = html;
+}
+
+// ========== 初始�?==========
+document.addEventListener('DOMContentLoaded', function() {
+  renderSidebar();
+  renderHeader();
+  syncCurrentTab();
+  renderPageTabs();
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+renderHeader();
+renderSidebar();
+
+// 库存消耗趋�?
+new Chart(document.getElementById('consumeTrendChart'), {
+  type: 'line',
+  data: {
+    labels: ['07-01', '07-02', '07-03', '07-04', '07-05', '07-06', '07-07'],
+    datasets: [
+      {
+        label: '红包',
+        data: [580, 620, 590, 650, 700, 680, 720],
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        tension: 0.3
+      },
+      {
+        label: '券类',
+        data: [320, 350, 310, 380, 400, 420, 410],
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        tension: 0.3
+      },
+      {
+        label: '实物',
+        data: [45, 50, 48, 55, 60, 52, 58],
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.3
+      },
+      {
+        label: '三方权益',
+        data: [85, 90, 88, 95, 100, 92, 105],
+        borderColor: '#8b5cf6',
+        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+        tension: 0.3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } },
+    scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } }
+  }
+});
+
+// 品类消耗占�?
+new Chart(document.getElementById('categoryPieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['红包', '券类', '实物', '三方权益'],
+    datasets: [{
+      data: [35, 30, 15, 20],
+      backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6']
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'right', labels: { font: { size: 10 } } } }
+  }
+});
+</script>
+</body>
+</html>

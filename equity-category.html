@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益品类管理 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .toggle-switch {
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: #d9dee6;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-switch.active {
+      background: #1677ff;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle-switch.active::after {
+      left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 列表面板 -->
+          <div class="mk-list-panel">
+            <!-- Tab切换 -->
+            <div style="display: flex; borderBottom: '1px solid #e8ecf0'; marginBottom: 20;">
+              <button class="category-tab active" data-tab="inline" onclick="switchCategoryTab('inline')" style="padding: '10px 24px'; fontSize: 14px; border: none; background: none; cursor: pointer; color: #1677ff; borderBottom: '2px solid #1677ff'; marginBottom: -1; fontWeight: 600;">行内权益</button>
+              <button class="category-tab" data-tab="thirdparty" onclick="switchCategoryTab('thirdparty')" style="padding: '10px 24px'; fontSize: 14px; border: none; background: none; cursor: pointer; color: #4a5568; borderBottom: '2px solid transparent'; marginBottom: -1; fontWeight: 400;">第三方权益</button>
+              <button class="category-tab" data-tab="physical" onclick="switchCategoryTab('physical')" style="padding: '10px 24px'; fontSize: 14px; border: none; background: none; cursor: pointer; color: #4a5568; borderBottom: '2px solid transparent'; marginBottom: -1; fontWeight: 400;">实物奖品</button>
+            </div>
+
+            <!-- 行内权益 -->
+            <div id="inline-content">
+              <!-- 搜索 -->
+              <div class="mk-search-panel" style="marginBottom: 16;">
+                <div class="mk-search-grid" style="gridTemplateColumns: 'repeat(2, 1fr)';">
+                  <div class="mk-form-item">
+                    <label class="mk-label">卡券类型</label>
+                    <select class="mk-select" id="inline-search-type">
+                      <option value="">全部</option>
+                      <option>抵扣券</option>
+                      <option>折扣券</option>
+                      <option>兑换券</option>
+                      <option>满减券</option>
+                    </select>
+                  </div>
+                  <div class="mk-form-item">
+                    <label class="mk-label">卡券子类型</label>
+                    <select class="mk-select" id="inline-search-subtype">
+                      <option value="">全部</option>
+                      <option>现金抵扣券</option>
+                      <option>加息券</option>
+                      <option>减息券</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mk-search-actions">
+                  <button class="mk-btn mk-btn-default" onclick="resetInlineSearch()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    重置
+                  </button>
+                  <button class="mk-btn mk-btn-primary" onclick="searchInline()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    查询
+                  </button>
+                </div>
+              </div>
+
+              <div style="display: flex; justifyContent: 'flex-end'; marginBottom: 16;">
+                <button class="mk-btn mk-btn-primary" onclick="showInlineModal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                  新增行内权益
+                </button>
+              </div>
+
+              <div style="overflow-x: auto;">
+                <table class="mk-table">
+                  <thead>
+                    <tr>
+                      <th>业务类型</th>
+                      <th>卡券品类名称</th>
+                      <th>卡券类型</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inline-table"></tbody>
+                </table>
+              </div>
+
+              <div id="inline-pagination"></div>
+            </div>
+
+            <!-- 第三方权益 -->
+            <div id="thirdparty-content" style="display: none;">
+              <div style="padding: '0 0 16px 0'; borderBottom: '1px solid #f0f2f5'; marginBottom: 20;">
+                <div style="display: flex; alignItems: center; gap: 16; flexWrap: wrap; marginBottom: 12;">
+                  <div style="display: flex; alignItems: center; gap: 8;">
+                    <span style="fontSize: 13px; color: #8c95a6; whiteSpace: nowrap;">商品名称</span>
+                    <input class="mk-input" style="width: 200px;" placeholder="请输入商品名称">
+                  </div>
+                  <div style="display: flex; alignItems: center; gap: 8;">
+                    <span style="fontSize: 13px; color: #8c95a6; whiteSpace: nowrap;">商户</span>
+                    <select class="mk-select" style="width: 180px;">
+                      <option value="">请选择商户</option>
+                      <option>橙券</option>
+                      <option>京东</option>
+                      <option>美团</option>
+                    </select>
+                  </div>
+                  <div style="display: flex; alignItems: center; gap: 8;">
+                    <span style="fontSize: 13px; color: #8c95a6; whiteSpace: nowrap;">商品类型</span>
+                    <select class="mk-select" style="width: 180px;">
+                      <option value="">请选择商品类型</option>
+                      <option>卡密</option>
+                      <option>实物</option>
+                      <option>电子券</option>
+                    </select>
+                  </div>
+                  <div style="display: flex; gap: 8; marginLeft: auto;">
+                    <button class="mk-btn mk-btn-primary">查询</button>
+                    <button class="mk-btn mk-btn-default">重置</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mk-list-header" style="marginBottom: 12;">
+                <span class="mk-list-title">第三方权益列表</span>
+                <button class="mk-btn mk-btn-primary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M20.49 15a9 9 0 1 1-5.121-12.702"></path>
+                  </svg>
+                  同步第三方权益
+                </button>
+              </div>
+
+              <div style="overflow-x: auto;">
+                <table class="mk-table">
+                  <thead>
+                    <tr>
+                      <th>商户名称</th>
+                      <th>商品名称</th>
+                      <th>平台商品代码</th>
+                      <th>商品行业</th>
+                      <th>商品类型</th>
+                      <th>品牌</th>
+                      <th>面值(元)</th>
+                      <th>采购成本(元)</th>
+                      <th>兑换状态</th>
+                    </tr>
+                  </thead>
+                  <tbody id="thirdparty-table"></tbody>
+                </table>
+              </div>
+
+              <div id="thirdparty-pagination"></div>
+            </div>
+
+            <!-- 实物奖品 -->
+            <div id="physical-content" style="display: none;">
+              <div style="display: flex; alignItems: center; gap: 16; flexWrap: wrap; paddingBottom: 16; borderBottom: '1px solid #f0f2f5'; marginBottom: 20;">
+                <div style="display: flex; alignItems: center; gap: 8;">
+                  <span style="fontSize: 13px; color: #8c95a6; whiteSpace: nowrap;">商品名称</span>
+                  <input class="mk-input" style="width: 200px;" placeholder="请输入商品名称">
+                </div>
+                <div style="display: flex; alignItems: center; gap: 8;">
+                  <span style="fontSize: 13px; color: #8c95a6; whiteSpace: nowrap;">品牌</span>
+                  <input class="mk-input" style="width: 180px;" placeholder="请输入奖品品牌">
+                </div>
+                <div style="display: flex; alignItems: center; gap: 8;">
+                  <span style="fontSize: 13px; color: #8c95a6; whiteSpace: nowrap;">类型</span>
+                  <select class="mk-select" style="width: 180px;">
+                    <option value="">请选择奖品类型</option>
+                    <option>食品/特产</option>
+                    <option>家用电器</option>
+                    <option>日常生活用品</option>
+                    <option>箱包服饰</option>
+                  </select>
+                </div>
+                <div style="display: flex; gap: 8; marginLeft: auto;">
+                  <button class="mk-btn mk-btn-primary">查询</button>
+                  <button class="mk-btn mk-btn-default">重置</button>
+                </div>
+              </div>
+
+              <div class="mk-list-header" style="marginBottom: 12;">
+                <span class="mk-list-title">实物奖品列表</span>
+                <button class="mk-btn mk-btn-primary">新增实物奖品</button>
+              </div>
+
+              <div style="overflow-x: auto;">
+                <table class="mk-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 48px;"></th>
+                      <th>奖品名称</th>
+                      <th>奖品品类</th>
+                      <th>奖品品牌</th>
+                      <th>商户名称</th>
+                      <th>奖品型号</th>
+                      <th>奖品价值</th>
+                      <th>奖品成本</th>
+                      <th>领取方式</th>
+                      <th>是否可兑换</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="physical-table"></tbody>
+                </table>
+              </div>
+
+              <div id="physical-pagination"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/修改弹窗 -->
+  <div class="mk-modal-mask" id="inline-modal" style="display: none;">
+    <div class="mk-modal" style="width: 480px;" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span id="modal-title">新增行内权益品类</span>
+        <button class="mk-modal-close" onclick="closeInlineModal()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <div style="marginBottom: 16;">
+          <div style="display: flex; alignItems: center; gap: 8;">
+            <label style="fontSize: 13px; minWidth: 100; textAlign: right;"><span style="color: #ff4d4f;">*</span> 业务类型：</label>
+            <select class="mk-select" style="flex: 1;">
+              <option value="">请选择</option>
+              <option>理财</option>
+              <option>信用卡</option>
+              <option>现金</option>
+              <option>贷款</option>
+            </select>
+          </div>
+        </div>
+        <div style="marginBottom: 16;">
+          <div style="display: flex; alignItems: center; gap: 8;">
+            <label style="fontSize: 13px; minWidth: 100; textAlign: right;"><span style="color: #ff4d4f;">*</span> 品类名称：</label>
+            <input class="mk-input" style="flex: 1;" placeholder="请输入品类名称" maxlength="20">
+          </div>
+        </div>
+        <div style="marginBottom: 16;">
+          <div style="display: flex; alignItems: center; gap: 8;">
+            <label style="fontSize: 13px; minWidth: 100; textAlign: right;"><span style="color: #ff4d4f;">*</span> 卡券类型：</label>
+            <select class="mk-select" style="flex: 1;">
+              <option value="">请选择</option>
+              <option>抵扣券</option>
+              <option>折扣券</option>
+              <option>满减券</option>
+              <option>兑换券</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div style="display: flex; alignItems: center; gap: 8;">
+            <label style="fontSize: 13px; minWidth: 100; textAlign: right;"><span style="color: #ff4d4f;">*</span> 卡券子类型：</label>
+            <select class="mk-select" style="flex: 1;">
+              <option value="">请先选择卡券类型</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeInlineModal()">取消</button>
+        <button class="mk-btn mk-btn-primary" onclick="saveInline()">添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 8px 16px; background: #fff; borderRadius: 6px; boxShadow: 0 2px 8px rgba(0,0,0,0.15); fontSize: 13px; display: none; zIndex: 9999;">
+    <span style="color: #52c41a;">✓</span> <span id="toast-text"></span>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const inlineData = [
+      { id: '1', bizType: '理财', catName: '理财抵扣券测试', cardType: '抵扣券', cardSubType: '现金券抵扣券' },
+      { id: '2', bizType: '理财', catName: '理财加息券', cardType: '抵扣券', cardSubType: '加息券' },
+      { id: '3', bizType: '理财', catName: '满减券', cardType: '满减券', cardSubType: '现金满减券' },
+      { id: '4', bizType: '理财', catName: '兑换券', cardType: '兑换券', cardSubType: '普通商品兑换券' },
+      { id: '5', bizType: '贷款', catName: '账单分期折扣券', cardType: '折扣券', cardSubType: '利率折扣券' },
+      { id: '6', bizType: '信用卡', catName: '现金红包', cardType: '抵扣券', cardSubType: '现金券抵扣券' },
+      { id: '7', bizType: '贷款', catName: '贷款回馈券', cardType: '抵扣券', cardSubType: '现金券抵扣券' },
+      { id: '8', bizType: '贷款', catName: '房贷', cardType: '折扣券', cardSubType: '利率折扣券' },
+      { id: '9', bizType: '现金', catName: '话费抵扣券', cardType: '抵扣券', cardSubType: '现金券抵扣券' },
+      { id: '10', bizType: '现金', catName: '美团支付抵扣券', cardType: '抵扣券', cardSubType: '现金券抵扣券' }
+    ];
+
+    const thirdpartyData = [
+      { id: '1', merchant: '橙券', productName: '微信红包50元', productCode: '21000005', industry: '生活服务', productType: '卡密', brand: '微信', faceValue: '50.00', cost: '50.00', redeemable: true },
+      { id: '2', merchant: '橙券', productName: '微信红包30元', productCode: '21000004', industry: '生活服务', productType: '卡密', brand: '微信', faceValue: '30.00', cost: '30.00', redeemable: false },
+      { id: '3', merchant: '橙券', productName: '微信红包20元', productCode: '21000003', industry: '生活服务', productType: '卡密', brand: '微信', faceValue: '20.00', cost: '20.00', redeemable: false },
+      { id: '4', merchant: '橙券', productName: '支付宝红包10元', productCode: '21093005', industry: '生活服务', productType: '卡密', brand: '微信', faceValue: '10.00', cost: '10.00', redeemable: false },
+      { id: '5', merchant: '橙券', productName: '懒人听书VIP会员12个月', productCode: '22000001', industry: '娱乐', productType: '直充', brand: '懒人听书', faceValue: '198.00', cost: '150.00', redeemable: true }
+    ];
+
+    const physicalData = [
+      { id: '1', name: '行李箱', category: '食品/特产', brand: '随便', merchant: '商户一', model: '谢谢', price: '88.00', cost: '88.00', pickup: '自取', redeemable: false },
+      { id: '2', name: '箱包', category: '日常生活用品', brand: '香奈儿', merchant: '商户一', model: '香奈儿', price: '99.00', cost: '99.00', pickup: '邮寄', redeemable: true },
+      { id: '3', name: 'Iphone16', category: '日常生活用品', brand: '苹果', merchant: '商户一', model: 'Iphone16', price: '8000.00', cost: '8000.00', pickup: '邮寄', redeemable: true },
+      { id: '4', name: 'wyq加湿器', category: '食品/特产', brand: 'wyq', merchant: '商户一', model: '123123', price: '100.00', cost: '80.00', pickup: '邮寄', redeemable: true },
+      { id: '5', name: '充电宝', category: '日常生活用品', brand: '小米', merchant: '商户一', model: '1001', price: '100.00', cost: '70.00', pickup: '邮寄', redeemable: true }
+    ];
+
+    // 切换Tab
+    function switchCategoryTab(tab) {
+      document.querySelectorAll('.category-tab').forEach(el => {
+        el.classList.remove('active');
+        el.style.color = '#4a5568';
+        el.style.borderBottom = '2px solid transparent';
+        el.style.fontWeight = '400';
+      });
+      const activeTab = document.querySelector(`.category-tab[data-tab="${tab}"]`);
+      activeTab.classList.add('active');
+      activeTab.style.color = '#1677ff';
+      activeTab.style.borderBottom = '2px solid #1677ff';
+      activeTab.style.fontWeight = '600';
+
+      document.getElementById('inline-content').style.display = tab === 'inline' ? 'block' : 'none';
+      document.getElementById('thirdparty-content').style.display = tab === 'thirdparty' ? 'block' : 'none';
+      document.getElementById('physical-content').style.display = tab === 'physical' ? 'block' : 'none';
+    }
+
+    // 渲染行内权益表格
+    function renderInlineTable() {
+      const tbody = document.getElementById('inline-table');
+      tbody.innerHTML = inlineData.map(item => `
+        <tr>
+          <td style="color: #1677ff;">${item.bizType}</td>
+          <td style="color: #1677ff;">${item.catName}</td>
+          <td style="color: #1677ff;">${item.cardType} / ${item.cardSubType}</td>
+          <td>
+            <div style="display: flex; alignItems: center; gap: 12;">
+              <button class="mk-icon-btn" title="编辑" onclick="showInlineModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="mk-icon-btn" title="删除" onclick="deleteInline('${item.id}')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 渲染第三方权益表格
+    function renderThirdpartyTable() {
+      const tbody = document.getElementById('thirdparty-table');
+      tbody.innerHTML = thirdpartyData.map(item => `
+        <tr>
+          <td>${item.merchant}</td>
+          <td>${item.productName}</td>
+          <td style="color: #8c95a6;">${item.productCode}</td>
+          <td style="color: #1677ff;">${item.industry}</td>
+          <td>${item.productType}</td>
+          <td>${item.brand}</td>
+          <td>${item.faceValue}</td>
+          <td>${item.cost}</td>
+          <td>
+            <div class="toggle-switch ${item.redeemable ? 'active' : ''}" onclick="toggleRedeemable(this)"></div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 渲染实物奖品表格
+    function renderPhysicalTable() {
+      const tbody = document.getElementById('physical-table');
+      tbody.innerHTML = physicalData.map((item, idx) => `
+        <tr>
+          <td style="color: #8c95a6;">${idx + 1}</td>
+          <td style="color: #1677ff;">${item.name}</td>
+          <td>${item.category}</td>
+          <td>${item.brand}</td>
+          <td>${item.merchant}</td>
+          <td style="color: #8c95a6;">${item.model || '—'}</td>
+          <td>${item.price}</td>
+          <td>${item.cost}</td>
+          <td>${item.pickup}</td>
+          <td>
+            <div class="toggle-switch ${item.redeemable ? 'active' : ''}" onclick="toggleRedeemable(this)"></div>
+          </td>
+          <td>
+            <div style="display: flex; alignItems: center; gap: 12;">
+              <button class="mk-icon-btn" title="编辑">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="mk-icon-btn" title="删除">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 切换兑换状态
+    function toggleRedeemable(el) {
+      el.classList.toggle('active');
+      showToast('状态已更新');
+    }
+
+    // 显示弹窗
+    function showInlineModal() {
+      document.getElementById('inline-modal').style.display = 'flex';
+    }
+
+    // 关闭弹窗
+    function closeInlineModal() {
+      document.getElementById('inline-modal').style.display = 'none';
+    }
+
+    // 保存
+    function saveInline() {
+      showToast('已新增');
+      closeInlineModal();
+    }
+
+    // 删除
+    function deleteInline(id) {
+      if (confirm('确认删除该品类？')) {
+        showToast('已删除');
+      }
+    }
+
+    // 重置搜索
+    function resetInlineSearch() {
+      document.getElementById('inline-search-type').value = '';
+      document.getElementById('inline-search-subtype').value = '';
+    }
+
+    // 搜索
+    function searchInline() {
+      showToast('查询完成');
+    }
+
+    // Toast提示
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('inline-modal').addEventListener('click', closeInlineModal);
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      renderInlineTable();
+      renderThirdpartyTable();
+      renderPhysicalTable();
+    });
+  </script>
+</body>
+</html>

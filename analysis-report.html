@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益报表 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-stat-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .mk-stat-label { font-size: 12px; color: #8c95a6; }
+    .mk-stat-value { font-size: 22px; font-weight: 700; line-height: 1.2; }
+    .segment-btns {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .segment-btn {
+      padding: 6px 20px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #555;
+    }
+    .segment-btn.active {
+      background: #1677ff;
+      color: #fff;
+    }
+    .report-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .report-tag {
+      font-size: 11px;
+      background: #f0f5ff;
+      color: #1677ff;
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .mk-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      font-size: 13px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-bar-sm {
+      width: 56px;
+      height: 6px;
+      background: #f0f2f5;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-sm-fill {
+      height: 100%;
+      background: #52c41a;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页头 -->
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">权益报表</h1>
+              <p class="mk-page-subtitle">全行/机构权益报表，支持按日、月、年统计查看和下载</p>
+            </div>
+            <button class="mk-btn mk-btn-default" onclick="showToast('报表下载中，请稍候')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              下载报表
+            </button>
+          </div>
+
+          <!-- 筛选区 -->
+          <div class="mk-search-panel">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+              <div class="mk-form-item">
+                <label class="mk-label">统计维度</label>
+                <div class="segment-btns" id="granularity-btns">
+                  <button class="segment-btn active" data-val="日">按日</button>
+                  <button class="segment-btn" data-val="月">按月</button>
+                  <button class="segment-btn" data-val="年">按年</button>
+                </div>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">报表范围</label>
+                <div class="segment-btns" id="scope-btns">
+                  <button class="segment-btn active" data-val="全行">全行</button>
+                  <button class="segment-btn" data-val="机构">机构</button>
+                </div>
+              </div>
+              <div class="mk-form-item" id="org-select-wrap" style="display: none;">
+                <label class="mk-label">选择机构</label>
+                <select class="mk-select" style="width: 160px;" id="org-select">
+                  <option>零售银行部</option>
+                  <option>信用卡中心</option>
+                  <option>公司金融部</option>
+                  <option>私人银行部</option>
+                  <option>电子银行部</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">时间范围（起）</label>
+                <input type="date" class="mk-input" id="date-from">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">时间范围（止）</label>
+                <input type="date" class="mk-input" id="date-to">
+              </div>
+              <button class="mk-btn mk-btn-primary" onclick="showToast('查询成功')">查询</button>
+            </div>
+          </div>
+
+          <!-- 汇总统计 -->
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px;" id="summary-grid"></div>
+
+          <!-- 报表列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title" id="report-title">全行日报表</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: #8c95a6;">共 <b id="row-count">7</b> 条</span>
+                <button class="mk-btn mk-btn-default" onclick="showToast('Excel导出中，请稍候')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  导出 Excel
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table">
+                <thead>
+                  <tr id="report-thead"></tr>
+                </thead>
+                <tbody id="report-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 报表导出 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">报表导出</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 4px 0 8px;" id="export-cards"></div>
+          </div>
+
+          <!-- 自定义时间范围导出 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">自定义时间范围导出</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; padding-bottom: 8px;">
+              <div class="mk-form-item">
+                <label class="mk-label">报表类型</label>
+                <select class="mk-select" style="width: 160px;" id="export-type">
+                  <option>发放明细报表</option>
+                  <option>核销明细报表</option>
+                  <option>汇总统计报表</option>
+                  <option>趋势分析报表</option>
+                  <option>渠道分析报表</option>
+                  <option>机构明细报表</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">开始日期</label>
+                <input type="date" class="mk-input" style="width: 160px;" id="export-from">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">结束日期</label>
+                <input type="date" class="mk-input" style="width: 160px;" id="export-to">
+              </div>
+              <button class="mk-btn mk-btn-primary" onclick="showToast('报表导出中，请稍候')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                导出报表
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" style="display: none;" class="mk-toast"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    let granularity = '日';
+    let scope = '全行';
+
+    // 生成报表数据
+    function genDayData() {
+      return Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(2024, 5, 20 - i);
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const issued = Math.floor(3000 + Math.random() * 2000);
+        const used = Math.floor(issued * (0.65 + Math.random() * 0.2));
+        return {
+          period: dateStr, issued, used,
+          useRate: ((used / issued) * 100).toFixed(1),
+          cost: `¥${(issued * 18.5).toFixed(0)}`,
+          roi: (8 + Math.random() * 5).toFixed(1),
+          newUsers: Math.floor(issued * 0.1),
+          activeUsers: used,
+          expired: Math.floor(issued * 0.05),
+          returned: Math.floor(issued * 0.02),
+        };
+      });
+    }
+
+    function genMonthData() {
+      return Array.from({ length: 6 }, (_, i) => {
+        const d = new Date(2024, 5 - i, 1);
+        const issued = Math.floor(90000 + Math.random() * 40000);
+        const used = Math.floor(issued * (0.70 + Math.random() * 0.15));
+        return {
+          period: `${d.getFullYear()}年${d.getMonth() + 1}月`,
+          issued, used,
+          useRate: ((used / issued) * 100).toFixed(1),
+          cost: `¥${(issued * 18.5 / 10000).toFixed(1)}万`,
+          roi: (8 + Math.random() * 5).toFixed(1),
+          newUsers: Math.floor(issued * 0.08),
+          activeUsers: used,
+          expired: Math.floor(issued * 0.04),
+          returned: Math.floor(issued * 0.02),
+        };
+      });
+    }
+
+    function genYearData() {
+      return [2024, 2023, 2022].map(yr => {
+        const issued = Math.floor(1000000 + Math.random() * 500000);
+        const used = Math.floor(issued * 0.72);
+        return {
+          period: `${yr}年`,
+          issued, used,
+          useRate: ((used / issued) * 100).toFixed(1),
+          cost: `¥${(issued * 18.5 / 10000).toFixed(0)}万`,
+          roi: (9 + Math.random() * 3).toFixed(1),
+          newUsers: Math.floor(issued * 0.06),
+          activeUsers: used,
+          expired: Math.floor(issued * 0.03),
+          returned: Math.floor(issued * 0.02),
+        };
+      });
+    }
+
+    const exportCards = [
+      { title: '发放明细报表', desc: '每笔权益发放的详细记录', tags: ['权益编号', '权益名称', '发放时间', '+4'] },
+      { title: '核销明细报表', desc: '每笔权益核销的详细记录', tags: ['权益编号', '权益名称', '核销时间', '+3'] },
+      { title: '汇总统计报表', desc: '按权益类型汇总的统计数据', tags: ['权益类型', '发放量', '核销量', '+3'] },
+      { title: '趋势分析报表', desc: '按时间维度的趋势数据', tags: ['日期', '发放量', '核销量', '+3'] },
+      { title: '渠道分析报表', desc: '各渠道发放及核销数据', tags: ['渠道', '发放量', '核销量', '+2'] },
+      { title: '机构明细报表', desc: '各机构发放及核销数据', tags: ['机构', '发放量', '核销量', '+2'] },
+    ];
+
+    // 渲染汇总统计
+    function renderSummary(rows) {
+      const totals = rows.reduce((acc, r) => ({
+        issued: acc.issued + r.issued,
+        used: acc.used + r.used,
+        newUsers: acc.newUsers + r.newUsers,
+        expired: acc.expired + r.expired,
+        returned: acc.returned + r.returned,
+      }), { issued: 0, used: 0, newUsers: 0, expired: 0, returned: 0 });
+
+      const data = [
+        { label: '累计发放', value: totals.issued.toLocaleString(), color: '#1677ff' },
+        { label: '累计核销', value: totals.used.toLocaleString(), color: '#52c41a' },
+        { label: '综合核销率', value: `${((totals.used / totals.issued) * 100).toFixed(1)}%`, color: '#faad14' },
+        { label: '新增用户', value: totals.newUsers.toLocaleString(), color: '#722ed1' },
+        { label: '过期/退回', value: `${totals.expired.toLocaleString()} / ${totals.returned.toLocaleString()}`, color: '#ff4d4f' },
+      ];
+
+      document.getElementById('summary-grid').innerHTML = data.map(c => `
+        <div class="mk-stat-card">
+          <div class="mk-stat-label">${c.label}</div>
+          <div class="mk-stat-value" style="color: ${c.color};">${c.value}</div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染报表
+    function renderReport() {
+      const rows = granularity === '日' ? genDayData() : granularity === '月' ? genMonthData() : genYearData();
+      const periodLabel = granularity === '日' ? '日期' : granularity === '月' ? '月份' : '年份';
+
+      document.getElementById('report-title').textContent = `${scope}${granularity === '年' ? '' : ''}报表${scope === '机构' ? ` — ${document.getElementById('org-select').value}` : ''}`;
+      document.getElementById('row-count').textContent = rows.length;
+
+      document.getElementById('report-thead').innerHTML = `
+        <th>统计${periodLabel}</th>
+        <th>发放笔数</th>
+        <th>核销笔数</th>
+        <th>核销率</th>
+        <th>发放成本</th>
+        <th>综合ROI</th>
+        <th>新增用户</th>
+        <th>活跃用户</th>
+        <th>过期作废</th>
+        <th>退回</th>
+      `;
+
+      document.getElementById('report-tbody').innerHTML = rows.map(r => `
+        <tr>
+          <td style="font-weight: 500;">${r.period}</td>
+          <td>${r.issued.toLocaleString()}</td>
+          <td>${r.used.toLocaleString()}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="progress-bar-sm"><div class="progress-bar-sm-fill" style="width: ${r.useRate}%;"></div></div>
+              <span style="font-size: 12px;">${r.useRate}%</span>
+            </div>
+          </td>
+          <td style="font-weight: 600;">${r.cost}</td>
+          <td><span style="font-weight: 600; color: #52c41a;">${r.roi}</span></td>
+          <td>${r.newUsers.toLocaleString()}</td>
+          <td>${r.activeUsers.toLocaleString()}</td>
+          <td style="color: #8c95a6;">${r.expired.toLocaleString()}</td>
+          <td style="color: #8c95a6;">${r.returned.toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      renderSummary(rows);
+    }
+
+    // 渲染导出卡片
+    function renderExportCards() {
+      document.getElementById('export-cards').innerHTML = exportCards.map(r => `
+        <div class="report-card">
+          <div style="font-size: 14px; font-weight: 600;">${r.title}</div>
+          <div style="font-size: 12px; color: #8c95a6;">${r.desc}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+            ${r.tags.map(t => `<span class="report-tag">${t}</span>`).join('')}
+          </div>
+          <button class="mk-btn mk-btn-default" style="font-size: 12px; padding: 0 10px; height: 28px; margin-top: auto;" onclick="showToast('${r.title}导出中，请稍候')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            导出 CSV
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    // 绑定维度切换
+    document.querySelectorAll('#granularity-btns .segment-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('#granularity-btns .segment-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        granularity = this.dataset.val;
+        renderReport();
+      });
+    });
+
+    // 绑定范围切换
+    document.querySelectorAll('#scope-btns .segment-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('#scope-btns .segment-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        scope = this.dataset.val;
+        document.getElementById('org-select-wrap').style.display = scope === '机构' ? 'block' : 'none';
+        renderReport();
+      });
+    });
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderReport();
+      renderExportCards();
+    });
+  </script>
+</body>
+</html>

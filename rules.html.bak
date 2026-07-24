@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>活动发放规则查看 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../../assets/css/common.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <!-- 中部主体 -->
+  <div class="main">
+
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面目标 -->
+      <!-- 页面目标 已简化融入页面 -->
+
+      <!-- 规则列表 -->
+      <div class="mk-list-panel">
+  <div class="mk-panel-header"><div class="mk-panel-title">发放规则配置</div></div>
+  <div><div class="pt-6 space-y-4">
+          <!-- 规则卡片1 -->
+          <div class="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm text-slate-800">科技型小微开户送红包活动 - 发放规则</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">生效中</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+              <div><span class="text-slate-400 block">触发条件</span><span class="font-semibold text-slate-700">对公开户成功</span></div>
+              <div><span class="text-slate-400 block">发放权益</span><span class="font-semibold text-slate-700">微信50元代金券</span></div>
+              <div><span class="text-slate-400 block">每人限领</span><span class="font-semibold text-slate-700">1次/活动周期</span></div>
+              <div><span class="text-slate-400 block">日发放上限</span><span class="font-semibold text-slate-700">500张/天</span></div>
+            </div>
+            <div class="mt-3 p-2.5 bg-amber-50 rounded border border-amber-200 text-[10px] text-amber-700"><strong>风控规则：</strong>同一企业IP限3人/天，单设备限1次，黑名单企业自动拦截</div>
+          </div>
+
+          <!-- 规则卡片2 -->
+          <div class="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm text-slate-800">年中代发薪专项权益活动 - 发放规则</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-semibold">已结束</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+              <div><span class="text-slate-400 block">触发条件</span><span class="font-semibold text-slate-700">代发薪签约完成</span></div>
+              <div><span class="text-slate-400 block">发放权益</span><span class="font-semibold text-slate-700">星巴克30元券 + 年费减免券</span></div>
+              <div><span class="text-slate-400 block">每人限领</span><span class="font-semibold text-slate-700">各1次</span></div>
+              <div><span class="text-slate-400 block">日发放上限</span><span class="font-semibold text-slate-700">1000张/天</span></div>
+            </div>
+            <div class="mt-3 p-2.5 bg-blue-50 rounded border border-blue-200 text-[10px] text-blue-700"><strong>特殊规则：</strong>代发金额&ge;50万员工可额外领取高端实物权益（拉杆箱）</div>
+          </div>
+
+          <!-- 规则卡片3 -->
+          <div class="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm text-slate-800">端午抽奖赢好礼 - 发放规则</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">生效中</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+              <div><span class="text-slate-400 block">触发条件</span><span class="font-semibold text-slate-700">完成任意一笔交易</span></div>
+              <div><span class="text-slate-400 block">发放方式</span><span class="font-semibold text-slate-700">抽奖（概率分配）</span></div>
+              <div><span class="text-slate-400 block">每人限领</span><span class="font-semibold text-slate-700">3次/天</span></div>
+              <div><span class="text-slate-400 block">奖品池总量</span><span class="font-semibold text-slate-700">500份</span></div>
+            </div>
+            <div class="mt-3 grid grid-cols-4 gap-2 text-[10px]">
+              <div class="p-2 bg-yellow-50 rounded text-center"><span class="block font-bold text-yellow-700">一等奖</span><span class="text-slate-500">拉杆箱 x5</span></div>
+              <div class="p-2 bg-slate-50 rounded text-center"><span class="block font-bold text-slate-700">二等奖</span><span class="text-slate-500">星巴克券 x50</span></div>
+              <div class="p-2 bg-orange-50 rounded text-center"><span class="block font-bold text-orange-700">三等奖</span><span class="text-slate-500">代金券 x150</span></div>
+              <div class="p-2 bg-slate-50 rounded text-center"><span class="block font-bold text-slate-700">参与奖</span><span class="text-slate-500">积分 x295</span></div>
+            </div>
+          </div>
+        </div></div>
+</div>
+
+    
+      </div>
+    </div>
+  </div>
+  <!-- 底部 Footer -->
+</div>
+<script>
+/**
+ * 对公权益营销中台 - MPA 布局生成器 v5
+ * 适配《产品-UI规范文档.md》：.app.layout-v2 结构
+ *   .app.layout-v2 > .sidebar + .main(.top-shell(header + pageTabs) + .content > .mk-page)
+ *
+ * 顶部布局：
+ *   - 侧边栏顶部：产品 LOGO + 产品名称
+ *   - 右侧顶部：通知 / 登录用户名称 / 设置下拉
+ *   - 顶部下方：所有通过左侧导航打开的页面 Tab 切换区
+ */
+
+// ========== 菜单配置 ==========
+// type: internal=本地HTML | product=外部链接(window.open新标签页)
+const MENU_CONFIG = [
+  {
+    name: "看板中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`,
+    subMenus: [
+      { name: "首页概览", href: "../dashboard/overview.html", type: "internal" },
+      { name: "工作台审批", href: "../dashboard/workbench.html", type: "internal" }
+    ]
+  },
+  {
+    name: "客户中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    subMenus: [
+      { name: "企业客户列表", href: "../customer/list.html", type: "internal" },
+      { name: "企业客群管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_tagProfile/customerInsight/publicGroupManagement" },
+      { name: "企业客群管理（新页面）", href: "../customer/segment.html", type: "internal" },
+      { name: "企业白名单管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_market/marketListManager?type=blank" },
+      { name: "企业白名单管理（新页面）", href: "../customer/whitelist.html", type: "internal" },
+      { name: "企业黑名单管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_market/marketListManager?type=black" },
+      { name: "企业黑名单管理（新页面）", href: "../customer/blacklist.html", type: "internal" },
+      { name: "公私联动名单管理", href: "../customer/linkage.html", type: "internal" },
+      {
+        name: "客群运营",
+        subMenus: [
+          { name: "客群活动视图", href: "../customer/segment-activity.html", type: "internal" },
+          { name: "客群营销目标", href: "../customer/segment-goal.html", type: "internal" },
+          { name: "客群分渠道触达分析", href: "../customer/segment-channel.html", type: "internal" },
+          { name: "客群运营效果分析", href: "../customer/segment-operations.html", type: "internal" },
+          { name: "客群洞察分析", href: "../customer/segment-insight.html", type: "internal" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "事件中心管理",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    subMenus: [
+      { name: "业务场景管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_gatedLaunch/busiScen/list" },
+      { name: "业务场景管理（新页面）", href: "../event/scene.html", type: "internal" },
+      { name: "事件码产品码管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_gatedLaunch/busiScen/eventList" },
+      { name: "事件码产品码管理（新页面）", href: "../event/product-code.html", type: "internal" }
+    ]
+  },
+  {
+    name: "活动中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+    subMenus: [
+      { name: "活动管理列表", href: "../activity/list.html", type: "internal" },
+      { name: "活动数据统计", href: "../activity/analytics.html", type: "internal" },
+      { name: "活动发放规则查看", href: "../activity/rules.html", type: "internal" },
+      { name: "分类字典配置（新页面）", href: "../activity/category-dict.html", type: "internal" },
+      { name: "对公抽奖活动", href: "../activity/lottery.html", type: "internal" },
+      { name: "对公事件营销活动", href: "../activity/event-marketing.html", type: "internal" },
+      { name: "对公领权益活动", href: "../activity/claim-benefit.html", type: "internal" },
+      { name: "对公发权益活动", href: "../activity/send-benefit.html", type: "internal" },
+      {
+        name: "规则配置",
+        subMenus: [
+          { name: "参与规则", href: "../rules/participation-rule.html", type: "internal" },
+          { name: "权益规则", href: "../rules/benefit-rule.html", type: "internal" },
+          { name: "发放领取规则", href: "../rules/grant-claim-rule.html", type: "internal" },
+          { name: "活动列表页", href: "../rules/activity-list.html", type: "internal" },
+          { name: "活动发放规则页", href: "../rules/grant-rule-config.html", type: "internal" },
+          { name: "场景管理", href: "../rules/scene-config.html", type: "internal" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "权益直投中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+    subMenus: [
+      { name: "权益直投活动", href: "../newactivity/direct-invest-list.html", type: "internal" },
+      { name: "权益直投数据分析", href: "../newactivity/direct-invest-analytics.html", type: "internal" },
+      { name: "场景管理", href: "../newactivity/scene-config.html", type: "internal" }
+    ]
+  },
+  {
+    name: "权益中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`,
+    subMenus: [
+      { name: "权益库（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/Couponlist" },
+      { name: "权益库（新页面）", href: "../equity/benefit-library.html", type: "internal" },
+      { name: "权益货架（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/coupon/Shelflist" },
+      { name: "权益货架（新页面）", href: "../equity/benefit-shelf.html", type: "internal" },
+      { name: "权益流水（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/CouponListFlow" },
+      { name: "权益流水（新页面）", href: "../equity/benefit-flow.html", type: "internal" },
+      { name: "三方权益管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/threeParties/goodslist" },
+      { name: "三方权益管理（新页面）", href: "../equity/thirdparty-goods.html", type: "internal" },
+      { name: "三方权益订单（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/transaction/orderListFlow" },
+      { name: "三方权益订单（新页面）", href: "../equity/thirdparty-orders.html", type: "internal" },
+      { name: "实物权益列表（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/physicalPrizes/PrizesList" },
+      { name: "实物权益列表（新页面）", href: "../equity/physical-prizes.html", type: "internal" },
+      { name: "实物权益订单（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/physicalPrizes/prizesRecords" },
+      { name: "实物权益订单（新页面）", href: "../equity/physical-orders.html", type: "internal" },
+      { name: "权益补发（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/coupon/release" },
+      { name: "权益补发（新页面）", href: "../equity/benefit-reissue.html", type: "internal" },
+      { name: "卡券回收（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/reclaim/coupons" },
+      { name: "卡券回收（新页面）", href: "../equity/coupon-reclaim.html", type: "internal" },
+      { name: "卡券有效期修改（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/coupon/expired" },
+      { name: "卡券有效期修改（新页面）", href: "../equity/coupon-expiry.html", type: "internal" },
+      { name: "卡券过期提醒明细（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/coupon/expiredList" },
+      { name: "卡券过期提醒明细（新页面）", href: "../equity/coupon-expiry-list.html", type: "internal" },
+      { name: "行内卡券品类管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/coupon/rightscouponlist" },
+      { name: "行内卡券品类管理（新页面）", href: "../equity/internal-coupon-type.html", type: "internal" },
+      { name: "部门权益结算（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/List" },
+      { name: "部门权益结算（新页面）", href: "../equity/settlement.html", type: "internal" },
+      { name: "供应商管理（产品）", href: "", type: "product", url: "https://uat-pkg.finmall.com/innermanage/#/inner_equity/supplier/supplierLi" },
+      { name: "供应商管理（新页面）", href: "../equity/supplier.html", type: "internal" },
+      { name: "权益核销管理", href: "../benefit/redemption.html", type: "internal" },
+      { name: "活动费用统计", href: "../equity/cost-statistics.html", type: "internal" },
+      { name: "权益上架审批", href: "../equity/benefit-approval.html", type: "internal" },
+      { name: "权益修改审批", href: "../equity/benefit-modify-approval.html", type: "internal" },
+      { name: "权益库存管理", href: "../equity/benefit-stock.html", type: "internal" }
+    ]
+  },
+  {
+    name: "监控中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+    subMenus: [
+      { name: "权益库存监控", href: "../monitor/benefit-stock.html", type: "internal" },
+      { name: "权益发放异常监控", href: "../monitor/grant-exception.html", type: "internal" },
+      { name: "组件异常监测", href: "../monitor/component-health.html", type: "internal" },
+      { name: "三方权益供应商核销结算", href: "../monitor/thirdparty-settlement.html", type: "internal" }
+    ]
+  },
+  {
+    name: "系统中心",
+    icon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    subMenus: [
+      { name: "系统字典设置（新页面）", href: "../system/system-dict.html", type: "internal" },
+      { name: "权限管理（新页面）", href: "../system/permission.html", type: "internal" }
+    ]
+  }
+];
+
+// ========== 工具函数 ==========
+function getCurrentPagePath() {
+  var path = window.location.pathname;
+  return path.replace(/\\/g, '/').split('/').pop() || 'overview.html';
+}
+
+function getCurrentPageFullPath() {
+  // 获取完整相对路径（如 pages/activity/list.html）
+  var path = window.location.pathname.replace(/\\/g, '/');
+  var idx = path.indexOf('/pages/');
+  if (idx === -1) return getCurrentPagePath();
+  return path.substring(idx + 1);
+}
+
+function isMenuActive(menu) {
+  return menu.subMenus.some(function(sub) {
+    if (!sub.href || sub.type === 'product') {
+      if (sub.subMenus) {
+        return sub.subMenus.some(function(s2) {
+          if (!s2.href || s2.type === 'product') return false;
+          var p = s2.href.split('/').pop();
+          return getCurrentPagePath() === p;
+        });
+      }
+      return false;
+    }
+    var subPath = sub.href.split('/').pop();
+    return getCurrentPagePath() === subPath;
+  });
+}
+
+function isSubmenuActive(subMenu) {
+  if (!subMenu.href || subMenu.type === 'product') return false;
+  var subPath = subMenu.href.split('/').pop();
+  return getCurrentPagePath() === subPath;
+}
+
+function findCurrentMenuPath() {
+  for (var mi = 0; mi < MENU_CONFIG.length; mi++) {
+    var menu = MENU_CONFIG[mi];
+    for (var si = 0; si < menu.subMenus.length; si++) {
+      var sub = menu.subMenus[si];
+      if (sub.subMenus) {
+        for (var s2i = 0; s2i < sub.subMenus.length; s2i++) {
+          if (isSubmenuActive(sub.subMenus[s2i])) {
+            return { group: menu.name, parent: sub.name, name: sub.subMenus[s2i].name, href: sub.subMenus[s2i].href };
+          }
+        }
+      } else if (isSubmenuActive(sub)) {
+        return { group: menu.name, parent: null, name: sub.name, href: sub.href };
+      }
+    }
+  }
+  return null;
+}
+
+// ========== 渲染侧边栏（含 LOGO 头） ==========
+function renderSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+
+  // 侧边栏头部：产品 LOGO + 产品名称
+  var html = '<div class="sidebar-header">';
+  html += '  <div class="sidebar-logo-icon">ECB</div>';
+  html += '  <div class="sidebar-title-wrap">';
+  html += '    <div class="sidebar-title">对公权益营销中台</div>';
+  html += '    <div class="sidebar-title-sub">Corporate Benefit Platform</div>';
+  html += '  </div>';
+  html += '</div>';
+
+  html += '<nav class="sidebar-nav">';
+
+  MENU_CONFIG.forEach(function(menu) {
+    var active = isMenuActive(menu);
+    html += '<div class="menu-group">';
+    html += '<button class="menu-btn ' + (active ? 'active' : '') + '" onclick="toggleMenu(this)" data-menu="' + menu.name + '">' +
+      '<span class="menu-left"><span class="menu-icon">' + menu.icon + '</span><span>' + menu.name + '</span></span>' +
+      '<span class="menu-arrow">&#9660;</span></button>';
+
+    html += '<div class="submenu-list' + (active ? '' : ' submenu-collapsed') + '">';
+
+    menu.subMenus.forEach(function(sub) {
+      var subActive = isSubmenuActive(sub);
+
+      if (sub.subMenus) {
+        var anyActive = sub.subMenus.some(function(s2) { return isSubmenuActive(s2); });
+        html += '<button class="submenu-item submenu-parent' + (anyActive ? ' active submenu-open' : '') + '" onclick="toggleSubmenu(this)">' +
+          '<span>' + sub.name + '</span>' +
+          '<span class="submenu-arrow">&#9658;</span></button>';
+        html += '<div class="submenu-list-second' + (anyActive ? '' : ' submenu-collapsed') + '">';
+        sub.subMenus.forEach(function(sub2) {
+          var sub2Active = isSubmenuActive(sub2);
+          html += '<a href="' + sub2.href + '" class="submenu-item-second' + (sub2Active ? ' active' : '') + '">' + sub2.name + '</a>';
+        });
+        html += '</div>';
+      } else if (sub.type === 'product') {
+        html += '<button class="submenu-item' + (subActive ? ' active' : '') + ' submenu-product" ' +
+          'onclick="window.open(\'' + sub.url + '\', \'_blank\')" title="打开外部产品系统">' +
+          sub.name + '</button>';
+      } else {
+        html += '<a href="' + sub.href + '" class="submenu-item' + (subActive ? ' active' : '') + '">' + sub.name + '</a>';
+      }
+    });
+
+    html += '</div></div>';
+  });
+
+  html += '</nav>';
+  sidebar.innerHTML = html;
+}
+
+// 展开/收起一级菜单
+function toggleMenu(btn) {
+  var group = btn.closest('.menu-group');
+  if (!group) return;
+  var submenu = group.querySelector('.submenu-list');
+  if (!submenu) return;
+
+  btn.classList.toggle('active');
+  submenu.classList.toggle('submenu-collapsed');
+
+  var arrow = btn.querySelector('.menu-arrow');
+  if (arrow) arrow.style.transform = btn.classList.contains('active') ? 'rotate(180deg)' : '';
+}
+
+// 展开/收起二级子菜单
+function toggleSubmenu(btn) {
+  var submenuList = btn.nextElementSibling;
+  if (!submenuList || !submenuList.classList.contains('submenu-list-second')) return;
+
+  btn.classList.toggle('submenu-open');
+  submenuList.classList.toggle('submenu-collapsed');
+
+  var arrow = btn.querySelector('.submenu-arrow');
+  if (arrow) arrow.style.transform = btn.classList.contains('submenu-open') ? 'rotate(90deg)' : '';
+}
+
+// ========== 渲染顶部 Header（通知 / 用户 / 设置） ==========
+function renderHeader() {
+  var header = document.getElementById('header');
+  if (!header) return;
+
+  header.innerHTML =
+    '<div class="header-right">' +
+      // 通知铃铛
+      '<div class="header-notification" onclick="toggleNotificationDropdown(event)" title="消息通知">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+          '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>' +
+          '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
+        '</svg>' +
+        '<span class="header-notification-dot">3</span>' +
+        '<div class="notification-dropdown" id="notificationDropdown">' +
+          '<div class="dropdown-header">' +
+            '<span>消息通知</span>' +
+            '<a href="javascript:;" class="dropdown-action">全部已读</a>' +
+          '</div>' +
+          '<div class="notification-list">' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">活动审批待处理</div>' +
+                '<div class="notification-desc">您有 2 个活动申请待审批，请尽快处理</div>' +
+                '<div class="notification-time">10 分钟前</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">权益库存预警</div>' +
+                '<div class="notification-desc">美团差旅福利券库存不足 10%</div>' +
+                '<div class="notification-time">1 小时前</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">系统升级通知</div>' +
+                '<div class="notification-desc">v2.6.0 已发布，新增多项功能</div>' +
+                '<div class="notification-time">今天 09:00</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item">' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">活动数据周报</div>' +
+                '<div class="notification-desc">上周活动数据已生成，点击查看详情</div>' +
+                '<div class="notification-time">昨天 18:00</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="dropdown-footer">' +
+            '<a href="javascript:;">查看全部消息</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      // 用户信息（点击显示下拉）
+      '<div class="header-user-info" onclick="toggleUserDropdown(event)">' +
+        '<div class="header-avatar">管</div>' +
+        '<span class="header-user-name">管理员</span>' +
+        '<svg class="header-user-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+          '<polyline points="6 9 12 15 18 9"/>' +
+        '</svg>' +
+        '<div class="user-dropdown" id="userDropdown">' +
+          '<div class="user-dropdown-header">' +
+            '<div class="header-avatar">管</div>' +
+            '<div>' +
+              '<div class="user-dropdown-name">系统管理员</div>' +
+              '<div class="user-dropdown-role">超级管理员</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'profile\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+            '<span>个人中心</span>' +
+          '</button>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'changePwd\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+            '<span>修改密码</span>' +
+          '</button>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'theme\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="5.64"/></svg>' +
+            '<span>主题切换</span>' +
+          '</button>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button class="user-dropdown-item user-dropdown-logout" onclick="handleUserAction(\'logout\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+            '<span>退出登录</span>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function toggleNotificationDropdown(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('notificationDropdown');
+  if (!dd) return;
+  // 关闭其他下拉
+  var userDD = document.getElementById('userDropdown');
+  if (userDD) userDD.classList.remove('show');
+  dd.classList.toggle('show');
+}
+
+function toggleUserDropdown(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('userDropdown');
+  if (!dd) return;
+  // 关闭其他下拉
+  var notifDD = document.getElementById('notificationDropdown');
+  if (notifDD) notifDD.classList.remove('show');
+  dd.classList.toggle('show');
+}
+
+function handleUserAction(action) {
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.classList.remove('show');
+  switch(action) {
+    case 'profile': alert('打开个人中心'); break;
+    case 'changePwd': alert('打开修改密码'); break;
+    case 'theme': alert('切换主题（浅色/深色）'); break;
+    case 'logout': if(confirm('确定退出登录？')) { alert('已退出登录'); } break;
+  }
+}
+
+// 点击外部关闭下拉
+document.addEventListener('click', function(e) {
+  var notifDD = document.getElementById('notificationDropdown');
+  if (notifDD && !e.target.closest('.header-notification')) notifDD.classList.remove('show');
+  var userDD = document.getElementById('userDropdown');
+  if (userDD && !e.target.closest('.header-user-info')) userDD.classList.remove('show');
+});
+
+// ========== 渲染页面 Tab 切换区 ==========
+const TABS_STORAGE_KEY = 'mk_open_tabs';
+
+function getOpenTabs() {
+  try {
+    var raw = localStorage.getItem(TABS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function setOpenTabs(tabs) {
+  try {
+    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(tabs));
+  } catch (e) {}
+}
+
+function getCurrentTabInfo() {
+  var info = findCurrentMenuPath();
+  if (info) {
+    return { name: info.name, href: info.href };
+  }
+  // 找不到菜单时使用 title 作为兜底
+  var titleEl = document.querySelector('title');
+  var title = titleEl ? titleEl.textContent : '';
+  var pageName = title.split('-')[0].trim() || getCurrentPagePath();
+  return { name: pageName, href: getCurrentPagePath() };
+}
+
+function syncCurrentTab() {
+  var tabs = getOpenTabs();
+  var info = getCurrentTabInfo();
+  var currentPath = getCurrentPagePath();
+
+  // 如果当前页不在列表中，添加
+  var exists = tabs.some(function(t) { return t.path === currentPath; });
+  if (!exists) {
+    tabs.push({ name: info.name, path: currentPath, href: info.href, ts: Date.now() });
+    setOpenTabs(tabs);
+  } else {
+    // 更新已存在 tab 的名称（防止菜单改名）
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].path === currentPath) {
+        tabs[i].name = info.name;
+        tabs[i].href = info.href;
+        tabs[i].ts = Date.now();
+        break;
+      }
+    }
+    setOpenTabs(tabs);
+  }
+}
+
+function closeTab(path, e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  var tabs = getOpenTabs();
+  tabs = tabs.filter(function(t) { return t.path !== path; });
+  setOpenTabs(tabs);
+
+  var currentPath = getCurrentPagePath();
+  if (currentPath === path) {
+    // 关闭的是当前 tab，跳转到剩余的第一个或首页
+    if (tabs.length > 0) {
+      window.location.href = tabs[0].href || ('./' + tabs[0].path);
+    } else {
+      window.location.href = '../dashboard/overview.html';
+    }
+  } else {
+    renderPageTabs();
+  }
+}
+
+function closeAllTabs() {
+  setOpenTabs([]);
+  window.location.href = '../dashboard/overview.html';
+}
+
+function closeOtherTabs(path) {
+  var tabs = getOpenTabs();
+  tabs = tabs.filter(function(t) { return t.path === path; });
+  setOpenTabs(tabs);
+  renderPageTabs();
+}
+
+function renderPageTabs() {
+  var tabBar = document.getElementById('pageTabs');
+  if (!tabBar) return;
+
+  var tabs = getOpenTabs();
+  var currentPath = getCurrentPagePath();
+
+  if (tabs.length === 0) {
+    tabBar.innerHTML = '';
+    tabBar.classList.add('empty');
+    return;
+  }
+  tabBar.classList.remove('empty');
+
+  var html = '';
+  tabs.forEach(function(t) {
+    var isActive = t.path === currentPath;
+    var href = t.href || ('./' + t.path);
+    html += '<div class="page-tab' + (isActive ? ' active' : '') + '">' +
+      '<a href="' + href + '" class="page-tab-link" title="' + t.name + '">' +
+        '<span class="page-tab-name">' + t.name + '</span>' +
+      '</a>' +
+      '<button class="page-tab-close" onclick="closeTab(\'' + t.path + '\', event)" title="关闭">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button>' +
+    '</div>';
+  });
+
+  // 右侧操作按钮
+  html += '<div class="page-tabs-actions">' +
+    '<button class="page-tabs-action" onclick="closeOtherTabs(\'' + currentPath + '\')" title="关闭其他">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '<span>关闭其他</span>' +
+    '</button>' +
+    '<button class="page-tabs-action" onclick="closeAllTabs()" title="关闭全部">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '<span>关闭全部</span>' +
+    '</button>' +
+  '</div>';
+
+  tabBar.innerHTML = html;
+}
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', function() {
+  renderSidebar();
+  renderHeader();
+  syncCurrentTab();
+  renderPageTabs();
+});
+
+</script>
+</body>
+</html>

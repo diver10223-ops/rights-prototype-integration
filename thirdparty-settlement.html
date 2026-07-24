@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>三方权益供应商核销结算 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <!-- 侧边栏 -->
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    
+    <!-- 顶栏外壳：Header + Tab -->
+    <div class="top-shell">
+    <header id="header" class="app-header"></header>
+    <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+      <div class="mk-page">
+
+      <!-- 页面标题 -->
+      <div class="mb-5">
+        <h2 class="text-sm font-bold text-slate-800">三方权益供应商核销结算</h2>
+        <p class="text-[10px] text-slate-400 mt-1">与三方权益供应商进行月度核销对账，包括采购量、发放量、核销量、结算金额、差异分析等</p>
+      </div>
+
+      <!-- 01 结算概览区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">01</span>
+              <span class="text-[11px] font-medium text-slate-700">本月结算概览</span>
+            </div>
+            <p class="text-[10px] text-slate-400">结算周期：2026-06-01 ~ 2026-06-30</p>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-6 gap-3">
+            <div class="border border-slate-200 rounded p-3 bg-slate-50">
+              <div class="text-[10px] text-slate-400">合作供应商</div>
+              <div class="text-base font-bold text-slate-700 mt-1">12</div>
+            </div>
+            <div class="border border-blue-200 rounded p-3 bg-blue-50/50">
+              <div class="text-[10px] text-slate-500">采购金额</div>
+              <div class="text-base font-bold text-blue-600 mt-1">¥ 528,500</div>
+            </div>
+            <div class="border border-emerald-200 rounded p-3 bg-emerald-50/50">
+              <div class="text-[10px] text-slate-500">已核销金额</div>
+              <div class="text-base font-bold text-emerald-600 mt-1">¥ 486,200</div>
+            </div>
+            <div class="border border-amber-200 rounded p-3 bg-amber-50/50">
+              <div class="text-[10px] text-slate-500">待核销金额</div>
+              <div class="text-base font-bold text-amber-600 mt-1">¥ 42,300</div>
+            </div>
+            <div class="border border-slate-200 rounded p-3 bg-slate-50">
+              <div class="text-[10px] text-slate-500">核销率</div>
+              <div class="text-base font-bold text-slate-700 mt-1">91.99%</div>
+            </div>
+            <div class="border border-red-200 rounded p-3 bg-red-50/50">
+              <div class="text-[10px] text-slate-500">对账差异</div>
+              <div class="text-base font-bold text-red-600 mt-1">¥ 1,820</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 供应商筛选区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">02</span>
+            <span class="text-[11px] font-medium text-slate-700">供应商筛选</span>
+          </div>
+          <div class="flex flex-wrap gap-4 items-end mt-3">
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">结算月份</label>
+              <input type="month" value="2026-06" class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-36 focus:outline-none focus:border-blue-400" />
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">供应商类型</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部</option>
+                <option>视频会员</option>
+                <option>餐饮美食</option>
+                <option>出行服务</option>
+                <option>电商购物</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-slate-500 block mb-1">对账状态</label>
+              <select class="border border-slate-300 rounded px-3 py-1.5 text-[11px] w-32 focus:outline-none focus:border-blue-400">
+                <option>全部</option>
+                <option>已对平</option>
+                <option>存在差异</option>
+                <option>待对账</option>
+              </select>
+            </div>
+            <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-[11px] hover:bg-blue-700">查询</button>
+            <button class="px-4 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 供应商结算列表区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">03</span>
+              <span class="text-[11px] font-medium text-slate-700">供应商结算明细</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">
+                <i class="fas fa-download mr-1"></i>导出对账单
+              </button>
+              <button class="px-3 py-1.5 bg-blue-600 text-white rounded text-[11px] hover:bg-blue-700">
+                <i class="fas fa-check mr-1"></i>批量确认
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-4 text-left font-medium">供应商</th>
+              <th class="py-2.5 px-4 text-left font-medium">权益类型</th>
+              <th class="py-2.5 px-4 text-right font-medium">采购数量</th>
+              <th class="py-2.5 px-4 text-right font-medium">发放数量</th>
+              <th class="py-2.5 px-4 text-right font-medium">核销数量</th>
+              <th class="py-2.5 px-4 text-right font-medium">采购金额</th>
+              <th class="py-2.5 px-4 text-right font-medium">结算金额</th>
+              <th class="py-2.5 px-4 text-right font-medium">差异</th>
+              <th class="py-2.5 px-4 text-center font-medium">对账状态</th>
+              <th class="py-2.5 px-4 text-center font-medium">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">腾讯权益</td>
+              <td class="py-3 px-4 text-slate-600">视频会员月卡</td>
+              <td class="py-3 px-4 text-right">10,000</td>
+              <td class="py-3 px-4 text-right">9,580</td>
+              <td class="py-3 px-4 text-right">9,420</td>
+              <td class="py-3 px-4 text-right">¥ 198,000</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 186,516</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 1,484</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已对平</span></td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">确认</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">美团权益</td>
+              <td class="py-3 px-4 text-slate-600">外卖红包</td>
+              <td class="py-3 px-4 text-right">15,000</td>
+              <td class="py-3 px-4 text-right">14,250</td>
+              <td class="py-3 px-4 text-right">14,180</td>
+              <td class="py-3 px-4 text-right">¥ 75,000</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 70,900</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 100</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已对平</span></td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">确认</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">京东权益</td>
+              <td class="py-3 px-4 text-slate-600">京东E卡</td>
+              <td class="py-3 px-4 text-right">5,000</td>
+              <td class="py-3 px-4 text-right">4,820</td>
+              <td class="py-3 px-4 text-right">4,780</td>
+              <td class="py-3 px-4 text-right">¥ 100,000</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 95,600</td>
+              <td class="py-3 px-4 text-right text-red-600 font-medium">¥ -1,820</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px]">存在差异</span></td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-amber-600 hover:text-amber-800 cursor-pointer">差异处理</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">滴滴权益</td>
+              <td class="py-3 px-4 text-slate-600">出行券</td>
+              <td class="py-3 px-4 text-right">8,000</td>
+              <td class="py-3 px-4 text-right">7,520</td>
+              <td class="py-3 px-4 text-right">7,420</td>
+              <td class="py-3 px-4 text-right">¥ 80,000</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 74,200</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 800</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已对平</span></td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">确认</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">星巴克权益</td>
+              <td class="py-3 px-4 text-slate-600">咖啡券</td>
+              <td class="py-3 px-4 text-right">3,000</td>
+              <td class="py-3 px-4 text-right">2,750</td>
+              <td class="py-3 px-4 text-right">2,680</td>
+              <td class="py-3 px-4 text-right">¥ 45,000</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 40,200</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 600</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">待对账</span></td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer">发起对账</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 font-medium text-slate-700">爱奇艺权益</td>
+              <td class="py-3 px-4 text-slate-600">视频会员季卡</td>
+              <td class="py-3 px-4 text-right">2,000</td>
+              <td class="py-3 px-4 text-right">1,850</td>
+              <td class="py-3 px-4 text-right">1,820</td>
+              <td class="py-3 px-4 text-right">¥ 30,500</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 27,300</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 600</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已对平</span></td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">确认</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- 分页 -->
+        <div class="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400">共 12 家供应商</div>
+          <div class="flex items-center gap-1">
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">上一页</button>
+            <button class="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">1</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">2</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">下一页</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 差异分析区 -->
+      <div class="grid grid-cols-2 gap-5 mb-5">
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">04</span>
+                <span class="text-[11px] font-medium text-slate-700">月度结算趋势</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <canvas id="settlementTrendChart" height="200"></canvas>
+          </div>
+        </div>
+        <div class="border border-slate-300 bg-white rounded-lg">
+          <div class="px-4 py-3 border-b border-slate-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 font-medium rounded">05</span>
+                <span class="text-[11px] font-medium text-slate-700">供应商结算占比</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <canvas id="supplierPieChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 结算单生成流程区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-blue-100 text-blue-700 font-medium rounded">06</span>
+              <span class="text-[11px] font-medium text-slate-700">结算单生成流程</span>
+            </div>
+            <p class="text-[10px] text-slate-400">对账确认后，按月生成三方权益结算单</p>
+          </div>
+        </div>
+        <div class="p-4">
+          <!-- 流程节点 -->
+          <div class="grid grid-cols-5 gap-3 mb-4">
+            <div class="border border-emerald-200 bg-emerald-50/50 rounded p-3 text-center">
+              <div class="w-6 h-6 mx-auto bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold mb-1">1</div>
+              <div class="text-[11px] font-medium text-slate-700">数据归集</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">采购/发放/核销</div>
+              <div class="text-[10px] text-emerald-600 mt-1">已完成</div>
+            </div>
+            <div class="border border-emerald-200 bg-emerald-50/50 rounded p-3 text-center">
+              <div class="w-6 h-6 mx-auto bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold mb-1">2</div>
+              <div class="text-[11px] font-medium text-slate-700">差异对账</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">供应商核对</div>
+              <div class="text-[10px] text-emerald-600 mt-1">已完成 9/12</div>
+            </div>
+            <div class="border border-blue-200 bg-blue-50/50 rounded p-3 text-center">
+              <div class="w-6 h-6 mx-auto bg-blue-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold mb-1">3</div>
+              <div class="text-[11px] font-medium text-slate-700">生成结算单</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">当月可生成</div>
+              <div class="text-[10px] text-blue-600 mt-1">进行中</div>
+            </div>
+            <div class="border border-slate-200 bg-slate-50 rounded p-3 text-center">
+              <div class="w-6 h-6 mx-auto bg-slate-300 text-white rounded-full flex items-center justify-center text-[10px] font-bold mb-1">4</div>
+              <div class="text-[11px] font-medium text-slate-700">财务审核</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">财务签字</div>
+              <div class="text-[10px] text-slate-400 mt-1">待启动</div>
+            </div>
+            <div class="border border-slate-200 bg-slate-50 rounded p-3 text-center">
+              <div class="w-6 h-6 mx-auto bg-slate-300 text-white rounded-full flex items-center justify-center text-[10px] font-bold mb-1">5</div>
+              <div class="text-[11px] font-medium text-slate-700">付款归档</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">凭证归档</div>
+              <div class="text-[10px] text-slate-400 mt-1">待启动</div>
+            </div>
+          </div>
+          <!-- 操作区 -->
+          <div class="flex items-center justify-between border-t border-slate-100 pt-3">
+            <div class="text-[11px] text-slate-500">
+              当前可生成：<span class="font-medium text-slate-700">2026-06</span> 月度结算单 ·
+              已对平 <span class="font-medium text-emerald-600">9</span> 家 ·
+              存在差异 <span class="font-medium text-red-600">3</span> 家
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50" onclick="previewSettlement()">
+                <i class="fas fa-eye mr-1"></i>预览结算单
+              </button>
+              <button class="px-3 py-1.5 border border-blue-300 rounded text-[11px] text-blue-600 hover:bg-blue-50" onclick="exportSettlement()">
+                <i class="fas fa-file-export mr-1"></i>导出对账单
+              </button>
+              <button class="px-3 py-1.5 bg-blue-600 text-white rounded text-[11px] hover:bg-blue-700" onclick="generateSettlement()">
+                <i class="fas fa-file-invoice mr-1"></i>生成本月结算单
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 07 结算状态全生命周期区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-purple-100 text-purple-700 font-medium rounded">07</span>
+              <span class="text-[11px] font-medium text-slate-700">结算状态全生命周期</span>
+            </div>
+            <p class="text-[10px] text-slate-400">2026-06 月度结算单各阶段处理状态</p>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-6 gap-2">
+            <div class="text-center">
+              <div class="w-9 h-9 mx-auto bg-slate-100 text-slate-500 rounded-full flex items-center justify-center mb-1">
+                <i class="fas fa-pen text-[11px]"></i>
+              </div>
+              <div class="text-[10px] font-medium text-slate-700">草稿</div>
+              <div class="text-[10px] text-slate-400">3 张</div>
+            </div>
+            <div class="text-center">
+              <div class="w-9 h-9 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-1">
+                <i class="fas fa-file-invoice text-[11px]"></i>
+              </div>
+              <div class="text-[10px] font-medium text-slate-700">已生成</div>
+              <div class="text-[10px] text-blue-600">5 张</div>
+            </div>
+            <div class="text-center">
+              <div class="w-9 h-9 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-1">
+                <i class="fas fa-check-circle text-[11px]"></i>
+              </div>
+              <div class="text-[10px] font-medium text-slate-700">已确认</div>
+              <div class="text-[10px] text-amber-600">2 张</div>
+            </div>
+            <div class="text-center">
+              <div class="w-9 h-9 mx-auto bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-1">
+                <i class="fas fa-search-dollar text-[11px]"></i>
+              </div>
+              <div class="text-[10px] font-medium text-slate-700">财务审核</div>
+              <div class="text-[10px] text-indigo-600">1 张</div>
+            </div>
+            <div class="text-center">
+              <div class="w-9 h-9 mx-auto bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-1">
+                <i class="fas fa-yen-sign text-[11px]"></i>
+              </div>
+              <div class="text-[10px] font-medium text-slate-700">已付款</div>
+              <div class="text-[10px] text-emerald-600">1 张</div>
+            </div>
+            <div class="text-center">
+              <div class="w-9 h-9 mx-auto bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mb-1">
+                <i class="fas fa-archive text-[11px]"></i>
+              </div>
+              <div class="text-[10px] font-medium text-slate-700">已归档</div>
+              <div class="text-[10px] text-slate-500">0 张</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mt-4">
+            <div class="border border-slate-200 rounded p-3 bg-slate-50/50">
+              <div class="text-[10px] text-slate-500 mb-1">当月已开结算单</div>
+              <div class="text-base font-bold text-slate-700">8 <span class="text-[10px] text-slate-400 font-normal">/ 12 家</span></div>
+              <div class="text-[10px] text-slate-400 mt-1">开单率 66.7%</div>
+            </div>
+            <div class="border border-amber-200 rounded p-3 bg-amber-50/30">
+              <div class="text-[10px] text-slate-500 mb-1">待确认金额</div>
+              <div class="text-base font-bold text-amber-600">¥ 95,600</div>
+              <div class="text-[10px] text-slate-400 mt-1">京东 E 卡</div>
+            </div>
+            <div class="border border-emerald-200 rounded p-3 bg-emerald-50/30">
+              <div class="text-[10px] text-slate-500 mb-1">当月已付总额</div>
+              <div class="text-base font-bold text-emerald-600">¥ 70,900</div>
+              <div class="text-[10px] text-slate-400 mt-1">美团权益</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08 结算单管理表区 -->
+      <div class="border border-slate-300 bg-white rounded-lg mb-5">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 font-medium rounded">08</span>
+              <span class="text-[11px] font-medium text-slate-700">结算单管理</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select class="border border-slate-300 rounded px-2 py-1 text-[10px] focus:outline-none focus:border-blue-400">
+                <option>全部状态</option>
+                <option>草稿</option>
+                <option>已生成</option>
+                <option>已确认</option>
+                <option>财务审核</option>
+                <option>已付款</option>
+                <option>已归档</option>
+              </select>
+              <select class="border border-slate-300 rounded px-2 py-1 text-[10px] focus:outline-none focus:border-blue-400">
+                <option>全部月份</option>
+                <option>2026-06</option>
+                <option>2026-05</option>
+                <option>2026-04</option>
+              </select>
+              <button class="px-3 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">
+                <i class="fas fa-download mr-1"></i>导出
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="w-full text-[11px]">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="py-2.5 px-4 text-left font-medium">结算单号</th>
+              <th class="py-2.5 px-4 text-left font-medium">供应商</th>
+              <th class="py-2.5 px-4 text-left font-medium">结算月份</th>
+              <th class="py-2.5 px-4 text-right font-medium">结算金额</th>
+              <th class="py-2.5 px-4 text-right font-medium">已付金额</th>
+              <th class="py-2.5 px-4 text-center font-medium">当前节点</th>
+              <th class="py-2.5 px-4 text-center font-medium">状态</th>
+              <th class="py-2.5 px-4 text-left font-medium">处理人</th>
+              <th class="py-2.5 px-4 text-center font-medium">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-001</td>
+              <td class="py-3 px-4 font-medium text-slate-700">腾讯权益</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 186,516</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 186,516</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">财务审核 → 已付款</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已付款</span></td>
+              <td class="py-3 px-4 text-slate-600">张财务</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">下载凭证</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-002</td>
+              <td class="py-3 px-4 font-medium text-slate-700">美团权益</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 70,900</td>
+              <td class="py-3 px-4 text-right text-emerald-600">¥ 70,900</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">已付款</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px]">已付款</span></td>
+              <td class="py-3 px-4 text-slate-600">张财务</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">下载凭证</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-003</td>
+              <td class="py-3 px-4 font-medium text-slate-700">滴滴权益</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 74,200</td>
+              <td class="py-3 px-4 text-right text-slate-400">¥ 0</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">财务审核</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px]">财务审核</span></td>
+              <td class="py-3 px-4 text-slate-600">张财务</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">财务确认</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-004</td>
+              <td class="py-3 px-4 font-medium text-slate-700">京东权益</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 95,600</td>
+              <td class="py-3 px-4 text-right text-slate-400">¥ 0</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">业务部门已确认</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">已确认</span></td>
+              <td class="py-3 px-4 text-slate-600">李运营</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">提交财务</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-005</td>
+              <td class="py-3 px-4 font-medium text-slate-700">星巴克权益</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 35,200</td>
+              <td class="py-3 px-4 text-right text-slate-400">¥ 0</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">供应商已确认</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">已确认</span></td>
+              <td class="py-3 px-4 text-slate-600">李运营</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">提交财务</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-006</td>
+              <td class="py-3 px-4 font-medium text-slate-700">网易云音乐</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 12,800</td>
+              <td class="py-3 px-4 text-right text-slate-400">¥ 0</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">已生成待确认</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">已生成</span></td>
+              <td class="py-3 px-4 text-slate-600">李运营</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">确认</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-007</td>
+              <td class="py-3 px-4 font-medium text-slate-700">喜马拉雅</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 8,500</td>
+              <td class="py-3 px-4 text-right text-slate-400">¥ 0</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">已生成待确认</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">已生成</span></td>
+              <td class="py-3 px-4 text-slate-600">李运营</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">确认</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-blue-50/30">
+              <td class="py-3 px-4 text-slate-600 font-mono">JS202606-008</td>
+              <td class="py-3 px-4 font-medium text-slate-700">肯德基权益</td>
+              <td class="py-3 px-4 text-slate-600">2026-06</td>
+              <td class="py-3 px-4 text-right font-medium">¥ 2,300</td>
+              <td class="py-3 px-4 text-right text-slate-400">¥ 0</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-600">草稿</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px]">草稿</span></td>
+              <td class="py-3 px-4 text-slate-600">李运营</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">编辑</span>
+                <span class="text-[11px] text-emerald-600 hover:text-emerald-800 cursor-pointer">生成</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-4 text-slate-400 font-mono">JS202605-012</td>
+              <td class="py-3 px-4 text-slate-500">腾讯权益</td>
+              <td class="py-3 px-4 text-slate-500">2026-05</td>
+              <td class="py-3 px-4 text-right text-slate-500">¥ 156,800</td>
+              <td class="py-3 px-4 text-right text-slate-500">¥ 156,800</td>
+              <td class="py-3 px-4 text-center text-[10px] text-slate-500">已归档</td>
+              <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 bg-slate-200 text-slate-600 rounded text-[10px]">已归档</span></td>
+              <td class="py-3 px-4 text-slate-500">张财务</td>
+              <td class="py-3 px-4 text-center">
+                <span class="text-[11px] text-blue-600 hover:text-blue-800 cursor-pointer mr-2">查看</span>
+                <span class="text-[11px] text-slate-500 hover:text-slate-700 cursor-pointer">凭证</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400">共 8 张当月结算单 · 累计金额 ¥ 486,016</div>
+          <div class="flex items-center gap-1">
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">上一页</button>
+            <button class="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">1</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">2</button>
+            <button class="px-2 py-1 border border-slate-300 rounded text-[10px] text-slate-600 hover:bg-slate-50">下一页</button>
+          </div>
+        </div>
+      </div>
+
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 结算单预览 Modal -->
+<div id="settlementPreviewModal" class="fixed inset-0 bg-black/30 z-50 hidden flex items-center justify-center">
+  <div class="bg-white rounded-lg shadow-xl w-3/4 max-w-3xl">
+    <div class="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+      <h3 class="text-sm font-bold text-slate-800">结算单预览 · 2026-06</h3>
+      <button onclick="closeSettlementPreview()" class="text-slate-400 hover:text-slate-600">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5">
+      <div class="border border-slate-200 rounded p-4 bg-slate-50/30 mb-3">
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <div class="text-[10px] text-slate-400">结算单号</div>
+            <div class="text-[11px] font-mono text-slate-700">JS202606-{供应商代码}</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">结算月份</div>
+            <div class="text-[11px] text-slate-700">2026-06</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">供应商</div>
+            <div class="text-[11px] text-slate-700">见下表</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">结算周期</div>
+            <div class="text-[11px] text-slate-700">2026-06-01 ~ 2026-06-30</div>
+          </div>
+        </div>
+        <table class="w-full text-[11px] border border-slate-200">
+          <thead class="bg-slate-100 text-slate-600">
+            <tr>
+              <th class="py-2 px-3 text-left font-medium">供应商</th>
+              <th class="py-2 px-3 text-right font-medium">核销数量</th>
+              <th class="py-2 px-3 text-right font-medium">单价(元)</th>
+              <th class="py-2 px-3 text-right font-medium">结算金额(元)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 bg-white">
+            <tr><td class="py-2 px-3">腾讯权益</td><td class="py-2 px-3 text-right">9,420</td><td class="py-2 px-3 text-right">19.80</td><td class="py-2 px-3 text-right font-medium">186,516.00</td></tr>
+            <tr><td class="py-2 px-3">美团权益</td><td class="py-2 px-3 text-right">14,180</td><td class="py-2 px-3 text-right">5.00</td><td class="py-2 px-3 text-right font-medium">70,900.00</td></tr>
+            <tr><td class="py-2 px-3">滴滴权益</td><td class="py-2 px-3 text-right">7,420</td><td class="py-2 px-3 text-right">10.00</td><td class="py-2 px-3 text-right font-medium">74,200.00</td></tr>
+            <tr class="bg-slate-50"><td class="py-2 px-3 font-medium" colspan="3">合计</td><td class="py-2 px-3 text-right font-bold text-blue-600">331,616.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="px-5 py-3 border-t border-slate-200 flex justify-end gap-2">
+      <button onclick="closeSettlementPreview()" class="px-4 py-1.5 border border-slate-300 rounded text-[11px] text-slate-600 hover:bg-slate-50">关闭</button>
+      <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-[11px] hover:bg-blue-700" onclick="closeSettlementPreview(); generateSettlement();">确认生成</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/nav.js"></script>
+
+
+</body>
+</html>

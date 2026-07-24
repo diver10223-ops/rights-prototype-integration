@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>权益库存管理 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/common.css" />
+</head>
+<body>
+<div class="app layout-v2">
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    <div class="top-shell">
+      <header id="header" class="app-header"></header>
+      <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+
+    <div class="content">
+      <div class="mk-page">
+
+        <div class="border-b border-slate-200 mb-4">
+          <button class="px-3 py-1.5 text-[13px] font-bold text-blue-600 border-b-2 border-blue-600 cursor-pointer" onclick="switchTab('list', this)">库存列表</button>
+          <button class="px-3 py-1.5 text-[13px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer" onclick="switchTab('statistics', this)">库存权益统计视图</button>
+          <button class="px-3 py-1.5 text-[13px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer" onclick="switchTab('usage', this)">库存变动明细</button>
+          <button class="px-3 py-1.5 text-[13px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer" onclick="switchTab('audit', this)">操作审计日志</button>
+        </div>
+
+        <div id="tab-list" class="tab-content">
+          <div class="grid grid-cols-5 gap-4 mb-6">
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-slate-500">卡券总数�?/span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+              <div class="text-xl font-bold text-slate-800 font-mono">12,845</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-slate-500">总可用库�?/span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="text-xl font-bold text-emerald-600 font-mono">8,236</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-slate-500">资产总库存成�?/span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="3" x2="16" y2="9"/><line x1="8" y1="3" x2="8" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+              </div>
+              <div class="text-xl font-bold text-slate-800 font-mono">¥268,430</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-slate-500">冻结卡券数量</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <div class="text-xl font-bold text-amber-600 font-mono">1,500</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-slate-500">库存预警卡券数量</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-400"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div class="text-xl font-bold text-amber-600 font-mono">12</div>
+            </div>
+          </div>
+
+          <div class="mk-search-panel mb-4">
+            <div class="flex flex-wrap gap-3 items-end mb-3">
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">权益ID</label>
+                <input type="text" placeholder="输入权益ID..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-44 focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">权益名称</label>
+                <input type="text" placeholder="搜索权益名称..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-64 focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">发行机构</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-36 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>美团</option>
+                  <option>微信支付</option>
+                  <option>携程</option>
+                  <option>星巴�?/option>
+                </select>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-3 items-end">
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">库存限制</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>有限库存</option>
+                  <option>无限库存</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">状�?/label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-28 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>正常</option>
+                  <option>冻结</option>
+                  <option>停用</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">可用渠道</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-36 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>活动平台</option>
+                  <option>权益平台</option>
+                  <option>营销画布</option>
+                </select>
+              </div>
+              <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold cursor-pointer transition-colors">查询</button>
+              <button class="px-4 py-1.5 border border-slate-300 hover:bg-slate-50 rounded text-[10px] font-bold cursor-pointer transition-colors">&#8635; 重置</button>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <span class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] rounded-full cursor-pointer">全部</span>
+              <span class="px-2 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] rounded-full cursor-pointer hover:bg-slate-50">零库�?/span>
+              <span class="px-2 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] rounded-full cursor-pointer hover:bg-slate-50">低库�?/span>
+              <span class="px-2 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] rounded-full cursor-pointer hover:bg-slate-50">已冻�?/span>
+              <span class="px-2 py-1 bg-red-50 border border-red-200 text-red-600 text-[10px] rounded-full cursor-pointer hover:bg-red-100">预警未补�?/span>
+              <span class="px-2 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] rounded-full cursor-pointer hover:bg-slate-50">分摊比例 0%</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 mb-3">
+            <button class="px-3 py-1.5 bg-slate-950 text-white rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-slate-800" onclick="batchFreeze()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> 批量冻结/解冻
+            </button>
+            <button class="px-3 py-1.5 bg-blue-600 text-white rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-blue-700" onclick="batchImport()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 批量导入库存
+            </button>
+            <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-slate-50" onclick="exportCoupons()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 批量导出卡券
+            </button>
+            <button class="px-3 py-1.5 border border-amber-300 text-amber-700 rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-amber-50" onclick="setAlertThreshold()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> 批量设置预警阈�?            </button>
+          </div>
+
+          <div class="mk-list-panel">
+            <div class="mk-panel-header">
+              <div class="mk-panel-title">权益库存列表</div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-slate-50" onclick="exportExcel()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 导出Excel
+                </button>
+                <span class="text-[10px] text-slate-400 font-mono">(�?12 条记�?</span>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-compact-table">
+                <thead>
+                  <tr>
+                    <th class="py-2.5 px-3 w-8"><input type="checkbox" class="w-3 h-3 rounded border-slate-300"/></th>
+                    <th class="py-2.5 px-3">卡券名称</th>
+                    <th class="py-2.5 px-3">卡券ID</th>
+                    <th class="py-2.5 px-3">发行机构</th>
+                    <th class="py-2.5 px-3 text-right">成本(�?</th>
+                    <th class="py-2.5 px-3 text-right">发放机构分摊比例</th>
+                    <th class="py-2.5 px-3">支持渠道</th>
+                    <th class="py-2.5 px-3 text-right">库存预警阈�?/th>
+                    <th class="py-2.5 px-3 text-right">当前库存</th>
+                    <th class="py-2.5 px-3 text-center">预警状�?/th>
+                    <th class="py-2.5 px-3 text-center">状�?/th>
+                    <th class="py-2.5 px-3 text-center">操作</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                  <tr class="hover:bg-slate-50/75 border-l-4 border-red-400">
+                    <td class="py-3 px-3"><input type="checkbox" class="w-3 h-3 rounded border-slate-300"/></td>
+                    <td class="py-3 px-3 text-slate-800">美团30元差旅晚餐通用�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON001</td>
+                    <td class="py-3 px-3">美团</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold">¥30</td>
+                    <td class="py-3 px-3 text-right">50%</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">活动平台</span></td>
+                    <td class="py-3 px-3 text-right font-mono">500</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-red-600" onclick="showBatchStock()">50</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">预警未补�?/span></td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">低库�?/span></td>
+                    <td class="py-3 px-3">
+                      <div class="flex flex-col gap-1">
+                        <button class="text-amber-600 text-[10px] font-bold cursor-pointer hover:text-amber-800" onclick="toggleFreeze()">冻结</button>
+                        <button class="text-blue-600 text-[10px] font-bold cursor-pointer hover:text-blue-800" onclick="openStockDetail()">查看</button>
+                        <button class="text-green-600 text-[10px] font-bold cursor-pointer hover:text-green-800" onclick="openStockIn()">入库</button>
+                        <button class="text-slate-600 text-[10px] font-bold cursor-pointer hover:text-slate-800" onclick="openThresholdModal()">预警阈�?/button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3"><input type="checkbox" class="w-3 h-3 rounded border-slate-300"/></td>
+                    <td class="py-3 px-3 text-slate-800">微信50元中石化加油通兑�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON002</td>
+                    <td class="py-3 px-3">微信支付</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold">¥50</td>
+                    <td class="py-3 px-3 text-right">100%</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">权益平台</span></td>
+                    <td class="py-3 px-3 text-right font-mono">2,000</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold" onclick="showBatchStock()">4,500</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] text-slate-400">�?/span></td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">正常</span></td>
+                    <td class="py-3 px-3">
+                      <div class="flex flex-col gap-1">
+                        <button class="text-amber-600 text-[10px] font-bold cursor-pointer hover:text-amber-800" onclick="toggleFreeze()">冻结</button>
+                        <button class="text-blue-600 text-[10px] font-bold cursor-pointer hover:text-blue-800" onclick="openStockDetail()">查看</button>
+                        <button class="text-green-600 text-[10px] font-bold cursor-pointer hover:text-green-800" onclick="openStockIn()">入库</button>
+                        <button class="text-slate-600 text-[10px] font-bold cursor-pointer hover:text-slate-800" onclick="openThresholdModal()">预警阈�?/button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75 bg-red-50/30 border-l-4 border-red-500">
+                    <td class="py-3 px-3"><input type="checkbox" class="w-3 h-3 rounded border-slate-300"/></td>
+                    <td class="py-3 px-3 text-slate-800">星巴克咖啡通兑�?对公�?</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON003</td>
+                    <td class="py-3 px-3">星巴�?/td>
+                    <td class="py-3 px-3 text-right font-mono font-bold">¥35</td>
+                    <td class="py-3 px-3 text-right">0%</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">活动平台</span></td>
+                    <td class="py-3 px-3 text-right font-mono">1,000</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-red-600" onclick="showBatchStock()">0</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">预警未补�?/span></td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">零库�?/span></td>
+                    <td class="py-3 px-3">
+                      <div class="flex flex-col gap-1">
+                        <button class="text-amber-600 text-[10px] font-bold cursor-pointer hover:text-amber-800" onclick="toggleFreeze()">冻结</button>
+                        <button class="text-blue-600 text-[10px] font-bold cursor-pointer hover:text-blue-800" onclick="openStockDetail()">查看</button>
+                        <button class="text-green-600 text-[10px] font-bold cursor-pointer hover:text-green-800" onclick="openStockIn()">入库</button>
+                        <button class="text-slate-600 text-[10px] font-bold cursor-pointer hover:text-slate-800" onclick="openThresholdModal()">预警阈�?/button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75 opacity-60">
+                    <td class="py-3 px-3"><input type="checkbox" class="w-3 h-3 rounded border-slate-300"/></td>
+                    <td class="py-3 px-3 text-slate-800">企业网银年费减免�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON004</td>
+                    <td class="py-3 px-3">本行</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold">¥680</td>
+                    <td class="py-3 px-3 text-right">100%</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-indigo-50 text-indigo-700 rounded">营销画布</span></td>
+                    <td class="py-3 px-3 text-right font-mono">500</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-slate-400" onclick="showBatchStock()">800</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] text-slate-400">�?/span></td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-semibold">已冻�?/span></td>
+                    <td class="py-3 px-3">
+                      <div class="flex flex-col gap-1">
+                        <button class="text-emerald-600 text-[10px] font-bold cursor-pointer hover:text-emerald-800" onclick="toggleFreeze()">解冻</button>
+                        <button class="text-blue-600 text-[10px] font-bold cursor-pointer hover:text-blue-800" onclick="openStockDetail()">查看</button>
+                        <button class="text-green-600 text-[10px] font-bold cursor-pointer hover:text-green-800" onclick="openStockIn()">入库</button>
+                        <button class="text-slate-600 text-[10px] font-bold cursor-pointer hover:text-slate-800" onclick="openThresholdModal()">预警阈�?/button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75 bg-amber-50/30 border-l-4 border-amber-500">
+                    <td class="py-3 px-3"><input type="checkbox" class="w-3 h-3 rounded border-slate-300"/></td>
+                    <td class="py-3 px-3 text-slate-800">高端商务拉杆�?20�?</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON005</td>
+                    <td class="py-3 px-3">供应商A</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold">¥380</td>
+                    <td class="py-3 px-3 text-right">30%</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">活动平台</span></td>
+                    <td class="py-3 px-3 text-right font-mono">100</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-600" onclick="showBatchStock()">50</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">预警未补�?/span></td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">低于预警</span></td>
+                    <td class="py-3 px-3">
+                      <div class="flex flex-col gap-1">
+                        <button class="text-amber-600 text-[10px] font-bold cursor-pointer hover:text-amber-800" onclick="toggleFreeze()">冻结</button>
+                        <button class="text-blue-600 text-[10px] font-bold cursor-pointer hover:text-blue-800" onclick="openStockDetail()">查看</button>
+                        <button class="text-green-600 text-[10px] font-bold cursor-pointer hover:text-green-800" onclick="openStockIn()">入库</button>
+                        <button class="text-slate-600 text-[10px] font-bold cursor-pointer hover:text-slate-800" onclick="openThresholdModal()">预警阈�?/button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 px-4 pb-3">
+              <span class="text-[10px] text-slate-400">�?12 条记�?/span>
+              <div class="flex items-center gap-2">
+                <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-400 cursor-not-allowed">&laquo;</button>
+                <button class="px-2.5 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">1</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">2</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">&raquo;</button>
+                <span class="text-[10px] text-slate-400 ml-2">每页</span>
+                <select class="border border-slate-200 rounded px-2 py-1 text-[10px]">
+                  <option>10</option>
+                  <option>20</option>
+                  <option>50</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-statistics" class="tab-content hidden">
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+            <div class="text-xs font-bold text-slate-700 mb-4">第一层：权益库存指标�?/div>
+            <div class="grid grid-cols-4 gap-4">
+              <!-- �?/4：卡券总数/可用卡券�?-->
+              <div class="col-span-1 bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-3">卡券总数 / 可用卡券�?/div>
+                <div class="space-y-3">
+                  <div class="bg-slate-50 border border-slate-100 rounded p-2">
+                    <div class="text-[10px] text-slate-400">卡券总数�?/div>
+                    <div class="text-xl font-bold text-slate-800 font-mono">12,845</div>
+                  </div>
+                  <div class="bg-emerald-50 border border-emerald-100 rounded p-2">
+                    <div class="text-[10px] text-emerald-600">可用卡券�?/div>
+                    <div class="text-xl font-bold text-emerald-600 font-mono">8,236</div>
+                  </div>
+                </div>
+              </div>
+              <!-- �?/4：库存数�?成本统计（嵌套卡片） -->
+              <div class="col-span-3 bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-3">库存数量 / 成本统计（按状态分层）</div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="bg-slate-50 border border-slate-100 rounded p-2.5">
+                    <div class="text-[10px] text-slate-400 mb-1.5">总库�?/ 总成�?/div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-base font-bold text-slate-800 font-mono">12,845</span>
+                      <span class="text-[10px] text-slate-400">�?/span>
+                      <span class="text-[10px] text-slate-300 mx-1">·</span>
+                      <span class="text-base font-bold text-slate-800 font-mono">¥268,430</span>
+                    </div>
+                  </div>
+                  <div class="bg-emerald-50 border border-emerald-100 rounded p-2.5">
+                    <div class="text-[10px] text-emerald-600 mb-1.5">可用库存 / 可用成本</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-base font-bold text-emerald-600 font-mono">8,236</span>
+                      <span class="text-[10px] text-slate-400">�?/span>
+                      <span class="text-[10px] text-slate-300 mx-1">·</span>
+                      <span class="text-base font-bold text-emerald-600 font-mono">¥175,350</span>
+                    </div>
+                  </div>
+                  <div class="bg-amber-50 border border-amber-100 rounded p-2.5">
+                    <div class="text-[10px] text-amber-600 mb-1.5">冻结库存 / 冻结成本</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-base font-bold text-amber-600 font-mono">1,500</span>
+                      <span class="text-[10px] text-slate-400">�?/span>
+                      <span class="text-[10px] text-slate-300 mx-1">·</span>
+                      <span class="text-base font-bold text-amber-600 font-mono">¥32,100</span>
+                    </div>
+                  </div>
+                  <div class="bg-orange-50 border border-orange-100 rounded p-2.5">
+                    <div class="text-[10px] text-orange-600 mb-1.5">30天内到期 / 到期成本</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-base font-bold text-orange-600 font-mono">1,478</span>
+                      <span class="text-[10px] text-slate-400">�?/span>
+                      <span class="text-[10px] text-slate-300 mx-1">·</span>
+                      <span class="text-base font-bold text-orange-600 font-mono">¥31,280</span>
+                    </div>
+                  </div>
+                  <div class="bg-red-50 border border-red-100 rounded p-2.5 col-span-2">
+                    <div class="text-[10px] text-red-600 mb-1.5">7天内到期 / 到期成本（高风险预警�?/div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-base font-bold text-red-600 font-mono">856</span>
+                      <span class="text-[10px] text-slate-400">�?/span>
+                      <span class="text-[10px] text-slate-300 mx-1">·</span>
+                      <span class="text-base font-bold text-red-600 font-mono">¥17,976</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+            <div class="text-xs font-bold text-slate-700 mb-4">第二层：权益使用指标�?/div>
+            <div class="grid grid-cols-6 gap-4">
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">卡券发放�?/div>
+                <div class="text-base font-bold text-slate-800 font-mono">5,632</div>
+                <div class="border-t border-slate-100 mt-2 pt-2">
+                  <div class="text-[10px] text-slate-400">本月发放</div>
+                  <div class="text-sm font-bold text-blue-600 font-mono">856 �?/div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">用户持有�?/div>
+                <div class="text-base font-bold text-emerald-600 font-mono">3,286</div>
+                <div class="border-t border-slate-100 mt-2 pt-2">
+                  <div class="text-[10px] text-slate-400">本月新增</div>
+                  <div class="text-sm font-bold text-emerald-600 font-mono">+486 �?/div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">卡券核销�?/div>
+                <div class="text-base font-bold text-slate-800 font-mono">2,156</div>
+                <div class="border-t border-slate-100 mt-2 pt-2">
+                  <div class="text-[10px] text-slate-400">本月核销</div>
+                  <div class="text-sm font-bold text-green-600 font-mono">328 �?/div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">总核销�?/div>
+                <div class="text-base font-bold text-emerald-600 font-mono">38.3%</div>
+                <div class="border-t border-slate-100 mt-2 pt-2">
+                  <div class="text-[10px] text-slate-400">本月核销�?/div>
+                  <div class="text-sm font-bold text-emerald-600 font-mono">42.1% �?/div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">总结算金�?/div>
+                <div class="text-base font-bold text-slate-800 font-mono">¥128,450</div>
+                <div class="border-t border-slate-100 mt-2 pt-2">
+                  <div class="text-[10px] text-slate-400">本月结算</div>
+                  <div class="text-sm font-bold text-green-600 font-mono">¥19,680</div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">ROI</div>
+                <div class="text-base font-bold text-emerald-600 font-mono">235%</div>
+                <div class="border-t border-slate-100 mt-2 pt-2">
+                  <div class="text-[10px] text-slate-400">本月 ROI</div>
+                  <div class="text-sm font-bold text-emerald-600 font-mono">+28.5% �?/div>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mt-4">
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">活动平台</div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月发放�?/span>
+                    <span class="font-mono font-bold text-blue-600">520</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月核销�?/span>
+                    <span class="font-mono font-bold text-green-600">198</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">渠道核销�?/span>
+                    <span class="font-mono font-bold">38.1%</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月结算金额</span>
+                    <span class="font-mono font-bold">¥11,880</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">权益平台</div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月发放�?/span>
+                    <span class="font-mono font-bold text-sky-600">236</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月核销�?/span>
+                    <span class="font-mono font-bold text-green-600">86</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">渠道核销�?/span>
+                    <span class="font-mono font-bold">36.4%</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月结算金额</span>
+                    <span class="font-mono font-bold">¥5,160</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-[10px] text-slate-500 mb-2">营销画布</div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月发放�?/span>
+                    <span class="font-mono font-bold text-indigo-600">100</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月核销�?/span>
+                    <span class="font-mono font-bold text-green-600">44</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">渠道核销�?/span>
+                    <span class="font-mono font-bold">44.0%</span>
+                  </div>
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-600">本月结算金额</span>
+                    <span class="font-mono font-bold">¥2,640</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+            <div class="text-xs font-bold text-slate-700 mb-4">详细信息</div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+                  <option>全部渠道</option>
+                  <option>活动平台</option>
+                  <option>权益平台</option>
+                  <option>营销画布</option>
+                </select>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+                  <option>全部活动</option>
+                </select>
+                <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+                <span class="text-[10px] text-slate-500">�?/span>
+                <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+                <button class="px-3 py-1.5 bg-blue-600 text-white rounded text-[10px] font-bold cursor-pointer">本月</button>
+                <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold cursor-pointer">本年</button>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold cursor-pointer hover:bg-slate-50">导出图片</button>
+                <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold cursor-pointer hover:bg-slate-50">导出明细</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-xs font-bold text-slate-800 mb-4">资产发放、核销、持有、回收趋势图</div>
+                <div class="relative h-48">
+                  <svg viewBox="0 0 400 150" class="w-full h-full">
+                    <defs>
+                      <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.5"/>
+                        <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0"/>
+                      </linearGradient>
+                      <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.5"/>
+                        <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+                      </linearGradient>
+                      <linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.5"/>
+                        <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0"/>
+                      </linearGradient>
+                      <linearGradient id="grad4" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.5"/>
+                        <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M 20 120 Q 40 100 60 110 T 100 80 T 140 90 T 180 70 T 220 60 T 260 80 T 300 50 T 340 70 T 380 40" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                    <path d="M 20 130 Q 40 110 60 120 T 100 100 T 140 110 T 180 90 T 220 80 T 260 100 T 300 70 T 340 90 T 380 60" fill="none" stroke="#10b981" stroke-width="2"/>
+                    <path d="M 20 100 Q 40 80 60 90 T 100 60 T 140 70 T 180 50 T 220 40 T 260 60 T 300 30 T 340 50 T 380 20" fill="none" stroke="#f59e0b" stroke-width="2"/>
+                    <path d="M 20 140 Q 40 130 60 135 T 100 125 T 140 130 T 180 120 T 220 115 T 260 125 T 300 110 T 340 120 T 380 105" fill="none" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="20" y1="140" x2="380" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+                    <text x="30" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">1�?/text>
+                    <text x="70" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">2�?/text>
+                    <text x="110" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">3�?/text>
+                    <text x="150" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">4�?/text>
+                    <text x="190" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">5�?/text>
+                    <text x="230" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">6�?/text>
+                    <text x="270" y="148" text-anchor="middle" font-size="8" fill="#94a3b8">7�?/text>
+                  </svg>
+                  <div class="flex justify-end gap-4 mt-2">
+                    <div class="flex items-center gap-1">
+                      <div class="w-3 h-0.5 bg-blue-500"></div>
+                      <span class="text-[10px] text-slate-500">发放</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <div class="w-3 h-0.5 bg-green-500"></div>
+                      <span class="text-[10px] text-slate-500">核销</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <div class="w-3 h-0.5 bg-amber-500"></div>
+                      <span class="text-[10px] text-slate-500">持有</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <div class="w-3 h-0.5 bg-red-500"></div>
+                      <span class="text-[10px] text-slate-500">回收</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <div class="text-xs font-bold text-slate-800 mb-4">现持权益过期分布�?/div>
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between text-[10px] mb-1">
+                      <span class="text-slate-600">7天内过期</span>
+                      <span class="font-mono">26%</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-red-500 rounded-full" style="width: 26%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-[10px] mb-1">
+                      <span class="text-slate-600">8-30天过�?/span>
+                      <span class="font-mono">19%</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-amber-500 rounded-full" style="width: 19%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-[10px] mb-1">
+                      <span class="text-slate-600">31-90天过�?/span>
+                      <span class="font-mono">35%</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-yellow-500 rounded-full" style="width: 35%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-[10px] mb-1">
+                      <span class="text-slate-600">90天以�?/span>
+                      <span class="font-mono">20%</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-emerald-500 rounded-full" style="width: 20%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-lg">
+              <div class="border-b border-slate-200 p-3">
+                <div class="text-xs font-bold text-slate-800">各渠道权益库存明�?/div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="mk-compact-table">
+                  <thead>
+                    <tr>
+                      <th class="py-2.5 px-3">来源渠道</th>
+                      <th class="py-2.5 px-3">活动/画布/任务名称</th>
+                      <th class="py-2.5 px-3">卡券名称</th>
+                      <th class="py-2.5 px-3 text-right">库存占用</th>
+                      <th class="py-2.5 px-3 text-right">发放�?/th>
+                      <th class="py-2.5 px-3 text-right">核销�?/th>
+                      <th class="py-2.5 px-3 text-right">持有�?/th>
+                      <th class="py-2.5 px-3 text-right">过期�?/th>
+                      <th class="py-2.5 px-3 text-right">回收�?/th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200 text-slate-700">
+                    <tr class="hover:bg-slate-50/75">
+                      <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-700 rounded">活动平台</span></td>
+                      <td class="py-3 px-3 text-xs">暑期营销活动</td>
+                      <td class="py-3 px-3 text-xs">美团30元差旅晚餐通用�?/td>
+                      <td class="py-3 px-3 text-right font-mono">500</td>
+                      <td class="py-3 px-3 text-right font-mono text-blue-600">300</td>
+                      <td class="py-3 px-3 text-right font-mono text-green-600">120</td>
+                      <td class="py-3 px-3 text-right font-mono text-emerald-600">180</td>
+                      <td class="py-3 px-3 text-right font-mono text-amber-600">25</td>
+                      <td class="py-3 px-3 text-right font-mono text-red-600">5</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/75">
+                      <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-700 rounded">活动平台</span></td>
+                      <td class="py-3 px-3 text-xs">会员专享活动</td>
+                      <td class="py-3 px-3 text-xs">微信50元中石化加油通兑�?/td>
+                      <td class="py-3 px-3 text-right font-mono">1,000</td>
+                      <td class="py-3 px-3 text-right font-mono text-blue-600">220</td>
+                      <td class="py-3 px-3 text-right font-mono text-green-600">78</td>
+                      <td class="py-3 px-3 text-right font-mono text-emerald-600">142</td>
+                      <td class="py-3 px-3 text-right font-mono text-amber-600">18</td>
+                      <td class="py-3 px-3 text-right font-mono text-red-600">2</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/75">
+                      <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 bg-sky-50 text-sky-700 rounded">权益平台</span></td>
+                      <td class="py-3 px-3 text-xs">发放任务A</td>
+                      <td class="py-3 px-3 text-xs">星巴克咖啡通兑�?对公�?</td>
+                      <td class="py-3 px-3 text-right font-mono">300</td>
+                      <td class="py-3 px-3 text-right font-mono text-blue-600">236</td>
+                      <td class="py-3 px-3 text-right font-mono text-green-600">86</td>
+                      <td class="py-3 px-3 text-right font-mono text-emerald-600">150</td>
+                      <td class="py-3 px-3 text-right font-mono text-amber-600">12</td>
+                      <td class="py-3 px-3 text-right font-mono text-red-600">8</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/75">
+                      <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded">营销画布</span></td>
+                      <td class="py-3 px-3 text-xs">欢迎流程</td>
+                      <td class="py-3 px-3 text-xs">企业网银年费减免�?/td>
+                      <td class="py-3 px-3 text-right font-mono">200</td>
+                      <td class="py-3 px-3 text-right font-mono text-blue-600">100</td>
+                      <td class="py-3 px-3 text-right font-mono text-green-600">44</td>
+                      <td class="py-3 px-3 text-right font-mono text-emerald-600">56</td>
+                      <td class="py-3 px-3 text-right font-mono text-amber-600">8</td>
+                      <td class="py-3 px-3 text-right font-mono text-red-600">2</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 px-4 pb-3">
+                <span class="text-[10px] text-slate-400">�?12 条记�?/span>
+                <div class="flex items-center gap-2">
+                  <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-400 cursor-not-allowed">&laquo;</button>
+                  <button class="px-2.5 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">1</button>
+                  <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">2</button>
+                  <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">&raquo;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-usage" class="tab-content hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div class="mk-panel-title">库存变动明细</div>
+            <button class="px-3 py-1.5 bg-blue-600 text-white rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-blue-700" onclick="openStockIn()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> + 增加库存
+            </button>
+          </div>
+
+          <div class="mk-search-panel mb-4">
+            <div class="flex flex-wrap gap-3 items-end">
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">卡券名称</label>
+                <input type="text" placeholder="输入卡券名称..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-44 focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">卡券种类</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>优惠�?/option>
+                  <option>实物商品</option>
+                  <option>服务�?/option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">操作时间</label>
+                <div class="flex items-center gap-2">
+                  <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+                  <span class="text-slate-400">-</span>
+                  <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+                </div>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">操作类型</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-40 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>添加库存</option>
+                  <option>活动占用库存</option>
+                  <option>活动释放库存</option>
+                  <option>渠道占用库存</option>
+                  <option>渠道释放库存</option>
+                  <option>到期回收库存</option>
+                  <option>权益补发</option>
+                  <option>权益回收</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">可用范围</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-28 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>全渠�?/option>
+                  <option>指定渠道</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">批次截止日期</label>
+                <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">操作�?/label>
+                <input type="text" placeholder="输入操作�?.." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-36 focus:outline-none focus:border-blue-400" />
+              </div>
+              <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold cursor-pointer transition-colors">查询</button>
+              <button class="px-4 py-1.5 border border-slate-300 hover:bg-slate-50 rounded text-[10px] font-bold cursor-pointer transition-colors">&#8635; 重置</button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mb-3">
+            <div class="border-b border-slate-200">
+              <button class="px-3 py-1.5 text-[12px] font-bold text-blue-600 border-b-2 border-blue-600 cursor-pointer" onclick="switchUsageTab('flow')">库存流水明细</button>
+              <button class="px-3 py-1.5 text-[12px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer" onclick="switchUsageTab('batch')">入库批次汇�?/button>
+            </div>
+            <div class="relative">
+              <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold cursor-pointer hover:bg-slate-50">导出 �?/button>
+            </div>
+          </div>
+
+          <div id="usage-batch" class="mk-list-panel hidden">
+            <div class="overflow-x-auto">
+              <table class="mk-compact-table">
+                <thead>
+                  <tr>
+                    <th class="py-2.5 px-3">入库批次</th>
+                    <th class="py-2.5 px-3">卡券名称</th>
+                    <th class="py-2.5 px-3">入库时间</th>
+                    <th class="py-2.5 px-3">操作�?/th>
+                    <th class="py-2.5 px-3">可用渠道</th>
+                    <th class="py-2.5 px-3 text-right">入库总量</th>
+                    <th class="py-2.5 px-3 text-right">批次剩余余量</th>
+                    <th class="py-2.5 px-3">截止时间</th>
+                    <th class="py-2.5 px-3">备注</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">BATCH20260710001</td>
+                    <td class="py-3 px-3 text-slate-800">美团30元差旅晚餐通用�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-10 14:30:00</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded">活动平台</span></td>
+                    <td class="py-3 px-3 text-right font-mono">2,000</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-600">1,850</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-12-31</td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">供应商补�?/td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">BATCH20260708002</td>
+                    <td class="py-3 px-3 text-slate-800">微信50元中石化加油通兑�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-08 09:15:00</td>
+                    <td class="py-3 px-3">运营�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">权益平台</span></td>
+                    <td class="py-3 px-3 text-right font-mono">5,000</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-600">500</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-10-31</td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">常规采购</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 px-4 pb-3">
+              <span class="text-[10px] text-slate-400">�?28 条记�?/span>
+              <div class="flex items-center gap-2">
+                <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-400 cursor-not-allowed">&laquo;</button>
+                <button class="px-2.5 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">1</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">2</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">3</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">&raquo;</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="usage-flow" class="mk-list-panel">
+            <div class="overflow-x-auto">
+              <table class="mk-compact-table">
+                <thead>
+                  <tr>
+                    <th class="py-2.5 px-3">时间</th>
+                    <th class="py-2.5 px-3">操作类型</th>
+                    <th class="py-2.5 px-3">卡券名称</th>
+                    <th class="py-2.5 px-3">卡券种类</th>
+                    <th class="py-2.5 px-3 text-right">数量</th>
+                    <th class="py-2.5 px-3 text-right">变动后库�?/th>
+                    <th class="py-2.5 px-3">截止时间</th>
+                    <th class="py-2.5 px-3">操作�?/th>
+                    <th class="py-2.5 px-3">备注</th>
+                    <th class="py-2.5 px-3 text-center">操作</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-10 14:30:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700">添加库存</span></td>
+                    <td class="py-3 px-3 text-slate-800">美团30元差旅晚餐通用�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded">优惠�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-green-600">+2,000</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-600">1,850</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-12-31</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">供应商补�?/td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-10 10:15:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">活动占用库存</span></td>
+                    <td class="py-3 px-3 text-slate-800">微信50元中石化加油通兑�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded">优惠�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-red-600">-500</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-600">4,500</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-10-31</td>
+                    <td class="py-3 px-3">运营�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">活动ID: ACT001</td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-09 16:45:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">活动释放库存</span></td>
+                    <td class="py-3 px-3 text-slate-800">星巴克咖啡通兑�?对公�?</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded">优惠�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-green-600">+100</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-red-600">0</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-08-31</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">活动结束释放</td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-09 09:20:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">渠道占用库存</span></td>
+                    <td class="py-3 px-3 text-slate-800">企业网银年费减免�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-cyan-50 text-cyan-700 rounded">服务�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-red-600">-200</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-600">800</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-12-31</td>
+                    <td class="py-3 px-3">运营�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">营销画布占用</td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-08 15:30:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700">渠道释放库存</span></td>
+                    <td class="py-3 px-3 text-slate-800">美团30元差旅晚餐通用�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded">优惠�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-green-600">+50</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-600">1,900</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-12-31</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">渠道任务完成</td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-08 08:00:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">到期回收库存</span></td>
+                    <td class="py-3 px-3 text-slate-800">高端商务拉杆�?20�?</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-orange-50 text-orange-700 rounded">实物商品</span></td>
+                    <td class="py-3 px-3 text-right font-mono text-red-600">-30</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-amber-600">50</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">-</td>
+                    <td class="py-3 px-3">系统</td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">自动到期回收</td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-07 14:00:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">权益补发</span></td>
+                    <td class="py-3 px-3 text-slate-800">微信50元中石化加油通兑�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded">优惠�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-green-600">+10</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-600">5,000</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-10-31</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">补发单号: REISSUE001</td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-07 10:30:00</td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700">权益回收</span></td>
+                    <td class="py-3 px-3 text-slate-800">企业网银年费减免�?/td>
+                    <td class="py-3 px-3"><span class="text-[10px] px-1.5 py-0.5 bg-cyan-50 text-cyan-700 rounded">服务�?/span></td>
+                    <td class="py-3 px-3 text-right font-mono text-red-600">-50</td>
+                    <td class="py-3 px-3 text-right font-mono font-bold text-emerald-600">1,000</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-12-31</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">用户退�?/td>
+                    <td class="py-3 px-3 text-center"><button class="text-blue-600 text-[10px] font-bold cursor-pointer">查看</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 px-4 pb-3">
+              <span class="text-[10px] text-slate-400">�?156 条记�?/span>
+              <div class="flex items-center gap-2">
+                <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-400 cursor-not-allowed">&laquo;</button>
+                <button class="px-2.5 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">1</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">2</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">3</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">&raquo;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-audit" class="tab-content hidden">
+          <div class="mk-search-panel mb-4">
+            <div class="flex flex-wrap gap-3 items-end">
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">卡券名称</label>
+                <input type="text" placeholder="输入卡券名称..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-44 focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">卡券种类</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>优惠�?/option>
+                  <option>实物商品</option>
+                  <option>服务�?/option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">操作时间</label>
+                <div class="flex items-center gap-2">
+                  <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+                  <span class="text-slate-400">-</span>
+                  <input type="date" class="border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+                </div>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">操作�?/label>
+                <input type="text" placeholder="输入操作�?.." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-36 focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">卡券ID</label>
+                <input type="text" placeholder="输入卡券ID..." class="border border-slate-300 rounded px-3 py-1.5 text-xs w-44 focus:outline-none focus:border-blue-400" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-600 font-medium block mb-1">操作类型</label>
+                <select class="border border-slate-300 rounded px-3 py-1.5 text-xs w-32 focus:outline-none focus:border-blue-400">
+                  <option>全部</option>
+                  <option>入库</option>
+                  <option>出库</option>
+                  <option>冻结</option>
+                  <option>解冻</option>
+                  <option>修改配置</option>
+                </select>
+              </div>
+              <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold cursor-pointer transition-colors">查询</button>
+              <button class="px-4 py-1.5 border border-slate-300 hover:bg-slate-50 rounded text-[10px] font-bold cursor-pointer transition-colors">&#8635; 重置</button>
+            </div>
+          </div>
+
+          <div class="mk-list-panel">
+            <div class="mk-panel-header">
+              <div class="mk-panel-title">操作审计日志</div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-slate-50" onclick="exportAuditLog()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 导出全量日志Excel
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-compact-table">
+                <thead>
+                  <tr>
+                    <th class="py-2.5 px-3">操作时间</th>
+                    <th class="py-2.5 px-3">操作人员</th>
+                    <th class="py-2.5 px-3">卡券名称</th>
+                    <th class="py-2.5 px-3">卡券ID</th>
+                    <th class="py-2.5 px-3 text-center">操作类型</th>
+                    <th class="py-2.5 px-3">操作内容</th>
+                    <th class="py-2.5 px-3">操作详情</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-10 14:30:00</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-slate-800">美团30元差旅晚餐通用�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON001</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700">入库</span></td>
+                    <td class="py-3 px-3">批量入库</td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">入库数量: 500�? 成本: ¥15,000</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-10 10:15:00</td>
+                    <td class="py-3 px-3">运营�?/td>
+                    <td class="py-3 px-3 text-slate-800">微信50元中石化加油通兑�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON002</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700">出库</span></td>
+                    <td class="py-3 px-3">活动发放</td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">发放数量: 200�? 活动ID: ACT001</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-09 16:45:00</td>
+                    <td class="py-3 px-3">管理�?/td>
+                    <td class="py-3 px-3 text-slate-800">星巴克咖啡通兑�?对公�?</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON003</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">冻结</span></td>
+                    <td class="py-3 px-3">库存冻结</td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">冻结库存: 1,500�?/td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/75">
+                    <td class="py-3 px-3 font-mono text-[11px]">2026-07-09 09:20:00</td>
+                    <td class="py-3 px-3">运营�?/td>
+                    <td class="py-3 px-3 text-slate-800">企业网银年费减免�?/td>
+                    <td class="py-3 px-3 font-mono text-[11px]">COUPON004</td>
+                    <td class="py-3 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">修改配置</span></td>
+                    <td class="py-3 px-3">修改预警阈�?/td>
+                    <td class="py-3 px-3 text-[11px] text-slate-500">阈值从 1000 修改�?500</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 px-4 pb-3">
+              <span class="text-[10px] text-slate-400">�?156 条记�?/span>
+              <div class="flex items-center gap-2">
+                <button class="px-2.5 py-1 border border-slate-200 rounded text-[10px] text-slate-400 cursor-not-allowed">&laquo;</button>
+                <button class="px-2.5 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">1</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">2</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">3</button>
+                <button class="px-2.5 py-1 border border-slate-200 hover:bg-slate-50 rounded text-[10px] text-slate-600 cursor-pointer">&raquo;</button>
+                <span class="text-[10px] text-slate-400 ml-2">每页</span>
+                <select class="border border-slate-200 rounded px-2 py-1 text-[10px]">
+                  <option>20</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="stockDetailModal" style="display:none">
+  <div class="mk-modal">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">库存详情</span>
+      <button class="mk-modal-close" onclick="closeModal('stockDetailModal')">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">权益名称</label>
+          <div class="text-sm font-bold text-slate-800">美团30元差旅晚餐通用�?/div>
+        </div>
+        <div>
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">权益类型</label>
+          <div class="text-sm text-slate-700"><span class="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded">第三�?/span></div>
+        </div>
+        <div>
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">面�?/label>
+          <div class="text-sm font-mono font-bold text-slate-800">¥30</div>
+        </div>
+        <div>
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">库存状�?/label>
+          <div class="text-sm"><span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">库存不足</span></div>
+        </div>
+      </div>
+      <div class="border-t border-slate-200 pt-4">
+        <div class="text-xs font-bold text-slate-800 mb-3">库存明细</div>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-slate-50 p-3 rounded">
+            <div class="text-[10px] text-slate-500 mb-1">总库�?/div>
+            <div class="text-lg font-bold font-mono text-slate-800">2,000</div>
+          </div>
+          <div class="bg-slate-50 p-3 rounded">
+            <div class="text-[10px] text-slate-500 mb-1">可用库存</div>
+            <div class="text-lg font-bold font-mono text-red-600">50</div>
+          </div>
+          <div class="bg-slate-50 p-3 rounded">
+            <div class="text-[10px] text-slate-500 mb-1">冻结库存</div>
+            <div class="text-lg font-bold font-mono text-slate-800">1,950</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeModal('stockDetailModal')">关闭</button>
+      <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="openStockIn(); closeModal('stockDetailModal')">立即入库</button>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="stockInModal" style="display:none">
+  <div class="mk-modal" style="width: 520px">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">权益入库</span>
+      <button class="mk-modal-close" onclick="closeModal('stockInModal')">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">权益名称</label>
+        <div class="text-sm font-bold text-slate-800 bg-slate-50 p-2 rounded">美团30元差旅晚餐通用�?/div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">是否有批次号</label>
+        <div class="flex gap-3">
+          <label class="flex items-center gap-1">
+            <input type="radio" name="hasBatchNo" value="yes" onclick="toggleBatchNo()" />
+            <span class="text-xs text-slate-600">�?/span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" name="hasBatchNo" value="no" checked onclick="toggleBatchNo()" />
+            <span class="text-xs text-slate-600">�?/span>
+          </label>
+        </div>
+        <div id="batchNoInput" class="hidden mt-2">
+          <input type="text" placeholder="请输入批次号" class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">入库渠道</label>
+        <select class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400">
+          <option selected>采购入库</option>
+          <option>供应商直�?/option>
+          <option>内部调拨</option>
+          <option>活动退�?/option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">适用范围</label>
+        <div class="flex flex-wrap gap-3">
+          <label class="flex items-center gap-1">
+            <input type="checkbox" checked />
+            <span class="text-xs text-slate-600">活动平台</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="checkbox" checked />
+            <span class="text-xs text-slate-600">权益平台</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="checkbox" checked />
+            <span class="text-xs text-slate-600">营销画布</span>
+          </label>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">入库数量 <span class="text-red-500">*</span></label>
+        <input type="number" placeholder="必填正整数，不能�?和负�? class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">是否有有效期</label>
+        <div class="flex gap-3">
+          <label class="flex items-center gap-1">
+            <input type="radio" name="hasValidity" value="yes" onclick="toggleValidity()" />
+            <span class="text-xs text-slate-600">�?/span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" name="hasValidity" value="no" checked onclick="toggleValidity()" />
+            <span class="text-xs text-slate-600">�?/span>
+          </label>
+        </div>
+        <div id="validityInput" class="hidden mt-2">
+          <div class="flex gap-2">
+            <input type="date" class="flex-1 border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+            <span class="text-slate-400 self-center">-</span>
+            <input type="date" class="flex-1 border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+          </div>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">备注</label>
+        <textarea rows="2" placeholder="请输入备注信�? class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400 resize-none"></textarea>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">本批次成�?/label>
+        <input type="number" placeholder="请输入总金额（非必输）" class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer">保存草稿</button>
+      <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeModal('stockInModal')">取消</button>
+      <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="submitStockIn()">立即添加</button>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="thresholdModal" style="display:none">
+  <div class="mk-modal" style="width: 480px">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">设置库存预警阈�?/span>
+      <button class="mk-modal-close" onclick="closeModal('thresholdModal')">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">预警阈值（数量�?<span class="text-red-500">*</span></label>
+        <input type="number" placeholder="请输入预警阈�? class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">通知�?<span class="text-red-500">*</span></label>
+        <div class="border border-slate-300 rounded p-3 min-h-20" id="thresholdNotifierList">
+          <div class="text-[10px] text-slate-400 text-center py-4">暂无通知人，点击下方按钮添加</div>
+        </div>
+        <button class="mt-2 px-3 py-1 border border-blue-500 text-blue-600 rounded text-xs font-bold hover:bg-blue-50 cursor-pointer flex items-center gap-1" onclick="openNotifierModal('threshold')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> 添加通知�?        </button>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">预警方式</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-1">
+            <input type="radio" name="alertType" checked />
+            <span class="text-xs text-slate-600">系统通知</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" name="alertType" />
+            <span class="text-xs text-slate-600">邮件通知</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" name="alertType" />
+            <span class="text-xs text-slate-600">短信通知</span>
+          </label>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">通知模板</label>
+        <select class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400">
+          <option value="default" selected>默认预警模板</option>
+          <option value="urgent">紧急预警模�?/option>
+          <option value="daily">每日库存提醒模板</option>
+        </select>
+        <div class="mt-2 p-2 bg-slate-50 rounded text-[10px] text-slate-600">
+          模板内容：【库存预警】{权益名称}当前库存{当前数量}，已低于预警阈值{阈值}，请及时处理�?        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">备注</label>
+        <textarea rows="2" placeholder="请输入备注信�? class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400 resize-none"></textarea>
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeModal('thresholdModal')">取消</button>
+      <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="saveThreshold()">保存设置</button>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="batchThresholdModal" style="display:none">
+  <div class="mk-modal" style="width: 520px">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">批量设置库存预警阈�?/span>
+      <button class="mk-modal-close" onclick="closeModal('batchThresholdModal')">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">已选权益（3个）</label>
+        <div class="border border-slate-200 rounded p-3 max-h-32 overflow-y-auto">
+          <div class="flex justify-between items-center py-1 border-b border-slate-100">
+            <span class="text-xs text-slate-700">美团30元差旅晚餐通用�?/span>
+            <span class="text-[10px] text-slate-400 font-mono">COUPON001</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-slate-100">
+            <span class="text-xs text-slate-700">微信50元中石化加油通兑�?/span>
+            <span class="text-[10px] text-slate-400 font-mono">COUPON002</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-xs text-slate-700">星巴克咖啡通兑�?对公�?</span>
+            <span class="text-[10px] text-slate-400 font-mono">COUPON003</span>
+          </div>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">预警阈值（数量�?<span class="text-red-500">*</span></label>
+        <input type="number" placeholder="请输入预警阈�? class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400" />
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">通知�?<span class="text-red-500">*</span></label>
+        <div class="border border-slate-300 rounded p-3 min-h-20" id="batchNotifierList">
+          <div class="text-[10px] text-slate-400 text-center py-4">暂无通知人，点击下方按钮添加</div>
+        </div>
+        <button class="mt-2 px-3 py-1 border border-blue-500 text-blue-600 rounded text-xs font-bold hover:bg-blue-50 cursor-pointer flex items-center gap-1" onclick="openNotifierModal('batch')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> 添加通知�?        </button>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">预警方式</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-1">
+            <input type="radio" name="batchAlertType" checked />
+            <span class="text-xs text-slate-600">系统通知</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" name="batchAlertType" />
+            <span class="text-xs text-slate-600">邮件通知</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" name="batchAlertType" />
+            <span class="text-xs text-slate-600">短信通知</span>
+          </label>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">通知模板</label>
+        <select class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400">
+          <option value="default" selected>默认预警模板</option>
+          <option value="urgent">紧急预警模�?/option>
+          <option value="daily">每日库存提醒模板</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">备注</label>
+        <textarea rows="2" placeholder="请输入备注信�? class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400 resize-none"></textarea>
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeModal('batchThresholdModal')">取消</button>
+      <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="saveBatchThreshold()">批量保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="batchImportModal" style="display:none">
+  <div class="mk-modal" style="width: 520px">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">批量导入库存</span>
+      <button class="mk-modal-close" onclick="closeBatchImportModal()">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div id="import-step-1">
+        <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center mb-4">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400 mx-auto mb-3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="text-sm text-slate-600 font-bold mb-2">选择批量库存表文�?/div>
+          <div class="text-[10px] text-slate-400 mb-3">支持 .xlsx / .xls / .csv 格式</div>
+          <button class="px-4 py-2 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer">选择文件</button>
+        </div>
+        <div class="flex justify-center gap-4">
+          <button class="px-4 py-2 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 下载模板文件
+          </button>
+        </div>
+      </div>
+      <div id="import-step-2" class="hidden">
+        <div class="mb-4">
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">预读取结果（6种卡券）</label>
+          <div class="border border-slate-200 rounded p-3 max-h-48 overflow-y-auto">
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-xs text-slate-700">美团30元差旅晚餐通用�?/span>
+              <span class="text-xs font-mono font-bold text-slate-800">1,000 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-xs text-slate-700">微信50元中石化加油通兑�?/span>
+              <span class="text-xs font-mono font-bold text-slate-800">2,000 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-xs text-slate-700">星巴克咖啡通兑�?对公�?</span>
+              <span class="text-xs font-mono font-bold text-slate-800">500 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-xs text-slate-700">高端商务拉杆�?20�?</span>
+              <span class="text-xs font-mono font-bold text-slate-800">300 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-xs text-slate-700">企业网银年费减免�?/span>
+              <span class="text-xs font-mono font-bold text-slate-800">1,500 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1.5">
+              <span class="text-xs text-slate-700">滴滴出行50元打车券</span>
+              <span class="text-xs font-mono font-bold text-slate-800">800 �?/span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-blue-50 p-3 rounded">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-blue-700">合计入库数量</span>
+            <span class="text-lg font-bold text-blue-600 font-mono">6,100 �?�?/span>
+          </div>
+        </div>
+      </div>
+      <div id="import-step-3" class="hidden">
+        <div class="text-center py-8">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500 mx-auto mb-4"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="text-sm text-slate-700 font-bold mb-2">导入成功</div>
+          <div class="text-[10px] text-slate-500">已成功导�?6,100 �?个卡�?/div>
+        </div>
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <div id="import-footer-1">
+        <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeBatchImportModal()">取消</button>
+        <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="previewImport()">上传并预�?/button>
+      </div>
+      <div id="import-footer-2" class="hidden">
+        <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeBatchImportModal()">取消</button>
+        <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="confirmImport()">确认入库</button>
+      </div>
+      <div id="import-footer-3" class="hidden">
+        <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="closeBatchImportModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="notifierModal" style="display:none">
+  <div class="mk-modal" style="width: 480px">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">选择通知�?/span>
+      <button class="mk-modal-close" onclick="closeNotifierModal()">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div class="mb-2">
+        <label class="text-[10px] text-slate-600 font-medium block mb-1">本部门人员列�?/label>
+      </div>
+      <div class="border border-slate-200 rounded p-2 max-h-64 overflow-y-auto">
+        <label class="flex items-center gap-2 py-2 px-2 hover:bg-slate-50 cursor-pointer rounded">
+          <input type="checkbox" class="notifier-checkbox" value="张三 - 运营�? />
+          <span class="text-xs text-slate-700">张三 - 运营�?/span>
+        </label>
+        <label class="flex items-center gap-2 py-2 px-2 hover:bg-slate-50 cursor-pointer rounded">
+          <input type="checkbox" class="notifier-checkbox" value="李四 - 财务�? />
+          <span class="text-xs text-slate-700">李四 - 财务�?/span>
+        </label>
+        <label class="flex items-center gap-2 py-2 px-2 hover:bg-slate-50 cursor-pointer rounded">
+          <input type="checkbox" class="notifier-checkbox" value="王五 - 市场�? />
+          <span class="text-xs text-slate-700">王五 - 市场�?/span>
+        </label>
+        <label class="flex items-center gap-2 py-2 px-2 hover:bg-slate-50 cursor-pointer rounded">
+          <input type="checkbox" class="notifier-checkbox" value="赵六 - 产品�? />
+          <span class="text-xs text-slate-700">赵六 - 产品�?/span>
+        </label>
+        <label class="flex items-center gap-2 py-2 px-2 hover:bg-slate-50 cursor-pointer rounded">
+          <input type="checkbox" class="notifier-checkbox" value="孙七 - 技术部" />
+          <span class="text-xs text-slate-700">孙七 - 技术部</span>
+        </label>
+        <label class="flex items-center gap-2 py-2 px-2 hover:bg-slate-50 cursor-pointer rounded">
+          <input type="checkbox" class="notifier-checkbox" value="周八 - 客服�? />
+          <span class="text-xs text-slate-700">周八 - 客服�?/span>
+        </label>
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeNotifierModal()">取消</button>
+      <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="confirmNotifiers()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="mk-modal-overlay" id="exportCouponModal" style="display:none">
+  <div class="mk-modal" style="width: 520px">
+    <div class="mk-modal-header">
+      <span class="mk-modal-title">批量导出卡券</span>
+      <button class="mk-modal-close" onclick="closeExportModal()">&times;</button>
+    </div>
+    <div class="mk-modal-body">
+      <div id="export-step-1">
+        <div class="mb-4">
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">已选权益（3个）</label>
+          <div class="border border-slate-200 rounded p-3 max-h-32 overflow-y-auto">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-xs text-slate-700">美团30元差旅晚餐通用�?/span>
+              <span class="text-[10px] text-slate-600 font-mono">50 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-xs text-slate-700">微信50元中石化加油通兑�?/span>
+              <span class="text-[10px] text-slate-600 font-mono">4,500 �?/span>
+            </div>
+            <div class="flex justify-between items-center py-1">
+              <span class="text-xs text-slate-700">星巴克咖啡通兑�?对公�?</span>
+              <span class="text-[10px] text-slate-600 font-mono">0 �?/span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-blue-50 p-3 rounded mb-4">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-blue-700">合计导出数量</span>
+            <span class="text-lg font-bold text-blue-600 font-mono">4,550 �?/span>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="text-[10px] text-slate-600 font-medium block mb-1">导出格式</label>
+          <select class="w-full border border-slate-300 rounded px-3 py-1.5 text-xs focus:outline-none focus:border-blue-400">
+            <option>Excel (.xlsx)</option>
+            <option>CSV (.csv)</option>
+          </select>
+        </div>
+      </div>
+      <div id="export-step-2" class="hidden">
+        <div class="text-center py-8">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500 mx-auto mb-4 animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          <div class="text-sm text-slate-700 font-bold mb-2">正在导出�?..</div>
+          <div class="text-[10px] text-slate-500">请稍候，系统正在处理数据</div>
+          <div class="w-full bg-slate-200 rounded-full h-2 mt-4">
+            <div id="export-progress" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 mt-2" id="export-progress-text">0%</div>
+        </div>
+      </div>
+      <div id="export-step-3" class="hidden">
+        <div class="text-center py-8">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500 mx-auto mb-4"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="text-sm text-slate-700 font-bold mb-2">导出成功</div>
+          <div class="text-[10px] text-slate-500 mb-4">已成功导�?4,550 张卡券数�?/div>
+          <button class="px-4 py-2 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer flex items-center gap-2 mx-auto">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 下载文件
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mk-modal-footer">
+      <div id="export-footer-1">
+        <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeModal('exportCouponModal')">取消</button>
+        <button class="px-4 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 cursor-pointer" onclick="startExport()">开始导�?/button>
+      </div>
+      <div id="export-footer-2" class="hidden">
+        <button class="px-4 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 cursor-pointer" onclick="closeExportModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(el) {
+    el.classList.add('hidden');
+  });
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  document.querySelectorAll('.border-b-2').forEach(function(el) {
+    el.classList.remove('border-blue-600', 'text-blue-600');
+    el.classList.add('text-slate-400');
+  });
+  btn.classList.remove('text-slate-400');
+  btn.classList.add('text-blue-600', 'border-blue-600');
+}
+
+function switchUsageTab(tab) {
+  document.getElementById('usage-batch').classList.add('hidden');
+  document.getElementById('usage-flow').classList.add('hidden');
+  document.getElementById('usage-' + tab).classList.remove('hidden');
+  event.target.parentElement.querySelectorAll('button').forEach(function(el) {
+    el.classList.remove('border-blue-600', 'text-blue-600');
+    el.classList.add('text-slate-400');
+  });
+  event.target.classList.remove('text-slate-400');
+  event.target.classList.add('text-blue-600', 'border-blue-600');
+}
+
+function toggleFreeze() {
+  var btn = event.target;
+  if (btn.textContent === '冻结') {
+    if (confirm('确定冻结该权益的库存吗？')) {
+      btn.textContent = '解冻';
+      btn.classList.remove('text-amber-600', 'hover:text-amber-800');
+      btn.classList.add('text-emerald-600', 'hover:text-emerald-800');
+      alert('库存已冻�?);
+    }
+  } else {
+    if (confirm('确定解冻该权益的库存吗？')) {
+      btn.textContent = '冻结';
+      btn.classList.remove('text-emerald-600', 'hover:text-emerald-800');
+      btn.classList.add('text-amber-600', 'hover:text-amber-800');
+      alert('库存已解�?);
+    }
+  }
+}
+
+function openThresholdModal() {
+  document.getElementById('thresholdModal').style.display = 'flex';
+}
+
+function showBatchStock() {
+  alert('批次库存汇总：\n批次1: 500�?(2026-12-31到期)\n批次2: 1,500�?(已冻�?');
+}
+
+function batchFreeze() {
+  var checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  if (checked.length === 0) {
+    alert('请先选择要操作的权益');
+    return;
+  }
+  if (confirm('确定对选中�?' + checked.length + ' 个权益执行冻�?解冻操作�?)) {
+    alert('操作成功�?);
+  }
+}
+
+function batchImport() {
+  var checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  if (checked.length === 0) {
+    alert('请先选择要导入库存的权益');
+    return;
+  }
+  document.getElementById('batchImportModal').style.display = 'flex';
+}
+
+function previewImport() {
+  document.getElementById('import-step-1').classList.add('hidden');
+  document.getElementById('import-footer-1').classList.add('hidden');
+  document.getElementById('import-step-2').classList.remove('hidden');
+  document.getElementById('import-footer-2').classList.remove('hidden');
+}
+
+function confirmImport() {
+  document.getElementById('import-step-2').classList.add('hidden');
+  document.getElementById('import-footer-2').classList.add('hidden');
+  document.getElementById('import-step-3').classList.remove('hidden');
+  document.getElementById('import-footer-3').classList.remove('hidden');
+}
+
+function closeBatchImportModal() {
+  document.getElementById('batchImportModal').style.display = 'none';
+  document.getElementById('import-step-1').classList.remove('hidden');
+  document.getElementById('import-step-2').classList.add('hidden');
+  document.getElementById('import-step-3').classList.add('hidden');
+  document.getElementById('import-footer-1').classList.remove('hidden');
+  document.getElementById('import-footer-2').classList.add('hidden');
+  document.getElementById('import-footer-3').classList.add('hidden');
+}
+
+function exportCoupons() {
+  var checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  if (checked.length === 0) {
+    alert('请先选择要导出的权益');
+    return;
+  }
+  document.getElementById('exportCouponModal').style.display = 'flex';
+}
+
+function startExport() {
+  document.getElementById('export-step-1').classList.add('hidden');
+  document.getElementById('export-footer-1').classList.add('hidden');
+  document.getElementById('export-step-2').classList.remove('hidden');
+  
+  var progress = 0;
+  var interval = setInterval(function() {
+    progress += 10;
+    document.getElementById('export-progress').style.width = progress + '%';
+    document.getElementById('export-progress-text').textContent = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      document.getElementById('export-step-2').classList.add('hidden');
+      document.getElementById('export-step-3').classList.remove('hidden');
+      document.getElementById('export-footer-2').classList.remove('hidden');
+    }
+  }, 300);
+}
+
+function closeExportModal() {
+  document.getElementById('exportCouponModal').style.display = 'none';
+  document.getElementById('export-step-1').classList.remove('hidden');
+  document.getElementById('export-step-2').classList.add('hidden');
+  document.getElementById('export-step-3').classList.add('hidden');
+  document.getElementById('export-footer-1').classList.remove('hidden');
+  document.getElementById('export-footer-2').classList.add('hidden');
+  document.getElementById('export-progress').style.width = '0%';
+  document.getElementById('export-progress-text').textContent = '0%';
+}
+
+function setAlertThreshold() {
+  var checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  if (checked.length === 0) {
+    alert('请先选择要设置预警阈值的权益');
+    return;
+  }
+  document.getElementById('batchThresholdModal').style.display = 'flex';
+}
+
+function saveBatchThreshold() {
+  alert('批量库存预警阈值设置已保存�?);
+  closeModal('batchThresholdModal');
+}
+
+function exportExcel() {
+  alert('正在导出Excel...\n导出成功�?);
+}
+
+function openStockDetail() {
+  document.getElementById('stockDetailModal').style.display = 'flex';
+}
+
+function openStockIn() {
+  document.getElementById('stockInModal').style.display = 'flex';
+}
+
+function submitStockIn() {
+  var quantityInput = document.querySelector('#stockInModal input[type="number"]');
+  var quantity = parseInt(quantityInput.value);
+  if (!quantity || quantity <= 0) {
+    alert('入库数量必须为正整数，不能为0和负�?);
+    return;
+  }
+  alert('权益入库成功�?);
+  closeModal('stockInModal');
+}
+
+
+
+var currentNotifierTarget = '';
+
+function toggleBatchNo() {
+  var hasBatch = document.querySelector('input[name="hasBatchNo"]:checked').value === 'yes';
+  document.getElementById('batchNoInput').classList.toggle('hidden', !hasBatch);
+}
+
+function toggleValidity() {
+  var hasValidity = document.querySelector('input[name="hasValidity"]:checked').value === 'yes';
+  document.getElementById('validityInput').classList.toggle('hidden', !hasValidity);
+}
+
+function openNotifierModal(target) {
+  currentNotifierTarget = target;
+  var listId = target === 'threshold' ? 'thresholdNotifierList' : 'batchNotifierList';
+  var container = document.getElementById(listId);
+  var selectedNotifiers = [];
+  
+  container.querySelectorAll('div').forEach(function(el) {
+    if (el.textContent && !el.textContent.includes('暂无通知�?)) {
+      selectedNotifiers.push(el.textContent.replace(' ×', ''));
+    }
+  });
+  
+  document.querySelectorAll('.notifier-checkbox').forEach(function(el) {
+    el.checked = selectedNotifiers.includes(el.value);
+  });
+  document.getElementById('notifierModal').style.display = 'flex';
+}
+
+function closeNotifierModal() {
+  document.getElementById('notifierModal').style.display = 'none';
+}
+
+function confirmNotifiers() {
+  var checked = document.querySelectorAll('.notifier-checkbox:checked');
+  var listId = currentNotifierTarget === 'threshold' ? 'thresholdNotifierList' : 'batchNotifierList';
+  var container = document.getElementById(listId);
+  
+  container.innerHTML = '';
+  if (checked.length === 0) {
+    container.innerHTML = '<div class="text-[10px] text-slate-400 text-center py-4">暂无通知人，点击下方按钮添加</div>';
+  } else {
+    checked.forEach(function(el) {
+      var tag = document.createElement('div');
+      tag.className = 'inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded text-[10px] mr-1 mb-1';
+      tag.innerHTML = el.value + ' <button onclick="removeNotifier(this)" class="hover:text-blue-900">&times;</button>';
+      container.appendChild(tag);
+    });
+  }
+  closeNotifierModal();
+}
+
+function removeNotifier(btn) {
+  btn.parentElement.remove();
+  var container = btn.parentElement.parentElement;
+  if (container.children.length === 0) {
+    container.innerHTML = '<div class="text-[10px] text-slate-400 text-center py-4">暂无通知人，点击下方按钮添加</div>';
+  }
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function saveThreshold() {
+  alert('库存预警阈值设置已保存�?);
+  closeModal('thresholdModal');
+}
+
+function exportAuditLog() {
+  alert('正在导出审计日志...\n导出成功�?);
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.relative')) {
+    document.querySelectorAll('.relative .hidden').forEach(function(el) {
+      el.classList.remove('hidden');
+    });
+  }
+});
+</script>
+
+<script>
+// 引入统一的左侧导航菜单配置（统一 8 大组 + 可见性控制）
+<script src="../assets/js/layout-new.js"></script>
+<script>
+function getCurrentPagePath() {
+  var path = window.location.pathname;
+  return path.replace(/\\/g, '/').split('/').pop() || 'overview.html';
+}
+
+function isMenuActive(menu) {
+  return menu.subMenus.some(function(sub) {
+    if (!sub.href || sub.type === 'product') {
+      if (sub.subMenus) {
+        return sub.subMenus.some(function(s2) {
+          if (!s2.href || s2.type === 'product') return false;
+          var p = s2.href.split('/').pop();
+          return getCurrentPagePath() === p;
+        });
+      }
+      return false;
+    }
+    var subPath = sub.href.split('/').pop();
+    return getCurrentPagePath() === subPath;
+  });
+}
+
+function isSubmenuActive(subMenu) {
+  if (!subMenu.href || subMenu.type === 'product') return false;
+  var subPath = subMenu.href.split('/').pop();
+  return getCurrentPagePath() === subPath;
+}
+
+function renderSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+  var html = '<div class="sidebar-header">';
+  html += '  <div class="sidebar-logo-icon">ECB</div>';
+  html += '  <div class="sidebar-title-wrap">';
+  html += '    <div class="sidebar-title">对公权益营销中台</div>';
+  html += '    <div class="sidebar-title-sub">Corporate Benefit Platform</div>';
+  html += '  </div>';
+  html += '</div>';
+  html += '<nav class="sidebar-nav">';
+  MENU_CONFIG.forEach(function(menu) {
+    var active = isMenuActive(menu);
+    html += '<div class="menu-group">';
+    html += '<button class="menu-btn ' + (active ? 'active' : '') + '" onclick="toggleMenu(this)">' +
+      '<span class="menu-left"><span class="menu-icon">' + menu.icon + '</span><span>' + menu.name + '</span></span>' +
+      '<span class="menu-arrow">&#9660;</span></button>';
+    html += '<div class="submenu-list' + (active ? '' : ' submenu-collapsed') + '">';
+    menu.subMenus.forEach(function(sub) {
+      var subActive = isSubmenuActive(sub);
+      if (sub.subMenus) {
+        var anyActive = sub.subMenus.some(function(s2) { return isSubmenuActive(s2); });
+        html += '<button class="submenu-item submenu-parent' + (anyActive ? ' active submenu-open' : '') + '" onclick="toggleSubmenu(this)">' +
+          '<span>' + sub.name + '</span>' +
+          '<span class="submenu-arrow">&#9658;</span></button>';
+        html += '<div class="submenu-list-second' + (anyActive ? '' : ' submenu-collapsed') + '">';
+        sub.subMenus.forEach(function(sub2) {
+          var sub2Active = isSubmenuActive(sub2);
+          html += '<a href="' + sub2.href + '" class="submenu-item-second' + (sub2Active ? ' active' : '') + '">' + sub2.name + '</a>';
+        });
+        html += '</div>';
+      } else if (sub.type === 'product') {
+        html += '<button class="submenu-item' + (subActive ? ' active' : '') + ' submenu-product" ' +
+          'onclick="window.open(\'' + sub.url + '\', \'_blank\')">' +
+          sub.name + '</button>';
+      } else {
+        html += '<a href="' + sub.href + '" class="submenu-item' + (subActive ? ' active' : '') + '">' + sub.name + '</a>';
+      }
+    });
+    html += '</div></div>';
+  });
+  html += '</nav>';
+  html += '<div class="sidebar-footer"><button class="sidebar-menu-cfg" onclick="openMenuVisibilityModal()" title="配置左侧导航菜单的显示与隐藏"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>菜单显示控制</button></div>';
+  sidebar.innerHTML = html;
+}
+
+function toggleMenu(btn) {
+  var group = btn.closest('.menu-group');
+  if (!group) return;
+  var submenu = group.querySelector('.submenu-list');
+  if (!submenu) return;
+  btn.classList.toggle('active');
+  submenu.classList.toggle('submenu-collapsed');
+  var arrow = btn.querySelector('.menu-arrow');
+  if (arrow) arrow.style.transform = btn.classList.contains('active') ? 'rotate(180deg)' : '';
+}
+
+function toggleSubmenu(btn) {
+  var submenuList = btn.nextElementSibling;
+  if (!submenuList || !submenuList.classList.contains('submenu-list-second')) return;
+  btn.classList.toggle('submenu-open');
+  submenuList.classList.toggle('submenu-collapsed');
+  var arrow = btn.querySelector('.submenu-arrow');
+  if (arrow) arrow.style.transform = btn.classList.contains('submenu-open') ? 'rotate(90deg)' : '';
+}
+
+function renderHeader() {
+  var header = document.getElementById('header');
+  if (!header) return;
+  header.innerHTML =
+    '<div class="header-right">' +
+      '<div class="header-notification" onclick="toggleNotificationDropdown(event)">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+          '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>' +
+          '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
+        '</svg>' +
+        '<span class="header-notification-dot">3</span>' +
+        '<div class="notification-dropdown" id="notificationDropdown">' +
+          '<div class="dropdown-header">' +
+            '<span>消息通知</span>' +
+            '<a href="javascript:;" class="dropdown-action">全部已读</a>' +
+          '</div>' +
+          '<div class="notification-list">' +
+            '<div class="notification-item unread">' +
+              '<div class="notification-dot-mark"></div>' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">活动审批待处�?/div>' +
+                '<div class="notification-desc">您有 2 个活动申请待审批</div>' +
+                '<div class="notification-time">10 分钟�?/div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notification-item">' +
+              '<div class="notification-content">' +
+                '<div class="notification-title">系统升级通知</div>' +
+                '<div class="notification-desc">v2.6.0 已发�?/div>' +
+                '<div class="notification-time">今天 09:00</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="dropdown-footer">' +
+            '<a href="javascript:;">查看全部消息</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="header-user-info" onclick="toggleUserDropdown(event)">' +
+        '<div class="header-avatar">�?/div>' +
+        '<span class="header-user-name">管理�?/span>' +
+        '<svg class="header-user-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+          '<polyline points="6 9 12 15 18 9"/>' +
+        '</svg>' +
+        '<div class="user-dropdown" id="userDropdown">' +
+          '<div class="user-dropdown-header">' +
+            '<div class="header-avatar">�?/div>' +
+            '<div>' +
+              '<div class="user-dropdown-name">系统管理�?/div>' +
+              '<div class="user-dropdown-role">超级管理�?/div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'profile\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+            '<span>个人中心</span>' +
+          '</button>' +
+          '<button class="user-dropdown-item" onclick="handleUserAction(\'changePwd\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+            '<span>修改密码</span>' +
+          '</button>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button class="user-dropdown-item user-dropdown-logout" onclick="handleUserAction(\'logout\')">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+            '<span>退出登�?/span>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function toggleNotificationDropdown(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('notificationDropdown');
+  if (!dd) return;
+  var userDD = document.getElementById('userDropdown');
+  if (userDD) userDD.classList.remove('show');
+  dd.classList.toggle('show');
+}
+
+function toggleUserDropdown(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('userDropdown');
+  if (!dd) return;
+  var notifDD = document.getElementById('notificationDropdown');
+  if (notifDD) notifDD.classList.remove('show');
+  dd.classList.toggle('show');
+}
+
+function handleUserAction(action) {
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.classList.remove('show');
+  switch(action) {
+    case 'profile': alert('打开个人中心'); break;
+    case 'changePwd': alert('打开修改密码'); break;
+    case 'logout': if(confirm('确定退出登录？')) { alert('已退出登�?); } break;
+  }
+}
+
+document.addEventListener('click', function(e) {
+  var notifDD = document.getElementById('notificationDropdown');
+  if (notifDD && !e.target.closest('.header-notification')) notifDD.classList.remove('show');
+  var userDD = document.getElementById('userDropdown');
+  if (userDD && !e.target.closest('.header-user-info')) userDD.classList.remove('show');
+});
+
+const TABS_STORAGE_KEY = 'mk_open_tabs';
+
+function getOpenTabs() {
+  try {
+    var raw = localStorage.getItem(TABS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function setOpenTabs(tabs) {
+  try {
+    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(tabs));
+  } catch (e) {}
+}
+
+function getCurrentTabInfo() {
+  var titleEl = document.querySelector('title');
+  var title = titleEl ? titleEl.textContent : '';
+  var pageName = title.split('-')[0].trim() || getCurrentPagePath();
+  return { name: pageName, href: getCurrentPagePath() };
+}
+
+function syncCurrentTab() {
+  var tabs = getOpenTabs();
+  var info = getCurrentTabInfo();
+  var currentPath = getCurrentPagePath();
+  var exists = tabs.some(function(t) { return t.path === currentPath; });
+  if (!exists) {
+    tabs.push({ name: info.name, path: currentPath, href: info.href, ts: Date.now() });
+    setOpenTabs(tabs);
+  }
+}
+
+function closeTab(path, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  var tabs = getOpenTabs();
+  tabs = tabs.filter(function(t) { return t.path !== path; });
+  setOpenTabs(tabs);
+  var currentPath = getCurrentPagePath();
+  if (currentPath === path) {
+    if (tabs.length > 0) {
+      window.location.href = tabs[0].href || ('./' + tabs[0].path);
+    } else {
+      window.location.href = '../dashboard/overview.html';
+    }
+  } else {
+    renderPageTabs();
+  }
+}
+
+function closeAllTabs() {
+  setOpenTabs([]);
+  window.location.href = '../dashboard/overview.html';
+}
+
+function closeOtherTabs(path) {
+  var tabs = getOpenTabs();
+  tabs = tabs.filter(function(t) { return t.path === path; });
+  setOpenTabs(tabs);
+  renderPageTabs();
+}
+
+function renderPageTabs() {
+  var tabBar = document.getElementById('pageTabs');
+  if (!tabBar) return;
+  var tabs = getOpenTabs();
+  var currentPath = getCurrentPagePath();
+  if (tabs.length === 0) {
+    tabBar.innerHTML = '';
+    tabBar.classList.add('empty');
+    return;
+  }
+  tabBar.classList.remove('empty');
+  var html = '';
+  tabs.forEach(function(t) {
+    var isActive = t.path === currentPath;
+    var href = t.href || ('./' + t.path);
+    html += '<div class="page-tab' + (isActive ? ' active' : '') + '">' +
+      '<a href="' + href + '" class="page-tab-link" title="' + t.name + '">' +
+        '<span class="page-tab-name">' + t.name + '</span>' +
+      '</a>' +
+      '<button class="page-tab-close" onclick="closeTab(\'' + t.path + '\', event)" title="关闭">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button>' +
+    '</div>';
+  });
+  html += '<div class="page-tabs-actions">' +
+    '<button class="page-tabs-action" onclick="closeOtherTabs(\'' + currentPath + '\')" title="关闭其他">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '<span>关闭其他</span>' +
+    '</button>' +
+    '<button class="page-tabs-action" onclick="closeAllTabs()" title="关闭全部">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+      '<span>关闭全部</span>' +
+    '</button>' +
+  '</div>';
+  tabBar.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderSidebar();
+  renderHeader();
+  syncCurrentTab();
+  renderPageTabs();
+});
+</script>
+</body>
+</html>

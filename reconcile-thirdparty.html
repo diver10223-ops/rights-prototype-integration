@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第三方权益核销对账 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <button class="header-icon-btn" title="设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页面标题 -->
+          <div class="mk-page-header">
+            <div>
+              <h1 class="mk-page-title">第三方权益核销对账</h1>
+              <p class="mk-page-subtitle">查询第三方权益账户变动流水，支持按商户、用户、时间筛选</p>
+            </div>
+            <button class="mk-btn mk-btn-default" onclick="showToast('流水导出中，请稍候')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出流水
+            </button>
+          </div>
+
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">交易时间（起）</label>
+                <input class="mk-input" type="date" id="dateStart">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">交易时间（止）</label>
+                <input class="mk-input" type="date" id="dateEnd">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">用户ID</label>
+                <div class="mk-input-wrap">
+                  <svg class="mk-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input class="mk-input mk-input-prefix" placeholder="精准查询" id="userId">
+                </div>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">商户</label>
+                <select class="mk-select" id="merchant">
+                  <option>全部</option>
+                  <option>商户一</option>
+                  <option>商户二</option>
+                </select>
+              </div>
+            </div>
+            <div class="mk-search-actions">
+              <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              <button class="mk-btn mk-btn-primary" onclick="handleQuery()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 统计卡片 -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">今日兑换总笔数</div>
+              <div class="mk-stat-value" style="color: #1677ff;">1,247</div>
+            </div>
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">成功发货笔数</div>
+              <div class="mk-stat-value" style="color: #52c41a;">1,180</div>
+            </div>
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">发货中笔数</div>
+              <div class="mk-stat-value" style="color: #faad14;">48</div>
+            </div>
+            <div class="mk-stat-card">
+              <div class="mk-stat-label">失败笔数</div>
+              <div class="mk-stat-value" style="color: #ff4d4f;">19</div>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">第三方权益流水</span>
+              <div class="mk-list-actions">
+                <span class="text-sm text-secondary">共 <b>5</b> 条</span>
+                <button class="mk-btn mk-btn-default text-sm" style="padding: 0 10px; height: 28px;" onclick="showToast('下载中，请稍候')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" id="flow-table">
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>交易时间</th>
+                    <th>商户名称</th>
+                    <th>商品名称</th>
+                    <th>权益名称</th>
+                    <th>用户ID</th>
+                    <th>订单状态</th>
+                    <th>支付流水</th>
+                    <th>支付状态</th>
+                    <th>发货类型</th>
+                    <th>发货时间</th>
+                    <th>发货结果</th>
+                  </tr>
+                </thead>
+                <tbody id="flow-tbody">
+                </tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span class="text-sm text-secondary">共 5 条</span>
+              <div class="mk-pagination-btns">
+                <button class="mk-page-btn active">1</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" class="mk-toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const mockFlows = [
+      { id: '1', merchantName: '商户一', productName: '电话充值50元', equityName: '话费充值券50元', userId: 'U100001', orderStatus: '已完成', payFlow: 'PAY20240620001', payStatus: '支付成功', deliveryType: '直充', deliveryTime: '2024-06-20 10:05:33', deliveryResult: '成功', tradeTime: '2024-06-20 10:05:00' },
+      { id: '2', merchantName: '商户一', productName: '腾讯视频月卡', equityName: '腾讯视频月会员', userId: 'U100002', orderStatus: '已完成', payFlow: 'PAY20240620002', payStatus: '支付成功', deliveryType: '卡密', deliveryTime: '2024-06-20 11:10:20', deliveryResult: '成功', tradeTime: '2024-06-20 11:10:00' },
+      { id: '3', merchantName: '商户二', productName: '美团外卖券30元', equityName: '美团外卖优惠券', userId: 'U100003', orderStatus: '发货中', payFlow: 'PAY20240620003', payStatus: '支付成功', deliveryType: '直充', deliveryTime: '-', deliveryResult: '处理中', tradeTime: '2024-06-20 14:30:00' },
+      { id: '4', merchantName: '商户一', productName: '加油卡100元', equityName: '中石化加油卡充值', userId: 'U100004', orderStatus: '已退款', payFlow: 'PAY20240620004', payStatus: '已退款', deliveryType: '直充', deliveryTime: '2024-06-20 15:00:00', deliveryResult: '失败', tradeTime: '2024-06-20 14:50:00' },
+      { id: '5', merchantName: '商户二', productName: '爱奇艺季卡', equityName: '爱奇艺季度会员', userId: 'U100005', orderStatus: '已完成', payFlow: 'PAY20240620005', payStatus: '支付成功', deliveryType: '卡密', deliveryTime: '2024-06-20 16:20:00', deliveryResult: '成功', tradeTime: '2024-06-20 16:18:00' },
+    ];
+
+    // 渲染表格
+    function renderTable() {
+      const tbody = document.getElementById('flow-tbody');
+      tbody.innerHTML = mockFlows.map((flow, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td class="text-muted-foreground">${flow.tradeTime}</td>
+          <td>${flow.merchantName}</td>
+          <td class="font-medium">${flow.productName}</td>
+          <td>${flow.equityName}</td>
+          <td>${flow.userId}</td>
+          <td><span class="${getOrderStatusClass(flow.orderStatus)}">${flow.orderStatus}</span></td>
+          <td class="text-xs text-muted-foreground">${flow.payFlow}</td>
+          <td>${flow.payStatus}</td>
+          <td>${flow.deliveryType}</td>
+          <td class="text-muted-foreground">${flow.deliveryTime}</td>
+          <td><span class="${getDeliveryClass(flow.deliveryResult)}">${flow.deliveryResult}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function getOrderStatusClass(status) {
+      if (status === '已完成') return 'mk-badge mk-badge-success';
+      if (status === '已退款') return 'mk-badge mk-badge-danger';
+      return 'mk-badge mk-badge-warning';
+    }
+
+    function getDeliveryClass(result) {
+      if (result === '成功') return 'mk-badge mk-badge-success';
+      if (result === '失败') return 'mk-badge mk-badge-danger';
+      return 'mk-badge mk-badge-warning';
+    }
+
+    // Toast提示
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('dateStart').value = '';
+      document.getElementById('dateEnd').value = '';
+      document.getElementById('userId').value = '';
+      document.getElementById('merchant').value = '全部';
+    }
+
+    // 查询
+    function handleQuery() {
+      showToast('查询成功');
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

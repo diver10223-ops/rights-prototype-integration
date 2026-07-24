@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>查看权益详情 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .detail-tabs { display: flex; border-bottom: 1px solid #e8ecf0; margin-bottom: 16px; }
+    .detail-tab { padding: 10px 20px; font-size: 14px; color: #4a5568; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+    .detail-tab:hover { color: #1677ff; }
+    .detail-tab.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .chart-placeholder { background: #f8fafc; border: 1px dashed #d9dee6; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #8c95a6; font-size: 13px; }
+    .info-row { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f2f5; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: 12px; color: #8c95a6; flex-shrink: 0; }
+    .info-value { font-size: 13px; color: #1a1a2e; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 页头 -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <div>
+              <h1 style="font-size: 16px; font-weight: 600; color: #1a1a2e;">95折优惠券</h1>
+            </div>
+            <div style="margin-left: 8px; font-size: 12px; color: #8c95a6;">ID：1001</div>
+            <span class="mk-badge mk-badge-info" style="margin-left: 8px;">行内自建</span>
+          </div>
+
+          <!-- 详情 Tab 切换 -->
+          <div class="detail-tabs">
+            <div class="detail-tab active" onclick="switchDetailTab('basic')" data-tab="basic">基本信息</div>
+            <div class="detail-tab" onclick="switchDetailTab('rule')" data-tab="rule">使用规则</div>
+            <div class="detail-tab" onclick="switchDetailTab('stats')" data-tab="stats">查看统计视图</div>
+          </div>
+
+          <!-- 基本信息 -->
+          <div id="panel-basic" class="tab-panel active">
+            <div class="mk-list-panel" style="margin-bottom: 16px;">
+              <div class="mk-list-header">
+                <span class="mk-list-title">基本信息</span>
+              </div>
+              <div style="padding: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 32px;">
+                  <div class="info-row">
+                    <span class="info-label">权益ID</span>
+                    <span class="info-value" style="color: #1677ff; font-family: 'Courier New', monospace;">1001</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">权益名称</span>
+                    <span class="info-value">95折优惠券</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">品类来源</span>
+                    <span class="mk-badge mk-badge-info">行内自建</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">发行机构</span>
+                    <span class="info-value">易诚银行</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">库存总量</span>
+                    <span class="info-value" style="font-weight: 600;">10,000</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">单张成本</span>
+                    <span class="info-value">¥5.00</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">有效期</span>
+                    <span class="info-value">2026-06-01 ~ 2026-12-31</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">状态</span>
+                    <span class="mk-badge mk-badge-success">已上架</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 使用规则 -->
+          <div id="panel-rule" class="tab-panel">
+            <div class="mk-list-panel" style="margin-bottom: 16px;">
+              <div class="mk-list-header">
+                <span class="mk-list-title">使用规则</span>
+              </div>
+              <div style="padding: 20px;">
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">使用链接</div>
+                  <a href="#" style="font-size: 13px; color: #1677ff;">https://bank.example.com/equity/discount/1001</a>
+                </div>
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">权益使用说明</div>
+                  <p style="font-size: 13px; color: #1a1a2e; line-height: 1.6;">本券适用于信用卡消费满200元时使用，折扣自动生效，每笔订单限用一张，不可叠加使用。</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 32px;">
+                  <div>
+                    <div style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">指定品类</div>
+                    <span style="font-size: 13px; color: #1a1a2e;">信用卡</span>
+                  </div>
+                  <div>
+                    <div style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">指定产品</div>
+                    <span style="font-size: 13px; color: #1a1a2e;">招行信用卡全系列产品</span>
+                  </div>
+                  <div>
+                    <div style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">指定客群</div>
+                    <span style="font-size: 13px; color: #1a1a2e;">信用卡活跃客群</span>
+                  </div>
+                  <div>
+                    <div style="font-size: 12px; color: #8c95a6; margin-bottom: 4px;">到期提醒</div>
+                    <span style="font-size: 13px; color: #52c41a;">✓ 已开启（提前7天短信提醒）</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 查看统计视图 -->
+          <div id="panel-stats" class="tab-panel">
+            <!-- KPI卡片 -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              <div class="mk-list-panel" style="display: flex; align-items: center; gap: 12px; padding: 16px;">
+                <div style="padding: 8px; border-radius: 8px; background: #e8f4ff; flex-shrink: 0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <p style="font-size: 12px; color: #8c95a6;">已发放量</p>
+                  <p style="font-size: 18px; font-weight: 700; margin-top: 2px; color: #1677ff;">4,100</p>
+                </div>
+              </div>
+              <div class="mk-list-panel" style="display: flex; align-items: center; gap: 12px; padding: 16px;">
+                <div style="padding: 8px; border-radius: 8px; background: #f0fff4; flex-shrink: 0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#52c41a" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <p style="font-size: 12px; color: #8c95a6;">已使用量</p>
+                  <p style="font-size: 18px; font-weight: 700; margin-top: 2px; color: #52c41a;">3,842</p>
+                </div>
+              </div>
+              <div class="mk-list-panel" style="display: flex; align-items: center; gap: 12px; padding: 16px;">
+                <div style="padding: 8px; border-radius: 8px; background: #fffbf0; flex-shrink: 0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0a500" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p style="font-size: 12px; color: #8c95a6;">当前持有量</p>
+                  <p style="font-size: 18px; font-weight: 700; margin-top: 2px; color: #f0a500;">246</p>
+                </div>
+              </div>
+              <div class="mk-list-panel" style="display: flex; align-items: center; gap: 12px; padding: 16px;">
+                <div style="padding: 8px; border-radius: 8px; background: #fff1f0; flex-shrink: 0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <p style="font-size: 12px; color: #8c95a6;">已过期量</p>
+                  <p style="font-size: 18px; font-weight: 700; margin-top: 2px; color: #ff4d4f;">12</p>
+                </div>
+              </div>
+              <div class="mk-list-panel" style="display: flex; align-items: center; gap: 12px; padding: 16px;">
+                <div style="padding: 8px; border-radius: 8px; background: #f9f0ff; flex-shrink: 0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#722ed1" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p style="font-size: 12px; color: #8c95a6;">结算资金</p>
+                  <p style="font-size: 18px; font-weight: 700; margin-top: 2px; color: #722ed1;">¥19,210</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <!-- 近7天趋势折线图 -->
+              <div class="md:col-span-2 mk-list-panel">
+                <div class="mk-list-header">
+                  <span class="mk-list-title">近7天发放 / 使用趋势</span>
+                </div>
+                <div style="height: 224px; padding: 20px;">
+                  <div class="chart-placeholder" style="height: 100%;">
+                    <div style="text-align: center;">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d9dee6" stroke-width="2" style="margin-bottom: 8px;">
+                        <path d="M3 3v18h18"></path>
+                        <path d="M18 17V9"></path>
+                        <path d="M13 17V5"></path>
+                        <path d="M8 17v-3"></path>
+                      </svg>
+                      <div>趋势图（需要图表库支持）</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 使用分布饼图 -->
+              <div class="mk-list-panel">
+                <div class="mk-list-header">
+                  <span class="mk-list-title">使用状态分布</span>
+                </div>
+                <div style="height: 224px; padding: 20px; display: flex; align-items: center; justify-content: center;">
+                  <div style="text-align: center;">
+                    <div style="width: 160px; height: 160px; border-radius: 50%; background: conic-gradient(#52c41a 0% 94%, #f0a500 94% 100%); margin: 0 auto 16px; position: relative;">
+                      <div style="position: absolute; top: 30%; left: 30%; right: 30%; bottom: 30%; background: #fff; border-radius: 50%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 16px; font-size: 12px;">
+                      <span><span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #52c41a; margin-right: 4px;"></span>已使用</span>
+                      <span><span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #f0a500; margin-right: 4px;"></span>持有中</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 每日发放柱状图 -->
+              <div class="md:col-span-2 mk-list-panel">
+                <div class="mk-list-header">
+                  <span class="mk-list-title">每日发放量</span>
+                </div>
+                <div style="height: 192px; padding: 20px;">
+                  <div class="chart-placeholder" style="height: 100%;">
+                    <div style="text-align: center;">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d9dee6" stroke-width="2" style="margin-bottom: 8px;">
+                        <rect x="3" y="12" width="4" height="9" rx="1"></rect>
+                        <rect x="10" y="8" width="4" height="13" rx="1"></rect>
+                        <rect x="17" y="4" width="4" height="17" rx="1"></rect>
+                      </svg>
+                      <div>柱状图（需要图表库支持）</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+             
+            <p style="font-size: 12px; color: #8c95a6; margin-top: 16px; text-align: right;">
+              统计时间：2026-07-20 23:59:59 · 数据来源：实时核销流水
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    function switchDetailTab(tab) {
+      document.querySelectorAll('.detail-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+      document.querySelectorAll('.tab-panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + tab));
+    }
+  </script>
+</body>
+</html>

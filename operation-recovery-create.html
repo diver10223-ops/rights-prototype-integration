@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增卡券回收 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      animation: fadeIn 0.2s ease;
+    }
+    .mk-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mk-modal {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.16);
+      max-height: 88vh;
+      overflow-y: auto;
+      width: 100%;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div style="min-height: 100%; background: #f5f7fa;">
+          <!-- 顶部导航 -->
+          <div style="background: #fff; borderBottom: '1px solid #e8ecf0', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16;">
+            <button onclick="goBack()" style="display: flex; alignItems: center; gap: 4; color: #1677ff; background: none; border: none; cursor: pointer; fontSize: 14; padding: 0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              返回
+            </button>
+            <span style="color: #d9dee6;">|</span>
+            <span style="fontSize: 14; color: #333; fontWeight: 500;">新增卡券回收</span>
+          </div>
+
+          <!-- 表单卡片 -->
+          <div style="maxWidth: 960; margin: '32px auto'; background: #fff; borderRadius: 8; border: '1px solid #e8ecf0'; padding: '40px 60px 48px';">
+            <!-- 回收名称 -->
+            <div style="display: flex; alignItems: center; marginBottom: 28;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0;">
+                <span style="color: #ff4d4f;">*</span> 回收名称
+              </label>
+              <input class="mk-input" style="width: 480;" placeholder="请输入回收名称" id="name">
+            </div>
+
+            <!-- 回收方式 -->
+            <div style="display: flex; alignItems: center; marginBottom: 28;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0;">
+                <span style="color: #ff4d4f;">*</span> 回收方式
+              </label>
+              <div style="display: flex; alignItems: center; gap: 24;">
+                <label style="display: flex; alignItems: center; gap: 6; cursor: pointer; fontSize: 14;" onclick="setMethod('manual')">
+                  <div style="width: 16; height: 16; borderRadius: '50%'; border: '2px solid #1677ff'; display: flex; alignItems: center; justifyContent: center;" id="radio-manual">
+                    <div style="width: 8; height: 8; borderRadius: '50%'; background: #1677ff;"></div>
+                  </div>
+                  <span style="color: #1677ff;">手动录入</span>
+                </label>
+                <label style="display: flex; alignItems: center; gap: 6; cursor: pointer; fontSize: 14;" onclick="setMethod('upload')">
+                  <div style="width: 16; height: 16; borderRadius: '50%'; border: '2px solid #d9dee6'; display: flex; alignItems: center; justifyContent: center;" id="radio-upload">
+                  </div>
+                  <span style="color: #333;">文件上传</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 手动录入表格 -->
+            <div id="manualSection" style="display: flex; alignItems: flex-start; marginBottom: 16;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0; paddingTop: 12;">
+                <span style="color: #ff4d4f;">*</span> 回收信息
+              </label>
+              <div style="flex: 1;">
+                <div class="overflow-x-auto">
+                  <table class="mk-table">
+                    <thead>
+                      <tr>
+                        <th style="width: 48;">序号</th>
+                        <th>客户号</th>
+                        <th>卡券名称</th>
+                        <th>券码</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody id="rowsBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- 文件上传区域 -->
+            <div id="uploadSection" style="display: none; alignItems: flex-start; marginBottom: 16;">
+              <label style="minWidth: 90; textAlign: right; paddingRight: 12; fontSize: 14; color: #555; flexShrink: 0; paddingTop: 8;">
+                <span style="color: #ff4d4f;">*</span> 上传文件
+              </label>
+              <div style="flex: 1; maxWidth: 560;">
+                <!-- 模版下载提示 -->
+                <div style="display: flex; alignItems: center; gap: 8; marginBottom: 12; padding: '8px 14px'; background: #fffbe6; border: '1px solid #ffe58f'; borderRadius: 6; fontSize: 13;">
+                  <span style="color: #8c6900;">请先下载文件模版，按格式填写后上传（字段：客户号、卡券名称、券码）</span>
+                  <button style="flexShrink: 0; color: #1677ff; background: none; border: none; cursor: pointer; fontSize: 13; fontWeight: 500;" onclick="downloadTemplate()">📥 下载模版</button>
+                </div>
+                <!-- 文件上传区 -->
+                <div id="uploadArea" style="border: '2px dashed #d9dee6'; borderRadius: 8; padding: '28px 40px'; textAlign: center; cursor: pointer; background: #fafbfc; transition: all .2s;" onclick="document.getElementById('fileInput').click()">
+                  <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;" onchange="handleFileSelect(event)">
+                  <div id="uploadPlaceholder">
+                    <div style="fontSize: 32; color: #c0c4cc; marginBottom: 8;">☁</div>
+                    <div style="fontSize: 14; color: #555; marginBottom: 4;">
+                      将文件拖到此处，或<span style="color: #1677ff;">点击上传</span>
+                    </div>
+                    <div style="fontSize: 12; color: #aaa;">支持 .csv / .xlsx / .xls 格式</div>
+                  </div>
+                  <div id="uploadedFile" style="display: none;"></div>
+                </div>
+                <div id="uploadActions" style="display: none; marginTop: 10; gap: 8;">
+                  <button class="mk-btn mk-btn-primary" style="height: 34; padding: '0 20px';" onclick="confirmUpload()">确认上传</button>
+                  <button class="mk-btn mk-btn-default" style="height: 34;" onclick="clearFile()">重新选择</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 保存按钮 -->
+          <div style="display: flex; justifyContent: center; paddingBottom: 48;">
+            <button class="mk-btn mk-btn-primary" style="width: 120; height: 40;" onclick="handleSave()">保存</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 卡券选择弹窗 -->
+  <div class="mk-modal-overlay" id="pickerModal" style="display: none;">
+    <div class="mk-modal" style="max-width: 400px;" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span>选择卡券</span>
+        <button class="mk-modal-close" onclick="closePicker()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="mk-modal-body" id="couponList"></div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据 - 可选卡券
+    const mockCoupons = [
+      { name: '满100减20券', code: 'CPN001' },
+      { name: '理财加息券', code: 'CPN002' },
+      { name: '信用卡年费抵扣券', code: 'CPN003' },
+      { name: '猎豹金币', code: 'CPN005' },
+      { name: '优惠券0507', code: 'CPN006' },
+    ];
+
+    let rows = [];
+    let currentMethod = 'manual';
+    let pickerTarget = null;
+    let uploadedFile = null;
+
+    function generateId() {
+      return 'row' + Date.now() + Math.random().toString(36).substr(2, 9);
+    }
+
+    function newRow() {
+      return {
+        id: generateId(),
+        userId: '',
+        couponName: '',
+        couponCode: '--',
+        remark: ''
+      };
+    }
+
+    function goBack() {
+      window.location.href = 'operation-recovery.html';
+    }
+
+    function setMethod(method) {
+      currentMethod = method;
+      const manualRadio = document.getElementById('radio-manual');
+      const uploadRadio = document.getElementById('radio-upload');
+      const manualSection = document.getElementById('manualSection');
+      const uploadSection = document.getElementById('uploadSection');
+
+      if (method === 'manual') {
+        manualRadio.innerHTML = '<div style="width: 8; height: 8; borderRadius: 50%; background: #1677ff;"></div>';
+        manualRadio.style.borderColor = '#1677ff';
+        uploadRadio.innerHTML = '';
+        uploadRadio.style.borderColor = '#d9dee6';
+        manualSection.style.display = 'flex';
+        uploadSection.style.display = 'none';
+      } else {
+        uploadRadio.innerHTML = '<div style="width: 8; height: 8; borderRadius: 50%; background: #1677ff;"></div>';
+        uploadRadio.style.borderColor = '#1677ff';
+        manualRadio.innerHTML = '';
+        manualRadio.style.borderColor = '#d9dee6';
+        manualSection.style.display = 'none';
+        uploadSection.style.display = 'flex';
+      }
+    }
+
+    function renderRows() {
+      const tbody = document.getElementById('rowsBody');
+      tbody.innerHTML = rows.map((row, idx) => `
+        <tr>
+          <td style="text-align: center; color: #8c95a6;">${idx + 1}</td>
+          <td>
+            <input class="mk-input" style="width: 120;" placeholder="请输入" value="${row.userId}" onchange="updateRow('${row.id}', 'userId', this.value)">
+          </td>
+          <td>
+            <button class="mk-btn mk-btn-primary" style="height: 30; fontSize: 13; padding: '0 14px';" onclick="openPicker('${row.id}')">
+              ${row.couponName || '选择'}
+            </button>
+          </td>
+          <td style="color: #8c95a6;">${row.couponCode || '--'}</td>
+          <td>
+            <div style="position: relative; display: inline-block;">
+              <input class="mk-input" style="width: 130; paddingRight: 40;" placeholder="请输入" maxLength="50" value="${row.remark}" onchange="updateRow('${row.id}', 'remark', this.value)">
+              <span style="position: absolute; right: 6; top: '50%'; transform: 'translateY(-50%)'; fontSize: 11; color: #aaa; pointerEvents: none;">${row.remark.length}/50</span>
+            </div>
+          </td>
+          <td>
+            <div style="display: flex; alignItems: center; gap: 8;">
+              ${rows.length > 1 ? `
+                <button class="mk-icon-btn" title="删除" onclick="removeRow('${row.id}')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              ` : ''}
+              ${idx === rows.length - 1 ? `
+                <button class="mk-icon-btn" title="新增" onclick="addRow()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function addRow() {
+      rows.push(newRow());
+      renderRows();
+    }
+
+    function removeRow(id) {
+      if (rows.length <= 1) return;
+      rows = rows.filter(r => r.id !== id);
+      renderRows();
+    }
+
+    function updateRow(id, field, value) {
+      const row = rows.find(r => r.id === id);
+      if (row) {
+        row[field] = value;
+        renderRows();
+      }
+    }
+
+    function openPicker(rowId) {
+      pickerTarget = rowId;
+      document.getElementById('couponList').innerHTML = mockCoupons.map(c => `
+        <div style="display: flex; justifyContent: space-between; alignItems: center; padding: '10px 0'; borderBottom: '1px solid #f0f2f5'; cursor: pointer;" onclick="selectCoupon('${c.name}', '${c.code}')">
+          <span style="fontSize: 13;">${c.name}</span>
+          <span style="fontSize: 12; color: #8c95a6;">${c.code}</span>
+        </div>
+      `).join('');
+      document.getElementById('pickerModal').style.display = 'flex';
+    }
+
+    function closePicker() {
+      document.getElementById('pickerModal').style.display = 'none';
+      pickerTarget = null;
+    }
+
+    function selectCoupon(name, code) {
+      if (pickerTarget) {
+        const row = rows.find(r => r.id === pickerTarget);
+        if (row) {
+          row.couponName = name;
+          row.couponCode = code;
+          renderRows();
+        }
+      }
+      closePicker();
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        uploadedFile = file;
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+        document.getElementById('uploadedFile').innerHTML = `
+          <div style="display: flex; alignItems: center; justifyContent: center; gap: 10;">
+            <span style="fontSize: 22;">📄</span>
+            <div style="textAlign: left;">
+              <div style="fontSize: 14; fontWeight: 500; color: #1677ff;">${file.name}</div>
+              <div style="fontSize: 12; color: #8c95a6; marginTop: 2;">${(file.size / 1024).toFixed(1)} KB</div>
+            </div>
+            <button style="marginLeft: 8; background: none; border: none; cursor: pointer; color: #aaa;" onclick="event.stopPropagation(); clearFile();">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        `;
+        document.getElementById('uploadedFile').style.display = 'block';
+        document.getElementById('uploadArea').style.borderColor = '#1677ff';
+        document.getElementById('uploadArea').style.background = '#f0f7ff';
+        document.getElementById('uploadActions').style.display = 'flex';
+      }
+    }
+
+    function clearFile() {
+      uploadedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('uploadPlaceholder').style.display = 'block';
+      document.getElementById('uploadedFile').style.display = 'none';
+      document.getElementById('uploadArea').style.borderColor = '#d9dee6';
+      document.getElementById('uploadArea').style.background = '#fafbfc';
+      document.getElementById('uploadActions').style.display = 'none';
+    }
+
+    function downloadTemplate() {
+      const csv = '客户号,卡券名称,券码\n100000000012,满100减20券,CPN001\n100000000017,理财加息券,CPN002\n';
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '卡券回收导入模板.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function confirmUpload() {
+      if (uploadedFile) {
+        showToast(`文件「${uploadedFile.name}」已上传解析，共导入 3 条记录`);
+      }
+    }
+
+    function handleSave() {
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        showToast('请输入回收名称');
+        return;
+      }
+      showToast('已保存');
+      setTimeout(() => {
+        window.location.href = 'operation-recovery.html';
+      }, 1200);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.className = 'mk-toast';
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('pickerModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePicker();
+      }
+    });
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      rows = [newRow(), newRow()];
+      renderRows();
+    });
+  </script>
+</body>
+</html>

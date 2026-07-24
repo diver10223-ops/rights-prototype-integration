@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益管理 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容区 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">权益ID</label>
+                <input class="mk-input" id="search-id" placeholder="请输入">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">权益名称</label>
+                <input class="mk-input" id="search-name" placeholder="请输入">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">权益类型</label>
+                <select class="mk-select" id="search-type">
+                  <option value="">全部</option>
+                  <option value="inline">行内权益</option>
+                  <option value="thirdparty">第三方权益</option>
+                  <option value="physical">实物奖品</option>
+                  <option value="package">权益包</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">发行机构</label>
+                <select class="mk-select" id="search-issuer">
+                  <option value="">全部</option>
+                  <option value="易诚银行">易诚银行</option>
+                  <option value="广州分行">广州分行</option>
+                  <option value="深圳分行">深圳分行</option>
+                  <option value="杭州分行">杭州分行</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">本机构上架状态</label>
+                <select class="mk-select" id="search-online-status">
+                  <option value="">全部</option>
+                  <option value="online">已上架</option>
+                  <option value="offline">未上架</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">状态</label>
+                <select class="mk-select" id="search-status">
+                  <option value="">全部</option>
+                  <option value="normal">正常</option>
+                  <option value="frozen">冻结</option>
+                </select>
+              </div>
+            </div>
+            <div class="mk-search-actions">
+              <button class="mk-btn mk-btn-default" onclick="handleReset()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                  <path d="M3 3v5h5"></path>
+                </svg>
+                重置
+              </button>
+              <button class="mk-btn mk-btn-primary" onclick="handleSearch()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 列表面板 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">权益列表</span>
+              <button class="mk-btn mk-btn-primary" onclick="location.href='equity-create.html'">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                新增卡券
+              </button>
+            </div>
+
+            <!-- Tab切换 -->
+            <div class="mk-tabs" style="padding: 0 20px; border-bottom: 1px solid #f0f2f5; margin-bottom: 0;">
+              <button class="mk-tab-item active" data-tab="all" onclick="switchTab('all')">全部</button>
+              <button class="mk-tab-item" data-tab="inline" onclick="switchTab('inline')">行内权益</button>
+              <button class="mk-tab-item" data-tab="thirdparty" onclick="switchTab('thirdparty')">第三方权益</button>
+              <button class="mk-tab-item" data-tab="physical" onclick="switchTab('physical')">实物奖品</button>
+              <button class="mk-tab-item" data-tab="package" onclick="switchTab('package')">权益包</button>
+            </div>
+
+            <div class="mk-table-wrap">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>权益ID</th>
+                    <th>权益名称</th>
+                    <th>发行机构</th>
+                    <th>已申请库存数量</th>
+                    <th>转化率</th>
+                    <th>到期提醒</th>
+                    <th>本机构上架状态</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+
+            <div id="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认弹窗 -->
+  <div class="mk-modal-mask" id="confirm-modal" style="display: none;">
+    <div class="mk-modal" style="width: 420px;" onclick="event.stopPropagation()">
+      <div class="mk-modal-header">
+        <span id="confirm-title">确认操作</span>
+        <button class="mk-modal-close" onclick="closeConfirmModal()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <div style="display: flex; alignItems: flex-start; gap: 12px;">
+          <span style="fontSize: 20px; marginTop: 2px;" id="confirm-icon">🔒</span>
+          <div>
+            <p style="fontSize: 14px; fontWeight: 500; color: #1a1a2e; marginBottom: 4px;" id="confirm-desc"></p>
+            <p style="fontSize: 12px; color: #8c95a6; marginTop: 8px;" id="confirm-note"></p>
+            <p style="fontSize: 12px; marginTop: 4px; color: #1677ff;">操作即时生效，无需审批。</p>
+          </div>
+        </div>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeConfirmModal()">取消</button>
+        <button class="mk-btn mk-btn-primary" id="confirm-btn">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 8px 16px; background: #fff; borderRadius: 6px; boxShadow: 0 2px 8px rgba(0,0,0,0.15); fontSize: 13px; display: none; zIndex: 9999;">
+    <span style="color: #52c41a;">✓</span> <span id="toast-text"></span>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    let equityList = [
+      { id: '1001', name: '95折优惠券', source: 'inline', status: 'online', stock: 10000, usedCount: 3842, receivedCount: 4100, supplier: '易诚银行', inventoryAlert: false },
+      { id: '1002', name: '满300减50元', source: 'inline', status: 'online', stock: 5000, usedCount: 1200, receivedCount: 1350, supplier: '广州分行', inventoryAlert: false },
+      { id: '1003', name: '星巴克50元饮品券', source: 'thirdparty', status: 'online', stock: 800, usedCount: 650, receivedCount: 700, supplier: '广州分行', inventoryAlert: true },
+      { id: '1004', name: '爱奇艺季卡', source: 'thirdparty', status: 'online', stock: 2000, usedCount: 890, receivedCount: 950, supplier: '杭州分行', inventoryAlert: false },
+      { id: '1005', name: '20元话费券', source: 'inline', status: 'frozen', stock: 3000, usedCount: 200, receivedCount: 210, supplier: '易诚银行', inventoryAlert: false },
+      { id: '1006', name: '京东实物100元', source: 'physical', status: 'online', stock: 500, usedCount: 120, receivedCount: 130, supplier: '易诚银行', inventoryAlert: false },
+      { id: '1007', name: '新手权益包', source: 'package', status: 'online', stock: 10000, usedCount: 5600, receivedCount: 5800, supplier: '杭州分行', inventoryAlert: false },
+      { id: '1008', name: '贷款利率优惠券', source: 'inline', status: 'online', stock: 1000, usedCount: 88, receivedCount: 90, supplier: '深圳分行', inventoryAlert: false },
+      { id: '1009', name: '9折信用卡年费折扣', source: 'inline', status: 'online', stock: 8000, usedCount: 2100, receivedCount: 2200, supplier: '易诚银行', inventoryAlert: false },
+      { id: '1010', name: '理财加息券', source: 'inline', status: 'online', stock: 5000, usedCount: 3200, receivedCount: 3400, supplier: '深圳分行', inventoryAlert: false }
+    ];
+
+    const SOURCE_TYPE_LABEL = { inline: '行内权益', thirdparty: '第三方', physical: '实物奖品', package: '权益包' };
+    const PAGE_SIZE = 10;
+
+    let currentPage = 1;
+    let activeTab = 'all';
+    let currentAction = null;
+    let currentItemId = null;
+
+    // Tab切换
+    function switchTab(tab) {
+      activeTab = tab;
+      currentPage = 1;
+      document.querySelectorAll('.mk-tab-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.tab === tab);
+      });
+      renderTable();
+    }
+
+    // 搜索过滤
+    function getFilteredData() {
+      const searchId = document.getElementById('search-id').value.trim();
+      const searchName = document.getElementById('search-name').value.trim();
+      const searchType = document.getElementById('search-type').value;
+      const searchIssuer = document.getElementById('search-issuer').value;
+      const searchOnlineStatus = document.getElementById('search-online-status').value;
+      const searchStatus = document.getElementById('search-status').value;
+
+      return equityList.filter(item => {
+        if (activeTab !== 'all' && item.source !== activeTab) return false;
+        if (searchId && !item.id.includes(searchId)) return false;
+        if (searchName && !item.name.toLowerCase().includes(searchName.toLowerCase())) return false;
+        if (searchType && item.source !== searchType) return false;
+        if (searchIssuer && item.supplier !== searchIssuer) return false;
+        if (searchOnlineStatus === 'online' && item.status !== 'online') return false;
+        if (searchOnlineStatus === 'offline' && item.status === 'online') return false;
+        if (searchStatus === 'normal' && item.status === 'frozen') return false;
+        if (searchStatus === 'frozen' && item.status !== 'frozen') return false;
+        return true;
+      });
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const filtered = getFilteredData();
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+      const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+      const tbody = document.getElementById('table-body');
+
+      if (paged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #8c95a6; padding: 32px;">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = paged.map(item => {
+          const convRate = item.receivedCount > 0 ? ((item.usedCount / item.receivedCount) * 100).toFixed(2) + '%' : '0.00%';
+          const isFrozen = item.status === 'frozen';
+          const isOnline = item.status === 'online';
+          const statusClass = isFrozen ? 'mk-badge mk-badge-danger' : 'mk-badge mk-badge-success';
+          const statusText = isFrozen ? '冻结' : '正常';
+
+          return `
+            <tr>
+              <td style="fontFamily: 'Courier New', monospace; fontSize: 12px;">${item.id}</td>
+              <td>
+                <div style="fontWeight: 500; color: #1a1a2e;">${item.name}</div>
+                <div style="fontSize: 12px; color: #8c95a6; marginTop: 2px;">${SOURCE_TYPE_LABEL[item.source]}</div>
+                ${item.inventoryAlert ? '<div style="fontSize: 12px; marginTop: 2px; color: #ff4d4f;">⚠ 库存预警</div>' : ''}
+              </td>
+              <td>${item.supplier || '易诚银行'}</td>
+              <td>${item.stock.toLocaleString()}</td>
+              <td>${convRate}</td>
+              <td><span style="fontSize: 12px; color: #8c95a6;">提前7天</span></td>
+              <td>
+                ${isOnline
+                  ? '<span style="color: #1677ff; fontSize: 13px;">已上架</span>'
+                  : '<span style="fontSize: 13px; color: #8c95a6;">未上架</span>'
+                }
+              </td>
+              <td><span class="${statusClass}">${statusText}</span></td>
+              <td>
+                <div style="display: flex; alignItems: center; gap: 2px; flexWrap: wrap;">
+                  <button class="mk-icon-btn" title="修改" style="font-size: 12px; padding: 2px 8px; color: #1677ff; font-weight: 500;" onclick="location.href='equity-edit.html?id=${item.id}'">修改</button>
+                  <button class="mk-icon-btn" title="复制" onclick="showToast('已复制权益「${item.name}」')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                  ${isFrozen
+                    ? `<button class="mk-icon-btn" title="解冻" style="color: #52c41a;" onclick="handleAction('${item.id}', 'unfreeze')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                      </button>`
+                    : `<button class="mk-icon-btn" title="冻结" onclick="handleAction('${item.id}', 'freeze')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                      </button>`
+                  }
+                  <button class="mk-icon-btn" title="查看" onclick="location.href='equity-view.html?id=${item.id}'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                  ${!isFrozen ? `
+                    <button class="mk-icon-btn" title="${isOnline ? '下架' : '上架'}" onclick="handleAction('${item.id}', '${isOnline ? 'offline' : 'online'}')">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                      </svg>
+                    </button>
+                  ` : ''}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      renderPagination(filtered.length, totalPages);
+    }
+
+    // 渲染分页
+    function renderPagination(total, totalPages) {
+      const container = document.getElementById('pagination');
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="mk-pagination">
+          <span style="fontSize: 12px; color: #8c95a6;">共 ${total} 条</span>
+          <button class="mk-page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">‹</button>
+          ${Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(p => `
+            <button class="mk-page-btn ${currentPage === p ? 'active' : ''}" onclick="changePage(${p})">${p}</button>
+          `).join('')}
+          <button class="mk-page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">›</button>
+        </div>
+      `;
+    }
+
+    // 切换页码
+    function changePage(page) {
+      const totalPages = Math.ceil(getFilteredData().length / PAGE_SIZE);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderTable();
+      }
+    }
+
+    // 搜索
+    function handleSearch() {
+      currentPage = 1;
+      renderTable();
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('search-id').value = '';
+      document.getElementById('search-name').value = '';
+      document.getElementById('search-type').value = '';
+      document.getElementById('search-issuer').value = '';
+      document.getElementById('search-online-status').value = '';
+      document.getElementById('search-status').value = '';
+      currentPage = 1;
+      renderTable();
+    }
+
+    // 操作
+    function handleAction(id, action) {
+      const item = equityList.find(e => e.id === id);
+      if (!item) return;
+
+      currentAction = action;
+      currentItemId = id;
+
+      const actions = {
+        freeze: { title: '确认冻结', icon: '🔒', label: '冻结' },
+        unfreeze: { title: '确认解冻', icon: '🔓', label: '解冻' },
+        offline: { title: '确认下架', icon: '📴', label: '下架' },
+        online: { title: '确认上架', icon: '📢', label: '上架' }
+      };
+
+      const actionInfo = actions[action];
+
+      const notes = {
+        freeze: '冻结后该权益不可发放、不可核销，请谨慎操作。',
+        unfreeze: '解冻后该权益将恢复正常状态，可正常发放与核销。',
+        offline: '下架后该权益将对用户不可见，已持有的仍可使用。',
+        online: '上架后该权益将对用户可见，即时生效。'
+      };
+
+      document.getElementById('confirm-title').textContent = actionInfo.title;
+      document.getElementById('confirm-icon').textContent = actionInfo.icon;
+      document.getElementById('confirm-desc').textContent = `确认对以下权益执行「${actionInfo.label}」操作？`;
+      document.getElementById('confirm-note').innerHTML = `权益名称：${item.name}<br>${notes[action]}`;
+      document.getElementById('confirm-btn').textContent = `确认${actionInfo.label}`;
+
+      document.getElementById('confirm-modal').style.display = 'flex';
+    }
+
+    // 确认操作
+    document.getElementById('confirm-btn').addEventListener('click', function() {
+      if (!currentItemId || !currentAction) return;
+
+      const item = equityList.find(e => e.id === currentItemId);
+      if (!item) return;
+
+      const actions = {
+        freeze: () => { item.status = 'frozen'; },
+        unfreeze: () => { item.status = 'online'; },
+        offline: () => { item.status = 'offline'; },
+        online: () => { item.status = 'online'; }
+      };
+
+      const labels = { freeze: '冻结', unfreeze: '解冻', offline: '下架', online: '上架' };
+
+      actions[currentAction]();
+      showToast(`「${item.name}」${labels[currentAction]}成功`);
+      closeConfirmModal();
+      renderTable();
+    });
+
+    // 关闭确认弹窗
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').style.display = 'none';
+      currentAction = null;
+      currentItemId = null;
+    }
+
+    // Toast提示
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('confirm-modal').addEventListener('click', closeConfirmModal);
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

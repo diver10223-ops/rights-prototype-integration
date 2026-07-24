@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增投放任务 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 24px;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-tab {
+      padding: 14px 24px;
+      font-size: 14px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #555;
+      font-weight: 400;
+    }
+    .step-tab.active {
+      color: #1677ff;
+      font-weight: 600;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .step-tab .step-num { background: #e8ecf0; color: #999; }
+    .step-tab.active .step-num { background: #1677ff; color: #fff; }
+    .section-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e8ecf0;
+      padding: 24px 32px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #222;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e8ecf0;
+    }
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .form-row.center { align-items: center; }
+    .form-row .label {
+      min-width: 110px;
+      text-align: right;
+      padding-right: 16px;
+      font-size: 14px;
+      color: #555;
+      flex-shrink: 0;
+      padding-top: 6px;
+    }
+    .form-row.center .label { padding-top: 0; }
+    .form-row .label .required { color: #ff4d4f; margin-right: 2px; }
+    .form-row .content { flex: 1; }
+    .radio-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .radio-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .segment-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #e8f4ff;
+      color: #1677ff;
+      border-radius: 4px;
+      padding: 3px 10px;
+      font-size: 12px;
+    }
+    .segment-tag button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      color: #1677ff;
+    }
+    .equity-pkg-card {
+      border: 1px solid #e8ecf0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      margin-bottom: 12px;
+    }
+    .equity-pkg-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f2f5;
+      background: #fafbfc;
+    }
+    .equity-pkg-body {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d9dee6;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 32px;
+    }
+    .stepper input {
+      border: none;
+      outline: none;
+      width: 60px;
+      padding: 0 8px;
+      font-size: 13px;
+      text-align: center;
+    }
+    .stepper-btns {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #d9dee6;
+    }
+    .stepper-btns button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 1px 6px;
+      line-height: 1;
+      font-size: 10px;
+    }
+    .stepper-btns button:first-child { border-bottom: 1px solid #d9dee6; }
+    .rule-card-selected {
+      border: 1px solid #1677ff;
+      border-radius: 8px;
+      padding: 14px 20px;
+      background: #f0f7ff;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .w-3\.5 { width: 14px; height: 14px; accent-color: #1677ff; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 步骤Tab -->
+      <div style="background: #fff; border-bottom: 1px solid #e8ecf0; padding: 0 24px; display: flex; gap: 0;">
+        <button class="step-tab active" data-tab="basic" onclick="switchTab('basic')">
+          <span class="step-num">1</span>
+          基本信息
+        </button>
+        <button class="step-tab" data-tab="rules" onclick="switchTab('rules')">
+          <span class="step-num">2</span>
+          活动规则
+        </button>
+        <button class="step-tab" data-tab="plan" onclick="switchTab('plan')">
+          <span class="step-num">3</span>
+          投放计划
+        </button>
+      </div>
+
+      <!-- 页面内容 -->
+      <div class="page-content" style="background: #f5f7fa;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 24px;">
+
+          <!-- 基本信息 -->
+          <div id="tab-basic" class="tab-content">
+            <div class="section-card">
+              <h4 class="section-title">基本信息</h4>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>任务名称</span>
+                <div class="content" style="position: relative; max-width: 480px;">
+                  <input class="mk-input" id="taskName" style="padding-right: 48px;" placeholder="请输入任务名称" maxlength="100">
+                  <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #aaa;" id="taskNameCount">0/100</span>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>活动时间</span>
+                <div class="content" style="display: flex; align-items: center; gap: 8px;">
+                  <input type="date" class="mk-input" id="timeStart" style="width: 160px;">
+                  <span style="color: #aaa; font-size: 13px;">至</span>
+                  <input type="date" class="mk-input" id="timeEnd" style="width: 160px;">
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>主办机构</span>
+                <div class="content">
+                  <select class="mk-select" id="org" style="width: 240px;">
+                    <option value="易诚银行">易诚银行</option>
+                    <option value="广州分行">广州分行</option>
+                    <option value="杭州分行">杭州分行</option>
+                    <option value="深圳分行">深圳分行</option>
+                    <option value="上海分行">上海分行</option>
+                    <option value="北京分行">北京分行</option>
+                    <option value="厦门分行">厦门分行</option>
+                    <option value="江苏分行">江苏分行</option>
+                    <option value="江西分行">江西分行</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label">活动预算</span>
+                <div class="content" style="display: flex; align-items: center; gap: 8px; max-width: 240px;">
+                  <input class="mk-input" id="budget" type="number" min="0" placeholder="请输入预算金额" style="flex: 1;">
+                  <span style="font-size: 13px; color: #555; flex-shrink: 0;">元</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <span class="label">活动说明</span>
+                <div class="content">
+                  <div id="fileUploadArea" style="border: 2px dashed #d9dee6; border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; max-width: 480px; background: #fafbfc;" onclick="document.getElementById('taskFileInput').click()">
+                    <input type="file" id="taskFileInput" style="display: none;" accept=".docx,.doc,.pdf">
+                    <div id="fileUploadContent">
+                      <div style="font-size: 28px; color: #c0c4cc; margin-bottom: 6px;">☁</div>
+                      <span style="font-size: 13px; color: #aaa;">将文件拖到此处，或<span style="color: #1677ff;">点击上传</span></span>
+                    </div>
+                  </div>
+                  <p style="font-size: 12px; color: #aaa; margin-top: 6px;">仅支持 .docx / .doc / .pdf 文件</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 活动规则 -->
+          <div id="tab-rules" class="tab-content" style="display: none;">
+            <!-- 发放用户 -->
+            <div class="section-card">
+              <h4 class="section-title">发放用户</h4>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>发送用户</span>
+                <div class="content">
+                  <div class="radio-row">
+                    <label><input type="radio" name="sendUserType" value="全客群" checked onchange="changeSendUserType(this.value)"> 全客群</label>
+                    <label><input type="radio" name="sendUserType" value="按客群" onchange="changeSendUserType(this.value)"> 按客群</label>
+                    <label><input type="radio" name="sendUserType" value="关联系统提供" onchange="changeSendUserType(this.value)"> 关联系统提供</label>
+                  </div>
+                </div>
+              </div>
+              <div id="sendUserContent">
+                <!-- 动态内容 -->
+              </div>
+            </div>
+
+            <!-- 发放规则 -->
+            <div class="section-card">
+              <h4 class="section-title">发放规则</h4>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>发送次数</span>
+                <div class="content">
+                  <div class="radio-row">
+                    <label><input type="radio" name="sendCount" value="一次性" checked onchange="changeSendCount(this.value)"> 一次性</label>
+                    <label><input type="radio" name="sendCount" value="周期性" onchange="changeSendCount(this.value)"> 周期性</label>
+                  </div>
+                </div>
+              </div>
+              <div id="sendTimeContent">
+                <!-- 动态内容 -->
+              </div>
+              <div class="form-row">
+                <span class="label"><span class="required">*</span>奖项内容</span>
+                <div class="content">
+                  <button class="mk-btn mk-btn-primary" style="display: flex; align-items: center; gap: 4px; margin-bottom: 12px;" onclick="openEquityDialog()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    选择权益
+                  </button>
+                  <div id="equityPkgList">
+                    <!-- 动态生成 -->
+                  </div>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>奖项总数量</span>
+                <div class="content">
+                  <div class="stepper">
+                    <input type="number" id="dailyTotal" value="1" min="1">
+                    <div class="stepper-btns">
+                      <button onclick="stepUp('dailyTotal')">▲</button>
+                      <button onclick="stepDown('dailyTotal')">▼</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>每人发放次数</span>
+                <div class="content">
+                  <div class="radio-row" style="margin-bottom: 10px;">
+                    <label><input type="radio" name="perPersonLimit" value="不限制" checked onchange="changePerPersonLimit(this.value)"> 不限制</label>
+                    <label><input type="radio" name="perPersonLimit" value="限制" onchange="changePerPersonLimit(this.value)"> 限制</label>
+                  </div>
+                  <div id="perPersonLimitContent" style="display: none;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div class="stepper">
+                        <input type="number" id="perPersonCount" value="1" min="1">
+                        <div class="stepper-btns">
+                          <button onclick="stepUp('perPersonCount')">▲</button>
+                          <button onclick="stepDown('perPersonCount')">▼</button>
+                        </div>
+                      </div>
+                      <span style="font-size: 13px; color: #555;">次</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 投放规则 -->
+            <div class="section-card">
+              <h4 class="section-title">投放规则</h4>
+              <p style="font-size: 13px; color: #888; margin-bottom: 12px;">请选择已上架的投放规则（仅显示状态为"启用"的规则）</p>
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <select class="mk-select" id="selectedRule" style="width: 320px;" onchange="updateRuleCard()">
+                  <option value="">-- 请选择投放规则 --</option>
+                  <option value="R001">全客群新客礼包规则</option>
+                  <option value="R002">贷款事件达标规则</option>
+                  <option value="R004">节日活动通用规则</option>
+                </select>
+                <button id="clearRuleBtn" style="display: none; background: none; border: none; cursor: pointer; color: #aaa; font-size: 13px;" onclick="clearSelectedRule()">✕ 清除</button>
+              </div>
+              <div id="ruleCardArea"></div>
+            </div>
+          </div>
+
+          <!-- 投放计划 -->
+          <div id="tab-plan" class="tab-content" style="display: none;">
+            <div class="section-card">
+              <h4 class="section-title">投放计划</h4>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>计划名称</span>
+                <div class="content" style="position: relative; max-width: 480px;">
+                  <input class="mk-input" id="planName" style="padding-right: 48px;" placeholder="请输入投放计划名称" maxlength="100">
+                  <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #aaa;" id="planNameCount">0/100</span>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>投放渠道</span>
+                <div class="content">
+                  <select class="mk-select" id="planChannel" style="width: 200px;">
+                    <option>短信</option>
+                    <option>消息推送</option>
+                    <option>邮件</option>
+                    <option>企业微信</option>
+                    <option>APP弹窗</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>投放客群</span>
+                <div class="content">
+                  <div class="radio-row" style="margin-bottom: 10px;">
+                    <label><input type="radio" name="planTargetType" value="活动客群" checked> 活动客群</label>
+                    <label><input type="radio" name="planTargetType" value="自定义" onchange="changePlanTargetType(this.value)"> 自定义</label>
+                  </div>
+                  <div id="planSegmentArea" style="display: none;">
+                    <button class="mk-btn mk-btn-primary" style="display: flex; align-items: center; gap: 4px; margin-bottom: 8px;" onclick="openPlanSegmentDialog()">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                      选择客群
+                    </button>
+                    <div id="planSegmentTags"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>投放时间</span>
+                <div class="content">
+                  <div style="display: flex; align-items: center; border: 1px solid #d9dee6; border-radius: 6px; padding: 0 12px; background: #fff; height: 34px; gap: 8px; max-width: 260px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <input type="datetime-local" id="planTime" style="border: none; outline: none; font-size: 13px; flex: 1;">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row center">
+                <span class="label"><span class="required">*</span>投放内容</span>
+                <div class="content" style="display: flex; gap: 8px; max-width: 480px;">
+                  <input class="mk-input" id="planContent" style="flex: 1;" placeholder="请输入OA审批编号查询短信内容">
+                  <button class="mk-btn mk-btn-primary" style="height: 34px; padding: 0 18px; flex-shrink: 0;">查询</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 底部按钮 -->
+          <div style="display: flex; justify-content: flex-end; gap: 10px; padding-bottom: 32px;">
+            <button class="mk-btn mk-btn-default" onclick="location.href='delivery-task.html'">取消</button>
+            <button class="mk-btn mk-btn-default" onclick="saveDraft()">保存草稿</button>
+            <button class="mk-btn mk-btn-primary" onclick="publish()">发布</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 选择权益弹窗 -->
+  <div class="mk-modal-overlay" id="equityModal" style="display: none;">
+    <div class="mk-modal" style="max-width: 640px; width: 92%;">
+      <div class="mk-modal-header">
+        <span>选择权益（已选 <span id="equitySelectedCount">0</span> 项）</span>
+        <button class="mk-modal-close" onclick="closeEquityDialog()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <input class="mk-input" id="equitySearch" placeholder="搜索权益名称" style="flex: 1;">
+        </div>
+        <div style="max-height: 360px; overflow-y: auto;">
+          <table class="mk-table" id="equityTable">
+            <thead>
+              <tr>
+                <th style="width: 40px;"><input type="checkbox" id="equityCheckAll" onchange="toggleEquityAll()"></th>
+                <th>权益名称</th>
+                <th>当前库存</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody id="equityTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeEquityDialog()">取消</button>
+        <button class="mk-btn mk-btn-primary" onclick="confirmEquity()">添加（<span id="equityConfirmCount">0</span>项）</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 选择客群弹窗 -->
+  <div class="mk-modal-overlay" id="segmentModal" style="display: none;">
+    <div class="mk-modal" style="max-width: 600px; width: 90%;">
+      <div class="mk-modal-header">
+        <span>选择客群</span>
+        <button class="mk-modal-close" onclick="closeSegmentDialog()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <table class="mk-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;"></th>
+              <th>客群名称</th>
+              <th>覆盖客户数</th>
+            </tr>
+          </thead>
+          <tbody id="segmentTableBody"></tbody>
+        </table>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeSegmentDialog()">取消</button>
+        <button class="mk-btn mk-btn-primary" onclick="confirmSegment()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="mk-toast" id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const MOCK_EQUITIES = [
+      { id: '1001', name: '95折优惠券', stock: 10000, frozen: false },
+      { id: '1002', name: '满300减50元', stock: 5000, frozen: false },
+      { id: '1003', name: '星巴克50元饮品券', stock: 800, frozen: false },
+      { id: '1004', name: '爱奇艺季卡', stock: 2000, frozen: false },
+      { id: '1005', name: '20元话费券', stock: 3000, frozen: true },
+      { id: '1006', name: '京东实物100元', stock: 500, frozen: false },
+    ];
+    const MOCK_SEGMENTS = [
+      { id: 's1', name: '游戏客群L6', count: 0 },
+      { id: 's2', name: '游戏客群L5', count: 0 },
+      { id: 's3', name: '理财到期客群', count: 1280 },
+      { id: 's4', name: '信用卡活跃客群', count: 4500 },
+      { id: 's5', name: '新注册用户', count: 890 },
+    ];
+    const ENABLED_RULES = [
+      { id: 'R001', ruleName: '全客群新客礼包规则', targetType: '全客群', triggerType: '立即发放', receiveType: '自动发放' },
+      { id: 'R002', ruleName: '贷款事件达标规则', targetType: '客群圈选', triggerType: '事件达标', receiveType: '用户领取' },
+      { id: 'R004', ruleName: '节日活动通用规则', targetType: '全客群', triggerType: '立即发放', receiveType: '用户领取' },
+    ];
+    const LINKED_SYSTEM_OPTS = ['每天生日用户', '每天手机银行注册一周年用户', '每月新开户用户', '每季度高净值客户', '年度理财到期客户'];
+
+    let state = {
+      equityPkg: [],
+      selectedSegments: [],
+      planSegments: [],
+      equityChecked: new Set(),
+      segmentChecked: new Set(),
+      currentSegmentType: 'send', // 'send' or 'plan'
+    };
+
+    // Tab切换
+    function switchTab(tab) {
+      document.querySelectorAll('.step-tab').forEach(el => el.classList.remove('active'));
+      document.querySelector(`.step-tab[data-tab="${tab}"]`).classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.getElementById(`tab-${tab}`).style.display = 'block';
+    }
+
+    // 任务名称字数统计
+    document.getElementById('taskName').addEventListener('input', function() {
+      document.getElementById('taskNameCount').textContent = this.value.length + '/100';
+    });
+    document.getElementById('planName').addEventListener('input', function() {
+      document.getElementById('planNameCount').textContent = this.value.length + '/100';
+    });
+
+    // 文件上传
+    document.getElementById('taskFileInput').addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        document.getElementById('fileUploadContent').innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 13px; color: #333;">
+            📄 ${file.name}
+            <button style="background: none; border: none; cursor: pointer;" onclick="event.stopPropagation(); clearFile()">✕</button>
+          </div>
+        `;
+      }
+    });
+    function clearFile() {
+      document.getElementById('taskFileInput').value = '';
+      document.getElementById('fileUploadContent').innerHTML = `
+        <div style="font-size: 28px; color: #c0c4cc; margin-bottom: 6px;">☁</div>
+        <span style="font-size: 13px; color: #aaa;">将文件拖到此处，或<span style="color: #1677ff;">点击上传</span></span>
+      `;
+    }
+
+    // 发送用户类型切换
+    function changeSendUserType(type) {
+      const content = document.getElementById('sendUserContent');
+      if (type === '全客群') {
+        content.innerHTML = `<div class="form-row center"><span class="label"></span><span style="font-size: 13px; color: #8c95a6; padding: 4px 12px; background: #f5f7fa; border-radius: 6px; border: 1px solid #e8ecf0;">已选择全客群，将对所有用户发放</span></div>`;
+      } else if (type === '按客群') {
+        content.innerHTML = `<div class="form-row"><span class="label"><span class="required">*</span>客群</span><div class="content"><button class="mk-btn mk-btn-primary" style="display: flex; align-items: center; gap: 4px; margin-bottom: 10px;" onclick="openSegmentDialog('send')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>选择客群</button><div id="segmentTags"></div></div></div>`;
+        renderSegmentTags();
+      } else if (type === '关联系统提供') {
+        content.innerHTML = `<div class="form-row center"><span class="label"><span class="required">*</span>关联系统</span><div class="content" style="max-width: 360px;"><select class="mk-select" style="width: 100%;"><option value="">请选择</option>${LINKED_SYSTEM_OPTS.map(o => `<option>${o}</option>`).join('')}</select></div></div>`;
+      }
+    }
+    changeSendUserType('全客群');
+
+    // 发送次数切换
+    function changeSendCount(type) {
+      const content = document.getElementById('sendTimeContent');
+      if (type === '一次性') {
+        content.innerHTML = `<div class="form-row center"><span class="label"><span class="required">*</span>发送时间</span><div class="content"><div class="radio-row" style="margin-bottom: 10px;"><label><input type="radio" name="onceTime" value="活动发布后" checked> 活动发布后</label><label><input type="radio" name="onceTime" value="自定义" onchange="toggleOnceCustom()"> 自定义</label></div><div id="onceCustomTime" style="display: none;"><input type="datetime-local" class="mk-input" style="width: 220px;"></div></div></div>`;
+      } else {
+        content.innerHTML = `<div class="form-row center"><span class="label"><span class="required">*</span>发送时间</span><div class="content"><div class="radio-row" style="margin-bottom: 10px;"><label><input type="radio" name="cycleFreq" value="每天" checked> 每天</label><label><input type="radio" name="cycleFreq" value="每周"> 每周</label><label><input type="radio" name="cycleFreq" value="每月"> 每月</label></div><div style="display: flex; align-items: center; border: 1px solid #d9dee6; border-radius: 6px; padding: 0 10px; height: 32px; gap: 6px; background: #fff; min-width: 130px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><input type="time" style="border: none; outline: none; font-size: 13px; width: 90px;"></div></div></div>`;
+      }
+    }
+    changeSendCount('一次性');
+
+    function toggleOnceCustom() {
+      const custom = document.getElementById('onceCustomTime');
+      if (custom) custom.style.display = custom.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // 每人限额切换
+    function changePerPersonLimit(type) {
+      document.getElementById('perPersonLimitContent').style.display = type === '限制' ? 'block' : 'none';
+    }
+
+    // Stepper
+    function stepUp(id) {
+      const input = document.getElementById(id);
+      input.value = parseInt(input.value) + 1;
+    }
+    function stepDown(id) {
+      const input = document.getElementById(id);
+      if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+    }
+
+    // 选择权益弹窗
+    function openEquityDialog() {
+      state.equityChecked.clear();
+      renderEquityTable();
+      document.getElementById('equityModal').style.display = 'flex';
+    }
+    function closeEquityDialog() {
+      document.getElementById('equityModal').style.display = 'none';
+    }
+    function renderEquityTable() {
+      const search = document.getElementById('equitySearch').value;
+      const filtered = MOCK_EQUITIES.filter(e => !search || e.name.includes(search));
+      const tbody = document.getElementById('equityTableBody');
+      tbody.innerHTML = filtered.map(e => `
+        <tr style="cursor: pointer; background: ${state.equityChecked.has(e.id) ? '#f0f7ff' : ''}" onclick="toggleEquity('${e.id}')">
+          <td onclick="event.stopPropagation()"><input type="checkbox" ${state.equityChecked.has(e.id) ? 'checked' : ''} onchange="toggleEquity('${e.id}')"></td>
+          <td style="color: ${e.frozen ? '#aaa' : ''}">${e.name}</td>
+          <td>${e.stock.toLocaleString()}</td>
+          <td>${e.frozen ? '<span style="font-size: 11px; padding: 2px 6px; background: #f5f5f5; border-radius: 3px; color: #999;">冻结</span>' : '<span style="font-size: 11px; padding: 2px 6px; background: #f6ffed; border-radius: 3px; color: #52c41a;">正常</span>'}</td>
+        </tr>
+      `).join('');
+      updateEquityCount();
+    }
+    function toggleEquity(id) {
+      if (state.equityChecked.has(id)) state.equityChecked.delete(id);
+      else state.equityChecked.add(id);
+      renderEquityTable();
+    }
+    function toggleEquityAll() {
+      const search = document.getElementById('equitySearch').value;
+      const filtered = MOCK_EQUITIES.filter(e => !search || e.name.includes(search));
+      const allChecked = filtered.every(e => state.equityChecked.has(e.id));
+      if (allChecked) filtered.forEach(e => state.equityChecked.delete(e.id));
+      else filtered.forEach(e => state.equityChecked.add(e.id));
+      renderEquityTable();
+    }
+    function updateEquityCount() {
+      document.getElementById('equitySelectedCount').textContent = state.equityChecked.size;
+      document.getElementById('equityConfirmCount').textContent = state.equityChecked.size;
+    }
+    function confirmEquity() {
+      state.equityChecked.forEach(id => {
+        if (!state.equityPkg.find(p => p.equityId === id)) {
+          const eq = MOCK_EQUITIES.find(e => e.id === id);
+          state.equityPkg.push({
+            uid: `${id}-${Date.now()}`,
+            equityId: id,
+            equityName: eq?.name || id,
+            qty: 1
+          });
+        }
+      });
+      renderEquityPkg();
+      closeEquityDialog();
+    }
+    document.getElementById('equitySearch').addEventListener('input', renderEquityTable);
+
+    // 权益包列表渲染
+    function renderEquityPkg() {
+      const container = document.getElementById('equityPkgList');
+      if (state.equityPkg.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = state.equityPkg.map((item, idx) => `
+        <div class="equity-pkg-card">
+          <div class="equity-pkg-header">
+            <span style="font-size: 13px; font-weight: 500; color: #333;">权益包-权益${idx + 1}</span>
+            <button style="background: none; border: none; cursor: pointer; color: #aaa;" onclick="removeEquity('${item.uid}')">🗑</button>
+          </div>
+          <div class="equity-pkg-body">
+            <div style="width: 64px; height: 64px; border: 1px dashed #d9dee6; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafbfc; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c0c4cc" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div style="display: flex; flex: 1; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 13px; color: #555; flex-shrink: 0;">权益名称</span>
+              <input class="mk-input" style="flex: 1; min-width: 180px; max-width: 320px; padding-right: 48px;" value="${item.equityName}" onchange="updateEquityName('${item.uid}', this.value)">
+              <span style="font-size: 13px; color: #555; flex-shrink: 0; margin-left: 8px;">每次发放数量</span>
+              <div class="stepper">
+                <input type="number" value="${item.qty}" min="1" onchange="updateEquityQty('${item.uid}', this.value)">
+                <div class="stepper-btns">
+                  <button onclick="event.preventDefault(); stepUpEquity('${item.uid}')">▲</button>
+                  <button onclick="event.preventDefault(); stepDownEquity('${item.uid}')">▼</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    function removeEquity(uid) {
+      state.equityPkg = state.equityPkg.filter(p => p.uid !== uid);
+      renderEquityPkg();
+    }
+    function updateEquityName(uid, name) {
+      const item = state.equityPkg.find(p => p.uid === uid);
+      if (item) item.equityName = name;
+    }
+    function updateEquityQty(uid, qty) {
+      const item = state.equityPkg.find(p => p.uid === uid);
+      if (item) item.qty = parseInt(qty) || 1;
+    }
+    function stepUpEquity(uid) {
+      const item = state.equityPkg.find(p => p.uid === uid);
+      if (item) item.qty++;
+      renderEquityPkg();
+    }
+    function stepDownEquity(uid) {
+      const item = state.equityPkg.find(p => p.uid === uid);
+      if (item && item.qty > 1) item.qty--;
+      renderEquityPkg();
+    }
+
+    // 选择客群弹窗
+    function openSegmentDialog(type) {
+      state.currentSegmentType = type;
+      const selected = type === 'send' ? state.selectedSegments : state.planSegments;
+      state.segmentChecked = new Set(selected);
+      renderSegmentTable();
+      document.getElementById('segmentModal').style.display = 'flex';
+    }
+    function closeSegmentDialog() {
+      document.getElementById('segmentModal').style.display = 'none';
+    }
+    function renderSegmentTable() {
+      const tbody = document.getElementById('segmentTableBody');
+      tbody.innerHTML = MOCK_SEGMENTS.map(s => `
+        <tr style="cursor: pointer; background: ${state.segmentChecked.has(s.id) ? '#f0f7ff' : ''}" onclick="toggleSegment('${s.id}')">
+          <td><input type="checkbox" ${state.segmentChecked.has(s.id) ? 'checked' : ''} onchange="toggleSegment('${s.id}')"></td>
+          <td>${s.name}</td>
+          <td>${s.count}</td>
+        </tr>
+      `).join('');
+    }
+    function toggleSegment(id) {
+      if (state.segmentChecked.has(id)) state.segmentChecked.delete(id);
+      else state.segmentChecked.add(id);
+      renderSegmentTable();
+    }
+    function confirmSegment() {
+      if (state.currentSegmentType === 'send') {
+        state.selectedSegments = Array.from(state.segmentChecked);
+        renderSegmentTags();
+      } else {
+        state.planSegments = Array.from(state.segmentChecked);
+        renderPlanSegmentTags();
+      }
+      closeSegmentDialog();
+    }
+
+    function renderSegmentTags() {
+      const container = document.getElementById('segmentTags');
+      if (!container) return;
+      if (state.selectedSegments.length === 0) {
+        container.innerHTML = '<span style="font-size: 12px; color: #aaa;">支持多选，已选 0 个客群</span>';
+        return;
+      }
+      container.innerHTML = state.selectedSegments.map(id => {
+        const seg = MOCK_SEGMENTS.find(s => s.id === id);
+        return `<span class="segment-tag">${seg?.name || id}<button onclick="removeSegment('${id}')">✕</button></span>`;
+      }).join('') + `<div style="font-size: 12px; color: #8c95a6; margin-top: 6px;">已选 ${state.selectedSegments.length} 个客群</div>`;
+    }
+    function removeSegment(id) {
+      state.selectedSegments = state.selectedSegments.filter(s => s !== id);
+      renderSegmentTags();
+    }
+
+    // 投放规则卡片
+    function updateRuleCard() {
+      const ruleId = document.getElementById('selectedRule').value;
+      const clearBtn = document.getElementById('clearRuleBtn');
+      const cardArea = document.getElementById('ruleCardArea');
+      clearBtn.style.display = ruleId ? 'flex' : 'none';
+      if (!ruleId) {
+        cardArea.innerHTML = '';
+        return;
+      }
+      const rule = ENABLED_RULES.find(r => r.id === ruleId);
+      if (rule) {
+        cardArea.innerHTML = `<div class="rule-card-selected"><div style="width: 8px; height: 8px; border-radius: 50%; background: #52c41a; margin-top: 5px; flex-shrink: 0;"></div><div><div style="font-size: 14px; font-weight: 600; color: #1677ff; margin-bottom: 6px;">${rule.ruleName}</div><div style="font-size: 12px; color: #666; display: flex; gap: 20px; flex-wrap: wrap;"><span>规则ID：${rule.id}</span><span>目标客群：${rule.targetType}</span><span>触发方式：${rule.triggerType}</span><span>领取方式：${rule.receiveType}</span><span style="color: #52c41a; font-weight: 500;">● 已启用</span></div></div></div>`;
+      }
+    }
+    function clearSelectedRule() {
+      document.getElementById('selectedRule').value = '';
+      updateRuleCard();
+    }
+
+    // 投放计划客群
+    function changePlanTargetType() {
+      const custom = document.querySelector('input[name="planTargetType"]:checked').value === '自定义';
+      document.getElementById('planSegmentArea').style.display = custom ? 'block' : 'none';
+    }
+    function openPlanSegmentDialog() {
+      openSegmentDialog('plan');
+    }
+    function renderPlanSegmentTags() {
+      const container = document.getElementById('planSegmentTags');
+      if (!container) return;
+      if (state.planSegments.length === 0) return;
+      container.innerHTML = state.planSegments.map(id => {
+        const seg = MOCK_SEGMENTS.find(s => s.id === id);
+        return `<span class="segment-tag">${seg?.name || id}<button onclick="removePlanSegment('${id}')">✕</button></span>`;
+      }).join('');
+    }
+    function removePlanSegment(id) {
+      state.planSegments = state.planSegments.filter(s => s !== id);
+      renderPlanSegmentTags();
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // 保存草稿
+    function saveDraft() {
+      showToast('投放任务已保存为草稿');
+      setTimeout(() => { location.href = 'delivery-task.html'; }, 1200);
+    }
+
+    // 发布
+    function publish() {
+      const taskName = document.getElementById('taskName').value;
+      if (!taskName) {
+        showToast('请填写任务名称');
+        return;
+      }
+      showToast('投放任务已发布');
+      setTimeout(() => { location.href = 'delivery-task.html'; }, 1200);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('equityModal').addEventListener('click', function(e) {
+      if (e.target === this) closeEquityDialog();
+    });
+    document.getElementById('segmentModal').addEventListener('click', function(e) {
+      if (e.target === this) closeSegmentDialog();
+    });
+  </script>
+</body>
+</html>

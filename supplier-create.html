@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增供应商 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面特定样式 */
+    body { background: #f5f7fa; }
+    .form-header { background: #fff; border-bottom: 1px solid #e8ecf0; padding: 12px 24px; display: flex; align-items: center; gap: 12px; }
+    .back-btn { display: flex; align-items: center; gap: 4px; color: #1677ff; background: none; border: none; cursor: pointer; font-size: 14px; padding: 0; }
+    .back-btn:hover { opacity: 0.8; }
+    .form-card { max-width: 860px; margin: 32px auto; background: #fff; border-radius: 8px; border: 1px solid #e8ecf0; padding: 32px 48px 40px; }
+    .form-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 28px; }
+    .form-row { display: flex; align-items: flex-start; margin-bottom: 24px; }
+    .form-label { min-width: 130px; text-align: right; padding-right: 12px; padding-top: 7px; font-size: 14px; color: #555; flex-shrink: 0; }
+    .form-label .required { color: #ff4d4f; margin-right: 2px; }
+    .form-content { flex: 1; }
+    .count-input-wrap { position: relative; }
+    .count-input-wrap .mk-input { width: 100%; padding-right: 60px; }
+    .count-input-wrap .count { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #aaa; pointer-events: none; }
+    .date-range { display: flex; align-items: center; gap: 8px; border: 1px solid #d9dee6; border-radius: 6px; padding: 6px 12px; background: #fff; width: fit-content; }
+    .date-range input { border: none; outline: none; font-size: 13px; width: 130px; color: #333; }
+    .date-range input::placeholder { color: #aaa; }
+    .textarea-wrap { position: relative; }
+    .textarea-wrap .mk-textarea { width: 100%; min-height: 100px; }
+    .textarea-wrap .count { position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: #aaa; }
+    .form-footer { display: flex; justify-content: center; padding: 0 0 48px; }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <div class="form-header">
+    <button class="back-btn" onclick="goBack()">
+      <span style="font-size: 16px;">←</span> 返回
+    </button>
+    <span style="color: #d9dee6; font-size: 14px;">|</span>
+    <span style="font-size: 14px; color: #333; font-weight: 500;">新增供应商</span>
+  </div>
+
+  <!-- 表单卡片 -->
+  <div class="form-card">
+    <h3 class="form-title">供应商信息</h3>
+
+    <!-- 供应商名称 -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>供应商名称</span>
+      <div class="form-content">
+        <div class="count-input-wrap">
+          <input class="mk-input" placeholder="请输入" maxlength="100" id="name" oninput="updateCount('name', 100)">
+          <span class="count"><span id="name-count">0</span>/100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 供应商法人名称 -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>供应商法人名称</span>
+      <div class="form-content">
+        <div class="count-input-wrap">
+          <input class="mk-input" placeholder="请输入" maxlength="50" id="legalRep" oninput="updateCount('legalRep', 50)">
+          <span class="count"><span id="legalRep-count">0</span>/50</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 授权key -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>授权key</span>
+      <div class="form-content">
+        <div class="count-input-wrap">
+          <input class="mk-input" placeholder="请输入" maxlength="100" id="authKey" oninput="updateCount('authKey', 100)">
+          <span class="count"><span id="authKey-count">0</span>/100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 授权secret -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>授权secret</span>
+      <div class="form-content">
+        <div class="count-input-wrap">
+          <input class="mk-input" placeholder="请输入" maxlength="100" id="authSecret" oninput="updateCount('authSecret', 100)">
+          <span class="count"><span id="authSecret-count">0</span>/100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 合作日期 -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>合作日期</span>
+      <div class="form-content">
+        <div class="date-range">
+          <span style="font-size: 13px; color: #aaa;">自</span>
+          <input type="date" id="coopStart">
+          <span style="color: #aaa; font-size: 13px;">-</span>
+          <input type="date" id="coopEnd">
+        </div>
+      </div>
+    </div>
+
+    <!-- 联系人名称 -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>联系人名称</span>
+      <div class="form-content">
+        <div class="count-input-wrap">
+          <input class="mk-input" placeholder="请输入" maxlength="50" id="contactName" oninput="updateCount('contactName', 50)">
+          <span class="count"><span id="contactName-count">0</span>/50</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 联系人手机号 -->
+    <div class="form-row">
+      <span class="form-label"><span class="required">*</span>联系人手机号</span>
+      <div class="form-content">
+        <div class="count-input-wrap">
+          <input class="mk-input" placeholder="请输入" maxlength="11" id="phone" oninput="updateCount('phone', 11)">
+          <span class="count"><span id="phone-count">0</span>/11</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 供应商描述 -->
+    <div class="form-row">
+      <span class="form-label">供应商描述</span>
+      <div class="form-content">
+        <div class="textarea-wrap">
+          <textarea class="mk-textarea" placeholder="请输入" maxlength="500" id="description" oninput="updateTextareaCount()"></textarea>
+          <span class="count"><span id="description-count">0</span>/500</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部保存按钮 -->
+  <div class="form-footer">
+    <button class="mk-btn mk-btn-primary" style="width: 120px; height: 40px;" id="save-btn" onclick="handleSave()">
+      保存
+    </button>
+  </div>
+
+  <script>
+    // 更新输入框字数统计
+    function updateCount(id, maxLen) {
+      const input = document.getElementById(id);
+      const countEl = document.getElementById(id + '-count');
+      countEl.textContent = input.value.length;
+    }
+
+    // 更新文本域字数统计
+    function updateTextareaCount() {
+      const textarea = document.getElementById('description');
+      const countEl = document.getElementById('description-count');
+      countEl.textContent = textarea.value.length;
+    }
+
+    // 返回列表页
+    function goBack() {
+      window.location.href = 'supplier-list.html';
+    }
+
+    // 保存
+    let saving = false;
+    function handleSave() {
+      if (saving) return;
+
+      saving = true;
+      const btn = document.getElementById('save-btn');
+      btn.textContent = '保存中...';
+      btn.disabled = true;
+
+      // 模拟保存
+      setTimeout(() => {
+        saving = false;
+        btn.textContent = '保存';
+        btn.disabled = false;
+
+        // 跳转回列表页
+        window.location.href = 'supplier-list.html';
+      }, 1000);
+    }
+
+    // 检查是否为编辑模式
+    function checkEditMode() {
+      const params = new URLSearchParams(window.location.search);
+      const editId = params.get('edit');
+
+      if (editId) {
+        // 编辑模式 - 可以在这里加载对应ID的数据
+        document.querySelector('.form-header span:last-child').textContent = '编辑供应商';
+      }
+    }
+
+    // 初始化
+    checkEditMode();
+  </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益补发 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      animation: fadeIn 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 10px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <!-- 第一行 -->
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; marginBottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: #8c95a6; white-space: nowrap;">权益名称</span>
+                <select class="mk-select" style="width: 200px;" id="equityFilter">
+                  <option value="">全部</option>
+                  <option>满100减20券</option>
+                  <option>理财加息券</option>
+                  <option>信用卡年费抵扣券</option>
+                  <option>爱奇艺季卡</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: #8c95a6; white-space: nowrap;">处理状态</span>
+                <select class="mk-select" style="width: 200px;" id="statusFilter">
+                  <option value="">全部</option>
+                  <option value="成功">成功</option>
+                  <option value="失败">失败</option>
+                  <option value="处理中">处理中</option>
+                  <option value="待执行">待执行</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 8px; margin-left: auto;">
+                <button class="mk-btn mk-btn-primary" onclick="handleSearch()">查询</button>
+                <button class="mk-btn mk-btn-default" onclick="handleReset()">重置</button>
+              </div>
+            </div>
+            <!-- 第二行：提交时间 -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 13px; color: #8c95a6; white-space: nowrap;">提交时间</span>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <input class="mk-input" type="date" style="width: 150px;" id="startDate">
+                <span style="color: #8c95a6; font-size: 13px;">-</span>
+                <input class="mk-input" type="date" style="width: 150px;" id="endDate">
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表面板 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">发放列表</span>
+              <button class="mk-btn mk-btn-primary" onclick="goToCreate()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                新增
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>客户号</th>
+                    <th>权益名称</th>
+                    <th>发放数量</th>
+                    <th>处理状态</th>
+                    <th>失败原因</th>
+                    <th>提交时间</th>
+                    <th>备注</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+            <div class="mk-pagination">
+              <span style="font-size: 13px; color: #8c95a6;" id="totalCount">共 0 条</span>
+              <button class="mk-page-btn" id="prevBtn" onclick="changePage(-1)">‹</button>
+              <div id="pageNumbers"></div>
+              <button class="mk-page-btn" id="nextBtn" onclick="changePage(1)">›</button>
+              <span style="font-size: 13px; color: #8c95a6;">前往</span>
+              <input class="mk-input" style="width: 44px; text-align: center; padding: 0 4px;" id="jumpPage" onblur="jumpToPage()">
+              <span style="font-size: 13px; color: #8c95a6;">页</span>
+              <select class="mk-select" style="width: 88px;">
+                <option>10条/页</option>
+                <option>20条/页</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    let mockData = [
+      { id: 'ri1', customerId: '20250515-3', equityName: '行李箱', quantity: 1, status: '成功', failReason: '--', submitTime: '2025-05-15 17:15:36', remark: '测试' },
+      { id: 'ri2', customerId: '200000001691', equityName: 'gui测试实物奖品20221...', quantity: 1, status: '成功', failReason: '--', submitTime: '2025-05-14 11:03:59', remark: '测试权益发放' },
+      { id: 'ri3', customerId: '交易密码+信用卡有效期', equityName: '微信红包2元', quantity: 1, status: '成功', failReason: '--', submitTime: '2025-05-14 11:02:57', remark: '测试权益发放统计' },
+      { id: 'ri4', customerId: '200000001691', equityName: '理财抵扣券lf', quantity: 2, status: '成功', failReason: '--', submitTime: '2025-02-12 16:33:16', remark: '测试权益发放流程' },
+      { id: 'ri5', customerId: '200000001771', equityName: '兑换券poc', quantity: 1, status: '成功', failReason: '--', submitTime: '2025-01-07 14:07:08', remark: '测试' },
+      { id: 'ri6', customerId: '测试1', equityName: '行李箱测试0930-修改', quantity: 3, status: '成功', failReason: '--', submitTime: '2024-12-30 16:55:49', remark: '333' },
+    ];
+
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+    let filteredData = [];
+
+    function statusColor(s) {
+      if (s === '成功') return '#1677ff';
+      if (s === '失败') return '#ff4d4f';
+      if (s === '处理中') return '#faad14';
+      return '#8c95a6';
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const equityFilter = document.getElementById('equityFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      filteredData = mockData.filter(r => {
+        if (equityFilter && r.equityName !== equityFilter) return false;
+        if (statusFilter && r.status !== statusFilter) return false;
+        return true;
+      });
+
+      const totalPages = Math.ceil(filteredData.length / PAGE_SIZE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const paged = filteredData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+      const tbody = document.getElementById('tableBody');
+      if (paged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #8c95a6; padding: 40px;">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = paged.map(r => `
+          <tr>
+            <td style="color: #1a1a2e;">${r.customerId}</td>
+            <td>${r.equityName}</td>
+            <td style="color: #1677ff;">${r.quantity}</td>
+            <td style="color: ${statusColor(r.status)};">${r.status}</td>
+            <td style="color: #8c95a6;">${r.failReason}</td>
+            <td style="color: #8c95a6;">${r.submitTime}</td>
+            <td style="color: #8c95a6;">${r.remark}</td>
+            <td>
+              <button class="mk-icon-btn" title="查看详情">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 渲染分页
+      document.getElementById('totalCount').textContent = `共 ${filteredData.length} 条`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+      document.getElementById('jumpPage').value = currentPage;
+
+      let pageHtml = '';
+      for (let i = 1; i <= totalPages; i++) {
+        pageHtml += `<button class="mk-page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+      }
+      document.getElementById('pageNumbers').innerHTML = pageHtml;
+    }
+
+    function goToCreate() {
+      window.location.href = 'operation-reissue-create.html';
+    }
+
+    function handleSearch() {
+      currentPage = 1;
+      renderTable();
+    }
+
+    function handleReset() {
+      document.getElementById('equityFilter').value = '';
+      document.getElementById('statusFilter').value = '';
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+      currentPage = 1;
+      renderTable();
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+    }
+
+    function changePage(delta) {
+      const totalPages = Math.ceil(filteredData.length / PAGE_SIZE) || 1;
+      const newPage = currentPage + delta;
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderTable();
+      }
+    }
+
+    function jumpToPage() {
+      const totalPages = Math.ceil(filteredData.length / PAGE_SIZE) || 1;
+      const v = parseInt(document.getElementById('jumpPage').value);
+      if (v >= 1 && v <= totalPages) {
+        currentPage = v;
+        renderTable();
+      }
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

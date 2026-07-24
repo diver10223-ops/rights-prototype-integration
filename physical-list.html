@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实物奖品列表 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .mk-modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mk-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 10px 24px;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      font-size: 13px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mt-3 { margin-top: 12px; }
+    .mb-3 { margin-bottom: 12px; }
+    .text-red-500 { color: #ff4d4f; }
+    .font-mono { font-family: monospace; }
+    .max-w-\[180px\] { max-width: 180px; }
+    .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .flex-nowrap { flex-wrap: nowrap; }
+    .mk-form-label.required::before { content: '*'; color: #ff4d4f; margin-right: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page">
+          <div class="mk-page-header">
+            <div><h1 class="mk-page-title">实物奖品列表</h1></div>
+          </div>
+
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <div class="mk-search-grid">
+              <div class="mk-form-item">
+                <label class="mk-label">名称/品牌：</label>
+                <input class="mk-input" id="searchKeyword" placeholder="请输入名称或品牌">
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">奖品类型：</label>
+                <select class="mk-select" id="searchType">
+                  <option value="">全部</option>
+                  <option value="数码类">数码类</option>
+                  <option value="家电类">家电类</option>
+                  <option value="日用品">日用品</option>
+                  <option value="食品类">食品类</option>
+                </select>
+              </div>
+              <div class="mk-form-item">
+                <label class="mk-label">状态：</label>
+                <select class="mk-select" id="searchStatus">
+                  <option value="">全部</option>
+                  <option value="online">已上架</option>
+                  <option value="offline">已下架</option>
+                </select>
+              </div>
+            </div>
+            <div class="mk-search-actions mt-3">
+              <button class="mk-btn mk-btn-default" onclick="resetSearch()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                重置
+              </button>
+              <button class="mk-btn mk-btn-primary" onclick="searchPrizes()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div class="mk-list-panel">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0;">
+              <span style="font-size: 13px; color: #8c95a6;">共 <b id="totalCount">4</b> 件奖品</span>
+              <button class="mk-btn mk-btn-primary mk-btn-sm" onclick="openAddModal()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                新增奖品
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="mk-table" id="prizeTable">
+                <thead>
+                  <tr>
+                    <th>奖品ID</th>
+                    <th>奖品名称</th>
+                    <th>品牌</th>
+                    <th>类型</th>
+                    <th>市场价</th>
+                    <th>成本价</th>
+                    <th>库存</th>
+                    <th>领取方式</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="prizeTableBody">
+                  <!-- 动态生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/编辑弹窗 -->
+  <div class="mk-modal-mask" id="editModal" style="display: none;">
+    <div class="mk-modal" style="width: 520px;">
+      <div class="mk-modal-header">
+        <span id="modalTitle">新增实物奖品</span>
+        <button class="mk-modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="mk-modal-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px;">
+          <div class="mk-form-item">
+            <label class="mk-form-label required" style="min-width: 85px;">奖品名称：</label>
+            <input class="mk-input" id="formName" placeholder="请输入奖品名称">
+          </div>
+          <div class="mk-form-item">
+            <label class="mk-form-label required" style="min-width: 85px;">品牌：</label>
+            <input class="mk-input" id="formBrand" placeholder="请输入品牌名称">
+          </div>
+          <div class="mk-form-item">
+            <label class="mk-form-label" style="min-width: 85px;">市场价(元)：</label>
+            <input class="mk-input" id="formPrice" placeholder="市场零售价" type="number" min="0">
+          </div>
+          <div class="mk-form-item">
+            <label class="mk-form-label" style="min-width: 85px;">成本价(元)：</label>
+            <input class="mk-input" id="formCost" placeholder="采购成本价" type="number" min="0">
+          </div>
+          <div class="mk-form-item">
+            <label class="mk-form-label" style="min-width: 85px;">库存数量：</label>
+            <input class="mk-input" id="formStock" placeholder="请输入库存数量" type="number" min="0">
+          </div>
+          <div class="mk-form-item">
+            <label class="mk-form-label" style="min-width: 85px;">奖品类型：</label>
+            <select class="mk-select" id="formType">
+              <option value="">请选择</option>
+              <option value="数码类">数码类</option>
+              <option value="家电类">家电类</option>
+              <option value="日用品">日用品</option>
+              <option value="食品类">食品类</option>
+            </select>
+          </div>
+          <div class="mk-form-item" style="grid-column: span 2;">
+            <label class="mk-form-label" style="min-width: 85px;">领取方式：</label>
+            <select class="mk-select" id="formReceiptMethod">
+              <option value="">请选择</option>
+              <option value="快递配送">快递配送</option>
+              <option value="门店自取">门店自取</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="mk-modal-footer">
+        <button class="mk-btn mk-btn-default" onclick="closeEditModal()">取消</button>
+        <button class="mk-btn mk-btn-primary" onclick="savePrize()" id="saveBtn">添加奖品</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="mk-toast" id="toast" style="display: none;"></div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    let prizes = [
+      { id: 'PHY001', name: '华为耳机 FreeBuds 5i', brand: '华为', type: '数码类', price: 799, cost: 650, stock: 200, receiptMethod: '快递配送', status: 'online', createTime: '2026-05-01' },
+      { id: 'PHY002', name: '小米充电宝 20000mAh', brand: '小米', type: '数码类', price: 149, cost: 110, stock: 500, receiptMethod: '快递配送', status: 'online', createTime: '2026-05-10' },
+      { id: 'PHY003', name: '格兰仕微波炉 P70F20TL', brand: '格兰仕', type: '家电类', price: 399, cost: 300, stock: 100, receiptMethod: '快递配送', status: 'online', createTime: '2026-05-15' },
+      { id: 'PHY004', name: '九阳豆浆机 DJ12B-A11EC', brand: '九阳', type: '家电类', price: 259, cost: 190, stock: 0, receiptMethod: '快递配送', status: 'offline', createTime: '2026-04-01' },
+    ];
+
+    let filteredPrizes = [...prizes];
+    let editingPrize = null;
+
+    function renderTable() {
+      const tbody = document.getElementById('prizeTableBody');
+      document.getElementById('totalCount').textContent = filteredPrizes.length;
+      if (filteredPrizes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted-foreground" style="padding: 40px;">暂无数据</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filteredPrizes.map(item => `
+        <tr>
+          <td class="text-muted-foreground font-mono" style="font-size: 12px;">${item.id}</td>
+          <td class="font-medium max-w-[180px] truncate">${item.name}</td>
+          <td>${item.brand}</td>
+          <td><span class="mk-badge mk-badge-info">${item.type}</span></td>
+          <td class="font-medium">¥${item.price}</td>
+          <td style="color: #52c41a;">¥${item.cost}</td>
+          <td>
+            <span class="${item.stock === 0 ? 'text-red-500 font-medium' : ''}">
+              ${item.stock === 0 ? '已售罄' : item.stock.toLocaleString()}
+            </span>
+          </td>
+          <td>${item.receiptMethod}</td>
+          <td>
+            <span class="mk-badge ${item.status === 'online' ? 'mk-badge-success' : 'mk-badge-gray'}">
+              ${item.status === 'online' ? '已上架' : '已下架'}
+            </span>
+          </td>
+          <td class="text-muted-foreground">${item.createTime}</td>
+          <td>
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <button class="mk-link" onclick="openEditModal('${item.id}')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                编辑
+              </button>
+              <span style="color: var(--border); margin: 0 2px;">|</span>
+              <button class="mk-link ${item.status === 'online' ? 'mk-link-danger' : ''}" onclick="toggleStatus('${item.id}')">
+                ${item.status === 'online' ? '下架' : '上架'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function searchPrizes() {
+      const keyword = document.getElementById('searchKeyword').value;
+      const type = document.getElementById('searchType').value;
+      const status = document.getElementById('searchStatus').value;
+      filteredPrizes = prizes.filter(item => {
+        if (keyword && !item.name.includes(keyword) && !item.brand.includes(keyword)) return false;
+        if (type && item.type !== type) return false;
+        if (status && item.status !== status) return false;
+        return true;
+      });
+      renderTable();
+    }
+
+    function resetSearch() {
+      document.getElementById('searchKeyword').value = '';
+      document.getElementById('searchType').value = '';
+      document.getElementById('searchStatus').value = '';
+      filteredPrizes = [...prizes];
+      renderTable();
+    }
+
+    function toggleStatus(id) {
+      const item = prizes.find(p => p.id === id);
+      if (item) {
+        item.status = item.status === 'online' ? 'offline' : 'online';
+        searchPrizes();
+      }
+    }
+
+    function openAddModal() {
+      editingPrize = null;
+      document.getElementById('modalTitle').textContent = '新增实物奖品';
+      document.getElementById('saveBtn').textContent = '添加奖品';
+      document.getElementById('formName').value = '';
+      document.getElementById('formBrand').value = '';
+      document.getElementById('formPrice').value = '';
+      document.getElementById('formCost').value = '';
+      document.getElementById('formStock').value = '';
+      document.getElementById('formType').value = '';
+      document.getElementById('formReceiptMethod').value = '';
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function openEditModal(id) {
+      editingPrize = prizes.find(p => p.id === id);
+      if (!editingPrize) return;
+      document.getElementById('modalTitle').textContent = '编辑实物奖品';
+      document.getElementById('saveBtn').textContent = '保存修改';
+      document.getElementById('formName').value = editingPrize.name;
+      document.getElementById('formBrand').value = editingPrize.brand;
+      document.getElementById('formPrice').value = editingPrize.price;
+      document.getElementById('formCost').value = editingPrize.cost;
+      document.getElementById('formStock').value = editingPrize.stock;
+      document.getElementById('formType').value = editingPrize.type;
+      document.getElementById('formReceiptMethod').value = editingPrize.receiptMethod;
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+      editingPrize = null;
+    }
+
+    function savePrize() {
+      const name = document.getElementById('formName').value.trim();
+      if (!name) return;
+
+      if (editingPrize) {
+        editingPrize.name = name;
+        editingPrize.brand = document.getElementById('formBrand').value;
+        editingPrize.type = document.getElementById('formType').value;
+        editingPrize.price = parseFloat(document.getElementById('formPrice').value) || 0;
+        editingPrize.cost = parseFloat(document.getElementById('formCost').value) || 0;
+        editingPrize.stock = parseInt(document.getElementById('formStock').value) || 0;
+        editingPrize.receiptMethod = document.getElementById('formReceiptMethod').value;
+        showToast('实物奖品已更新');
+      } else {
+        const newItem = {
+          id: `PHY${Date.now()}`,
+          name: name,
+          brand: document.getElementById('formBrand').value,
+          type: document.getElementById('formType').value,
+          price: parseFloat(document.getElementById('formPrice').value) || 0,
+          cost: parseFloat(document.getElementById('formCost').value) || 0,
+          stock: parseInt(document.getElementById('formStock').value) || 0,
+          receiptMethod: document.getElementById('formReceiptMethod').value,
+          status: 'online',
+          createTime: new Date().toISOString().split('T')[0]
+        };
+        prizes.push(newItem);
+        showToast('实物奖品已添加');
+      }
+      searchPrizes();
+      closeEditModal();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = `<span style="color: #52c41a;">✓</span> ${msg}`;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeEditModal();
+    });
+
+    // 初始化
+    renderTable();
+  </script>
+</body>
+</html>

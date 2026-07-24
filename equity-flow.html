@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权益流水 - 权益平台管理系统</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 页面特定样式 */
+    .mk-page { min-height: calc(100vh - 92px); display: flex; flex-direction: column; gap: 12px; }
+    .mk-search-panel { background: #fff; border-radius: 8px; border: 1px solid var(--border); padding: 16px 20px 14px; }
+    .mk-list-panel { background: #fff; border-radius: 8px; border: 1px solid var(--border); flex: 1; }
+    .mk-list-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 16px 20px; border-bottom: 1px solid var(--bg-gray); }
+    .mk-list-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .mk-table-wrap { overflow-x: auto; }
+    .mk-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 12px 20px; font-size: 13px; color: var(--text-secondary); }
+    .mk-page-btn { min-width: 28px; height: 28px; padding: 0 6px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d9dee6; border-radius: 4px; cursor: pointer; background: #fff; font-size: 13px; transition: all 0.15s; }
+    .mk-page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .mk-page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .mk-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .whitespace-nowrap { white-space: nowrap; }
+    .font-mono { font-family: monospace; }
+    .advanced-filter { color: #1677ff; background: none; border: none; cursor: pointer; padding: 0 4px; font-size: 13px; }
+    .advanced-filter:hover { text-decoration: underline; }
+    .advanced-row { display: none; }
+    .advanced-row.show { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶栏 -->
+      <header class="top-header">
+        <div class="header-actions">
+          <button class="header-icon-btn" title="通知">🔔</button>
+          <div class="header-user">
+            <div class="user-avatar" style="width: 24px; height: 24px; font-size: 11px;">A</div>
+            <span style="font-size: 13px;">管理员</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab栏 -->
+      <div class="tab-bar" id="tab-bar"></div>
+
+      <!-- 页面内容 -->
+      <div class="page-content">
+        <div class="mk-page" id="page-content">
+          <!-- 搜索面板 -->
+          <div class="mk-search-panel">
+            <!-- 第一行 -->
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">权益名称</span>
+                <select class="mk-select" style="width: 170px;" id="equityFilter">
+                  <option value="">所有权益</option>
+                  <option value="95折优惠券">95折优惠券</option>
+                  <option value="满300减50元">满300减50元</option>
+                  <option value="星巴克50元饮品券">星巴克50元饮品券</option>
+                  <option value="20元话费券">20元话费券</option>
+                  <option value="爱奇艺季卡">爱奇艺季卡</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">用户号</span>
+                <input class="mk-input" style="width: 170px;" placeholder="请输入用户号" id="userId">
+              </div>
+              <div style="display: flex; gap: 8px; margin-left: auto;">
+                <button class="mk-btn mk-btn-primary" onclick="handleQuery()">🔍 查询</button>
+                <button class="mk-btn mk-btn-default" onclick="handleReset()">🔄 重置</button>
+                <button class="advanced-filter" onclick="toggleAdvanced()">高级筛选</button>
+              </div>
+            </div>
+
+            <!-- 第二行 -->
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">操作类型</span>
+                <select class="mk-select" style="width: 150px;" id="opType">
+                  <option value="领取">领取</option>
+                  <option value="使用">使用</option>
+                  <option value="到期作废">到期作废</option>
+                  <option value="退款">退款</option>
+                  <option value="冲正">冲正</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">操作状态</span>
+                <select class="mk-select" style="width: 150px;" id="opStatus">
+                  <option value="">全部</option>
+                  <option value="成功">成功</option>
+                  <option value="失败">失败</option>
+                  <option value="处理中">处理中</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">操作时间</span>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <input class="mk-input" type="date" style="width: 140px;" id="startDate" value="2026-07-09">
+                  <span style="color: var(--text-muted); font-size: 13px;">-</span>
+                  <input class="mk-input" type="date" style="width: 140px;" id="endDate" value="2026-07-09">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 流水列表 -->
+          <div class="mk-list-panel">
+            <div class="mk-list-header">
+              <span class="mk-list-title">权益流水</span>
+            </div>
+            <div class="mk-table-wrap">
+              <table class="mk-table">
+                <thead>
+                  <tr>
+                    <th>操作时间</th>
+                    <th>流水号</th>
+                    <th>用户号</th>
+                    <th>操作类型</th>
+                    <th>卡券名称</th>
+                    <th>卡券类型</th>
+                    <th>数量</th>
+                    <th>操作状态</th>
+                    <th>发行机构</th>
+                    <th>预算(元)</th>
+                    <th>备注</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+            <div class="mk-pagination" id="pagination" style="display: none;">
+              <span style="font-size: 13px; color: var(--text-muted);">共 <span id="total-count">0</span> 条</span>
+              <button class="mk-page-btn" id="prev-btn" onclick="changePage(-1)">‹</button>
+              <div id="page-buttons"></div>
+              <button class="mk-page-btn" id="next-btn" onclick="changePage(1)">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script>
+    // Mock数据
+    const mockFlows = [
+      { id: 'f1', opTime: '2026-07-09 10:23:45', flowNo: 'FL20260709001', userId: 'U100001', opType: '领取', cardName: '95折优惠券', cardType: '行内金融卡券', quantity: 1, opStatus: '成功', issuer: '易诚银行', budget: '--', remark: '' },
+      { id: 'f2', opTime: '2026-07-09 10:45:10', flowNo: 'FL20260709002', userId: 'U100002', opType: '使用', cardName: '满300减50元', cardType: '行内金融卡券', quantity: 1, opStatus: '成功', issuer: '上海分行', budget: '¥50.00', remark: '理财核销' },
+      { id: 'f3', opTime: '2026-07-09 11:02:30', flowNo: 'FL20260709003', userId: 'U100003', opType: '领取', cardName: '星巴克50元饮品券', cardType: '第三方卡券', quantity: 1, opStatus: '成功', issuer: '北京分行', budget: '--', remark: '' },
+      { id: 'f4', opTime: '2026-07-09 12:15:00', flowNo: 'FL20260709004', userId: 'U100004', opType: '到期作废', cardName: '20元话费券', cardType: '行内金融卡券', quantity: 1, opStatus: '成功', issuer: '易诚银行', budget: '¥20.00', remark: '超出有效期' },
+      { id: 'f5', opTime: '2026-07-09 14:30:22', flowNo: 'FL20260709005', userId: 'U100005', opType: '使用', cardName: '爱奇艺季卡', cardType: '第三方卡券', quantity: 1, opStatus: '成功', issuer: '深圳分行', budget: '¥28.00', remark: '' },
+    ];
+
+    let currentPage = 1;
+    const PAGE_SIZE = 10;
+
+    // 获取筛选数据
+    function getFiltered() {
+      const equityFilter = document.getElementById('equityFilter').value;
+      const userId = document.getElementById('userId').value.trim();
+      const opType = document.getElementById('opType').value;
+      const opStatus = document.getElementById('opStatus').value;
+
+      return mockFlows.filter(f => {
+        if (equityFilter && equityFilter !== '所有权益' && f.cardName !== equityFilter) return false;
+        if (userId && !f.userId.includes(userId)) return false;
+        if (opType && f.opType !== opType) return false;
+        if (opStatus && opStatus !== '全部' && f.opStatus !== opStatus) return false;
+        return true;
+      });
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const filtered = getFiltered();
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const paged = filtered.slice(start, start + PAGE_SIZE);
+      const tbody = document.getElementById('table-body');
+
+      if (paged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted-foreground" style="padding: 40px;">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = paged.map(item => `
+          <tr>
+            <td class="text-muted-foreground whitespace-nowrap">${item.opTime}</td>
+            <td class="font-mono" style="font-size: 12px; color: var(--text-muted); white-space: nowrap;">${item.flowNo}</td>
+            <td>${item.userId}</td>
+            <td>${item.opType}</td>
+            <td>${item.cardName}</td>
+            <td class="text-muted-foreground">${item.cardType}</td>
+            <td>${item.quantity}</td>
+            <td style="color: ${item.opStatus === '成功' ? '#52c41a' : item.opStatus === '失败' ? '#ff4d4f' : '#faad14'};">${item.opStatus}</td>
+            <td>${item.issuer}</td>
+            <td class="text-muted-foreground">${item.budget}</td>
+            <td class="text-muted-foreground">${item.remark || '--'}</td>
+          </tr>
+        `).join('');
+      }
+
+      // 渲染分页
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+      if (totalPages > 1) {
+        document.getElementById('pagination').style.display = 'flex';
+        document.getElementById('total-count').textContent = filtered.length;
+        document.getElementById('prev-btn').disabled = currentPage === 1;
+        document.getElementById('next-btn').disabled = currentPage >= totalPages;
+
+        let pageHtml = '';
+        for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+          pageHtml += `<button class="mk-page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        }
+        document.getElementById('page-buttons').innerHTML = pageHtml;
+      } else {
+        document.getElementById('pagination').style.display = 'none';
+      }
+    }
+
+    // 切换页码
+    function changePage(delta) {
+      const filtered = getFiltered();
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+      const newPage = currentPage + delta;
+
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderTable();
+      }
+    }
+
+    // 跳转指定页
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+    }
+
+    // 切换高级筛选
+    function toggleAdvanced() {
+      // 这里可以扩展显示更多筛选条件
+      alert('高级筛选功能');
+    }
+
+    // 查询
+    function handleQuery() {
+      currentPage = 1;
+      renderTable();
+    }
+
+    // 重置
+    function handleReset() {
+      document.getElementById('equityFilter').value = '';
+      document.getElementById('userId').value = '';
+      document.getElementById('opType').value = '领取';
+      document.getElementById('opStatus').value = '';
+      document.getElementById('startDate').value = '2026-07-09';
+      document.getElementById('endDate').value = '2026-07-09';
+      currentPage = 1;
+      renderTable();
+    }
+
+    // 初始化
+    renderTable();
+  </script>
+</body>
+</html>

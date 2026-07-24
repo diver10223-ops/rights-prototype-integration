@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>投放规则管理 - 对公权益营销中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
+    .rm-page { padding: 12px; background: #f0f2f5; min-height: calc(100vh - 92px); }
+    .rm-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 8px; }
+    .rm-metric { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
+    .rm-metric .ico { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .rm-metric .label { font-size: 12px; color: #8c95a6; }
+    .rm-metric .value { font-size: 22px; font-weight: 700; color: #1a1a2e; line-height: 1.2; }
+    .rm-metric .sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .rm-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+    .rm-status .dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+    .rm-status.on { background: #d1fae5; color: #047857; }
+    .rm-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .rm-tag.blue { background: #e6f4ff; color: #1677ff; }
+    .rm-tag.purple { background: #ede9fe; color: #6d28d9; }
+    .rm-tag.gray { background: #f1f5f9; color: #475569; }
+    .rm-tag.orange { background: #ffedd5; color: #c2410c; }
+    .rm-link { color: #1677ff; cursor: pointer; font-size: 12px; }
+    .rm-link:hover { text-decoration: underline; }
+    .rm-link.danger { color: #dc2626; }
+    .rm-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .rm-table th { background: #fafbfc; color: #8c95a6; font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8ecf0; }
+    .rm-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #4a5568; vertical-align: middle; }
+    .rm-table tr:hover td { background: #fafbfc; }
+    .rm-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .rm-section-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .rm-field label { display: block; font-size: 12px; color: #4a5568; margin-bottom: 4px; }
+    .rm-field .ipt, .rm-field select, .rm-field textarea { width: 100%; border: 1px solid #e8ecf0; border-radius: 6px; padding: 6px 10px; font-size: 13px; color: #4a5568; background: #fff; outline: none; font-family: inherit; }
+    .rm-field .ipt:focus, .rm-field select:focus, .rm-field textarea:focus { border-color: #1677ff; }
+    .rm-field .ipt[readonly] { background: #f8fafc; color: #94a3b8; }
+    .rm-field textarea { min-height: 64px; line-height: 1.5; }
+    .rm-btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #e8ecf0; background: #fff; color: #4a5568; }
+    .rm-btn:hover { color: #1677ff; border-color: #1677ff; }
+    .rm-btn.primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .rm-btn.primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .rm-btn.lg { height: 36px; padding: 0 20px; }
+    .rm-radio { display: inline-flex; align-items: center; gap: 4px; margin-right: 16px; font-size: 13px; color: #4a5568; cursor: pointer; }
+    .rm-radio input { cursor: pointer; }
+    .rm-checkbox { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; font-size: 13px; color: #4a5568; cursor: pointer; padding: 4px 10px; border: 1px solid #e8ecf0; border-radius: 4px; }
+    .rm-checkbox input { cursor: pointer; }
+    .rm-checkbox.checked { background: #e6f4ff; border-color: #1677ff; color: #1677ff; }
+    .rm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .rm-modal-overlay.show { display: flex; }
+    .rm-modal { background: #fff; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-width: 92vw; max-height: 90vh; display: flex; flex-direction: column; }
+    .rm-modal-head { padding: 14px 20px; border-bottom: 1px solid #e8ecf0; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #1a1a2e; }
+    .rm-modal-close { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; color: #94a3b8; }
+    .rm-modal-close:hover { background: #f1f5f9; color: #475569; }
+    .rm-modal-body { padding: 20px; overflow: auto; }
+    .rm-modal-foot { padding: 12px 20px; border-top: 1px solid #e8ecf0; display: flex; justify-content: flex-end; gap: 8px; }
+    .rm-block { border: 1px solid #e8ecf0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .rm-block-title { font-size: 13px; font-weight: 600; color: #1677ff; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .rm-block-title::before { content: ''; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
+    .rm-help { padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; border-radius: 6px; font-size: 12px; line-height: 1.6; }
+    .rm-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: #e6f4ff; color: #1677ff; border-radius: 9999px; font-size: 12px; margin: 2px 4px 2px 0; }
+    .rm-pill .x { cursor: pointer; color: #1677ff; }
+    .rm-pill .x:hover { color: #0958d9; }
+    .rm-tab { padding: 8px 14px; font-size: 13px; color: #64748b; border-bottom: 2px solid transparent; cursor: pointer; background: none; border-left: none; border-right: none; border-top: none; }
+    .rm-tab.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
+    .rm-toast { position: fixed; top: 80px; right: 24px; padding: 10px 16px; border-radius: 6px; font-size: 13px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.15); z-index: 1100; opacity: 0; transform: translateX(20px); transition: all .25s; }
+    .rm-toast.show { opacity: 1; transform: translateX(0); }
+    .rm-toast.success { background: #10b981; }
+    .rm-toast.error { background: #ef4444; }
+  </style>
+</head>
+<body>
+<div class="app layout-v2">
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="main">
+    <div class="top-shell">
+      <header id="header" class="app-header"></header>
+      <div id="pageTabs" class="page-tabs empty"></div>
+    </div>
+    <div class="content">
+      <div class="rm-page">
+        <!-- 页头 -->
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-[14px] font-bold text-slate-800">投放规则管理</div>
+            <div class="text-[11px] text-slate-500 mt-1">创建高度参数化的"直投触发与领取规则模板"，供权益直投活动引用，支持周期批处理或实时事件流触发派送</div>
+          </div>
+        </div>
+
+        <!-- 顶部核心指标卡 -->
+        <div class="rm-card mb-3">
+          <div class="grid grid-cols-2">
+            <div class="rm-metric border-r border-slate-100">
+              <div class="ico" style="background:#e6f4ff;color:#1677ff">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div class="label">已启用模板总数</div>
+                <div class="value">5<span class="text-[12px] text-slate-400 ml-1">个</span></div>
+                <div class="sub">当前激活的规则模板</div>
+              </div>
+            </div>
+            <div class="rm-metric">
+              <div class="ico" style="background:#fef3c7;color:#d97706">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </div>
+              <div>
+                <div class="label">规则累计被引用</div>
+                <div class="value">18<span class="text-[12px] text-slate-400 ml-1">次</span></div>
+                <div class="sub">所有模板被活动引用的总次数</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 搜索与过滤条 -->
+        <div class="rm-card p-4 mb-3">
+          <div class="flex items-center gap-3">
+            <div class="rm-field flex-1">
+              <label>输入规则名称/关联客群关键字...</label>
+              <input id="fltKeyword" class="ipt" placeholder="如：新人、首次、登录" />
+            </div>
+            <div class="flex gap-2 self-end">
+              <button class="rm-btn primary" onclick="applyFilter()">查询</button>
+              <button class="rm-btn" onclick="resetFilter()">重置</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 规则模板列表 -->
+        <div class="rm-card">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="rm-section-title">规则模板列表</div>
+            <button class="rm-btn primary" onclick="openCreateModal()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              新建投放规则模板
+            </button>
+          </div>
+          <div class="overflow-auto">
+            <table class="rm-table">
+              <thead>
+                <tr>
+                  <th style="width:90px">规则ID</th>
+                  <th>规则名称</th>
+                  <th>适用目标客群</th>
+                  <th>核心营销目标</th>
+                  <th>触发事件</th>
+                  <th>分发规则简述</th>
+                  <th style="width:80px" class="text-center">活动引用次数</th>
+                  <th>规则状态</th>
+                  <th style="width:140px" class="text-center">操作</th>
+                </tr>
+              </thead>
+              <tbody id="ruleTbody"></tbody>
+            </table>
+          </div>
+          <div class="px-4 py-3 border-t border-slate-100 flex items-center justify-between text-[12px] text-slate-500">
+            <div>共 <span class="text-slate-700 font-semibold" id="totalCount">0</span> 条</div>
+            <div class="flex items-center gap-2">
+              <button class="rm-btn" style="height:28px;padding:0 10px">上一页</button>
+              <span class="px-2">1 / 1</span>
+              <button class="rm-btn" style="height:28px;padding:0 10px">下一页</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗2.1 新建/编辑规则模板 ============== -->
+<div id="modalRule" class="rm-modal-overlay">
+  <div class="rm-modal" style="width:820px">
+    <div class="rm-modal-head">
+      <span id="modalRuleTitle">新建投放规则模板</span>
+      <div class="rm-modal-close" onclick="closeModal('modalRule')">✕</div>
+    </div>
+    <div class="rm-modal-body" style="max-height:75vh">
+      <!-- 板块A：基本属性 -->
+      <div class="rm-block">
+        <div class="rm-block-title">板块A · 规则模板基本属性</div>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div class="rm-field">
+            <label>规则ID</label>
+            <input id="ruleId" class="ipt" readonly value="系统自动生成" />
+          </div>
+          <div class="rm-field">
+            <label>规则名称 <span class="text-rose-500">*</span></label>
+            <input id="ruleName" class="ipt" maxlength="30" placeholder="30字以内，如：新人首次登录直投规则" />
+          </div>
+        </div>
+        <div class="rm-field mb-3">
+          <label>营销目标 <span class="text-rose-500">*</span>（多选）</label>
+          <div id="goalBox" class="flex flex-wrap gap-1.5">
+            <label class="rm-checkbox" data-goal="新客转化">新客转化</label>
+            <label class="rm-checkbox" data-goal="活跃度提升">活跃度提升</label>
+            <label class="rm-checkbox" data-goal="AUM提升">AUM提升</label>
+            <label class="rm-checkbox" data-goal="资金留存">资金留存</label>
+            <label class="rm-checkbox" data-goal="产品销售">产品销售</label>
+          </div>
+        </div>
+        <div class="rm-field">
+          <label>规则说明/备注 <span class="text-rose-500">*</span></label>
+          <textarea id="ruleDesc" class="ipt" placeholder="简要阐述该规则设计的业务目的"></textarea>
+        </div>
+      </div>
+
+      <!-- 板块B：发放用户（客群选择） -->
+      <div class="rm-block">
+        <div class="rm-block-title">板块B · 发放用户（客群选择）</div>
+        <div class="mb-3">
+          <label class="rm-radio"><input type="radio" name="sendType" value="tag" checked /> 按标签：基于大数据标签库中的客群包来过滤（最常用）</label>
+          <label class="rm-radio"><input type="radio" name="sendType" value="sys" /> 关联系统提供：由调用该规则的业务系统在接口中动态传入名单</label>
+        </div>
+        <div id="groupCfgBox">
+          <div class="flex gap-2 mb-2">
+            <button class="rm-btn" onclick="openGroupModal()">选择客群</button>
+            <button class="rm-btn" onclick="clearGroups()">清空客群</button>
+          </div>
+          <div id="ruleGroupList" class="border border-slate-200 rounded p-2 min-h-[40px] bg-slate-50">
+            <span class="text-[12px] text-slate-400">暂未选择客群</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 板块C：触发条件设置 -->
+      <div class="rm-block">
+        <div class="rm-block-title">板块C · 触发条件设置</div>
+        <div class="mb-3">
+          <label class="rm-radio"><input type="radio" name="enableTrigger" value="no" checked onclick="onTriggerChange()" /> 否：常规的周期定时分发、批量下发</label>
+          <label class="rm-radio"><input type="radio" name="enableTrigger" value="yes" onclick="onTriggerChange()" /> 是：事件/场景触发实时自动直投</label>
+        </div>
+        <div id="triggerSub" style="display:none" class="border-t border-slate-100 pt-3 mt-1">
+          <div class="rm-field mb-3">
+            <label>单个触发事件 <span class="text-rose-500">*</span></label>
+            <select id="triggerEvent" class="ipt">
+              <option value="">请选择</option>
+              <option>对公新开户成功</option>
+              <option>对公单笔交易金额满额</option>
+              <option>代发薪入账成功</option>
+              <option>推荐新企业完成认证</option>
+              <option>手机银行首次绑定对公账户</option>
+            </select>
+          </div>
+          <div class="rm-field mb-3">
+            <label>触发限制 / 参数规则 <span class="text-rose-500">*</span></label>
+            <input id="triggerRule" class="ipt" placeholder="如：成功开立Ⅰ类户起24小时内系统触发、交易金额 >= 10000.00 元" />
+          </div>
+          <div class="rm-help">
+            <b>提示约束：</b>启用触发规则后，为了确保事件流闭环下权益实时自动派送，领取规则强制锁定为"自动发放"，不可修改。
+          </div>
+        </div>
+      </div>
+
+      <!-- 板块D：领取规则与分发策略 -->
+      <div class="rm-block">
+        <div class="rm-block-title">板块D · 领取规则与分发策略</div>
+        <div class="mb-3">
+          <label class="rm-radio"><input type="radio" name="claimType" value="manual" checked onclick="onClaimChange()" id="claimManual" /> 手动领取：客户必须登录指定终端（如手机银行App），主动点击卡券包中的"点击领取"按钮</label>
+          <label class="rm-radio"><input type="radio" name="claimType" value="auto" onclick="onClaimChange()" id="claimAuto" /> 自动发放：无需客户干预，系统在批处理或触发后直接将权益放入其卡包</label>
+        </div>
+
+        <!-- 手动领取子配置 -->
+        <div id="manualSub" class="border-t border-slate-100 pt-3">
+          <div class="rm-field mb-3">
+            <label>领取时效限制</label>
+            <div>
+              <label class="rm-radio"><input type="radio" name="claimPeriod" value="today" checked /> 当日有效</label>
+              <label class="rm-radio"><input type="radio" name="claimPeriod" value="3d" /> 3天内有效</label>
+              <label class="rm-radio"><input type="radio" name="claimPeriod" value="7d" /> 7天内有效</label>
+              <label class="rm-radio"><input type="radio" name="claimPeriod" value="custom" onclick="onCustomPeriod()" /> 自定义天数</label>
+            </div>
+            <div id="customDays" class="mt-2" style="display:none">
+              <input type="number" min="1" step="1" class="ipt" style="max-width:120px" placeholder="输入天数" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rm-field">
+              <label>频控限制（每日限额）</label>
+              <input type="number" min="0" class="ipt" value="1" />
+            </div>
+            <div class="rm-field">
+              <label>频控限制（累计限额）</label>
+              <input type="number" min="0" class="ipt" value="1" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 自动发放子配置 -->
+        <div id="autoSub" class="border-t border-slate-100 pt-3" style="display:none">
+          <div class="rm-field mb-3">
+            <label>自动分发模式</label>
+            <div>
+              <label class="rm-radio"><input type="radio" name="autoMode" value="once" checked onclick="onAutoMode()" /> 一次发放</label>
+              <label class="rm-radio"><input type="radio" name="autoMode" value="cycle" onclick="onAutoMode()" /> 周期发放</label>
+            </div>
+          </div>
+          <div id="autoOnce" class="rm-field">
+            <label>一次发放设置</label>
+            <div id="autoOnceMode" class="ipt flex items-center" style="background:#f8fafc;cursor:default">
+              <span id="autoOnceTag" class="rm-pill" style="background:#e6f4ff;color:#1677ff;margin:0;font-size:12px;padding:4px 12px">活动开始后立即发放</span>
+              <span class="text-[12px] text-slate-400 ml-2" id="autoOnceHint">（非事件触发模式：活动开始后立即发放）</span>
+            </div>
+          </div>
+          <div id="autoCycle" class="grid grid-cols-2 gap-3" style="display:none">
+            <div class="rm-field">
+              <label>周期频次</label>
+              <select class="ipt">
+                <option>每天</option>
+                <option>每周</option>
+                <option>每月</option>
+              </select>
+            </div>
+            <div class="rm-field">
+              <label>触发时刻</label>
+              <input type="time" class="ipt" value="09:00" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rm-modal-foot">
+      <button class="rm-btn" onclick="closeModal('modalRule')">取消</button>
+      <button class="rm-btn primary lg" onclick="saveRule()">保存规则模板</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 弹窗2.2 选择客群（公用） ============== -->
+<div id="modalGroup" class="rm-modal-overlay">
+  <div class="rm-modal" style="width:780px">
+    <div class="rm-modal-head">
+      <span>选择发放目标客群</span>
+      <div class="rm-modal-close" onclick="closeModal('modalGroup')">✕</div>
+    </div>
+    <div class="rm-modal-body" style="max-height:70vh">
+      <div class="flex items-center gap-2 mb-3 border-b border-slate-200">
+        <button class="rm-tab active" onclick="switchGroupTab(this,'tag')">标签客群</button>
+        <button class="rm-tab" onclick="switchGroupTab(this,'white')">白名单客群</button>
+      </div>
+      <div class="rm-field mb-3">
+        <input class="ipt" placeholder="输入客群名称/描述" oninput="filterGroup(this.value)" />
+      </div>
+      <div class="border border-slate-200 rounded overflow-hidden">
+        <table class="rm-table">
+          <thead>
+            <tr>
+              <th style="width:40px"><input type="checkbox" onclick="toggleAllGroups(this)" /></th>
+              <th>客群名称</th>
+              <th>客群类型</th>
+              <th>覆盖企业数</th>
+              <th>最近同步</th>
+            </tr>
+          </thead>
+          <tbody id="groupTbody"></tbody>
+        </table>
+      </div>
+      <div class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded">
+        <div class="text-[12px] text-slate-500 mb-2" id="groupSummary">标签客群 (已选择 0 个):</div>
+        <div id="groupPills" class="min-h-[28px]"></div>
+      </div>
+    </div>
+    <div class="rm-modal-foot">
+      <button class="rm-btn" onclick="closeModal('modalGroup')">取消</button>
+      <button class="rm-btn primary lg" onclick="confirmGroups()">确认选择</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="rm-toast"></div>
+
+<script>
+/* ========== 数据 ========== */
+const rules = [
+  { id:'RULE_001', name:'新人首次登录直投规则', group:'验证多波次--一类户包含最近3天', goals:['新客转化','活跃度提升'], trigger:'无（批处理定时触发）', desc:'自动直投 [一次性] (2026-07-06 09:00)', refs:3, status:'on' },
+  { id:'RULE_002', name:'高管节日营销派发规则', group:'对公高管VIP白名单', goals:['产品销售','AUM提升'], trigger:'⚡ 手机银行首次绑定对公账户', desc:'周期定时分发 [每天 09:00]', refs:5, status:'on' },
+  { id:'RULE_003', name:'代发薪入账实时派发', group:'代发薪重点活跃户', goals:['资金留存','活跃度提升'], trigger:'⚡ 代发薪入账成功', desc:'事件触发实时自动直投', refs:6, status:'on' },
+  { id:'RULE_004', name:'对公新户24h触发', group:'普惠小微重点拓展名单', goals:['新客转化'], trigger:'⚡ 对公新开户成功', desc:'成功开立Ⅰ类户起24小时内系统触发', refs:2, status:'on' },
+  { id:'RULE_005', name:'结算户AUM提升规则', group:'结算户月均5万+企业', goals:['AUM提升','资金留存'], trigger:'无（批处理定时触发）', desc:'周期定时分发 [每月 1号 09:00]', refs:2, status:'on' }
+];
+
+const groupPool = [
+  { name:'验证多波次--一类户包含最近3天', type:'标签生成', cnt:'1,245 户', sync:'2026-07-13 09:00' },
+  { name:'一类结算户开户超10万', type:'标签生成', cnt:'560 户', sync:'2026-07-12 09:00' },
+  { name:'代发薪重点活跃户', type:'标签生成', cnt:'5,612 户', sync:'2026-07-13 08:00' },
+  { name:'AUM提升目标企业包', type:'标签生成', cnt:'4,250 户', sync:'2026-07-12 22:00' },
+  { name:'对公高管VIP白名单', type:'白名单导入', cnt:'186 户', sync:'2026-07-10 14:22' },
+  { name:'普惠小微重点拓展名单', type:'白名单导入', cnt:'2,330 户', sync:'2026-07-11 11:05' },
+  { name:'2026核心授信客户包', type:'白名单导入', cnt:'820 户', sync:'2026-07-12 18:30' }
+];
+
+/* ========== 状态 ========== */
+let selectedGroups = [];
+let currentGroupTab = 'tag';
+let editingRule = null;
+let currentGoals = new Set();
+
+/* ========== 工具 ========== */
+function $(id){ return document.getElementById(id); }
+function showToast(msg, type){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'rm-toast ' + (type || 'success') + ' show';
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
+
+function renderTable(){
+  const kw = ($('fltKeyword').value || '').trim();
+  const rows = rules.filter(r => !kw || r.name.includes(kw) || r.group.includes(kw));
+  $('totalCount').textContent = rows.length;
+  const html = rows.map(r => {
+    const goalsHtml = r.goals.map(g => `<span class="rm-tag purple">${g}</span>`).join(' ');
+    return `<tr>
+      <td class="rm-mono text-slate-600">${r.id}</td>
+      <td class="font-medium text-slate-700">${r.name}</td>
+      <td>${r.group}</td>
+      <td>${goalsHtml}</td>
+      <td>${r.trigger}</td>
+      <td class="text-slate-600">${r.desc}</td>
+      <td class="text-center"><span class="rm-tag blue">${r.refs}</span></td>
+      <td><span class="rm-status on"><span class="dot"></span>已启用</span></td>
+      <td class="text-center">
+        <span class="rm-link" onclick="openEditModal('${r.id}')">编辑</span>
+        <span class="rm-link danger ml-2" onclick="deleteRule('${r.id}')">删除</span>
+      </td>
+    </tr>`;
+  }).join('');
+  $('ruleTbody').innerHTML = html || '<tr><td colspan="9" class="text-center text-slate-400 py-8">暂无数据</td></tr>';
+}
+function applyFilter(){ renderTable(); }
+function resetFilter(){ $('fltKeyword').value=''; renderTable(); }
+
+/* ========== 复选框交互 ========== */
+document.querySelectorAll('#goalBox .rm-checkbox').forEach(el => {
+  el.addEventListener('click', function(e){
+    if (e.target.tagName === 'INPUT') return;
+    this.classList.toggle('checked');
+    const input = this.querySelector('input');
+    if (input) input.checked = this.classList.contains('checked');
+    const g = this.dataset.goal;
+    if (this.classList.contains('checked')) currentGoals.add(g); else currentGoals.delete(g);
+  });
+});
+
+function onTriggerChange(){
+  const v = document.querySelector('input[name="enableTrigger"]:checked').value;
+  $('triggerSub').style.display = v === 'yes' ? 'block' : 'none';
+  if (v === 'yes') {
+    // 锁定领取为自动发放
+    $('claimAuto').checked = true;
+    $('claimManual').checked = false;
+    $('claimManual').disabled = true;
+    $('claimAuto').disabled = true;
+    onClaimChange();
+    // 一次发放：事件触发立即发放
+    $('autoOnceTag').textContent = '事件触发立即发放';
+    $('autoOnceTag').style.background = '#fef3c7';
+    $('autoOnceTag').style.color = '#92400e';
+    $('autoOnceHint').textContent = '（事件触发模式：事件触发立即发放）';
+  } else {
+    $('claimManual').disabled = false;
+    $('claimAuto').disabled = false;
+    // 一次发放：活动开始后立即发放
+    $('autoOnceTag').textContent = '活动开始后立即发放';
+    $('autoOnceTag').style.background = '#e6f4ff';
+    $('autoOnceTag').style.color = '#1677ff';
+    $('autoOnceHint').textContent = '（非事件触发模式：活动开始后立即发放）';
+  }
+}
+function onClaimChange(){
+  const v = document.querySelector('input[name="claimType"]:checked').value;
+  $('manualSub').style.display = v === 'manual' ? 'block' : 'none';
+  $('autoSub').style.display = v === 'auto' ? 'block' : 'none';
+}
+function onCustomPeriod(){ $('customDays').style.display = 'block'; }
+function onAutoMode(){
+  const v = document.querySelector('input[name="autoMode"]:checked').value;
+  $('autoOnce').style.display = v === 'once' ? 'block' : 'none';
+  $('autoCycle').style.display = v === 'cycle' ? 'flex' : 'none';
+}
+
+/* ========== 新建 / 编辑 ========== */
+function resetRuleForm(){
+  $('ruleId').value = '系统自动生成';
+  $('ruleName').value = '';
+  $('ruleDesc').value = '';
+  currentGoals.clear();
+  document.querySelectorAll('#goalBox .rm-checkbox').forEach(el => el.classList.remove('checked'));
+  selectedGroups = [];
+  renderRuleGroups();
+  document.querySelector('input[name="enableTrigger"][value="no"]').checked = true;
+  onTriggerChange();
+  document.querySelector('input[name="claimType"][value="manual"]').checked = true;
+  onClaimChange();
+  document.querySelector('input[name="claimPeriod"][value="today"]').checked = true;
+  $('customDays').style.display = 'none';
+  document.querySelector('input[name="autoMode"][value="once"]').checked = true;
+  onAutoMode();
+  document.querySelector('input[name="sendType"][value="tag"]').checked = true;
+}
+function openCreateModal(){
+  editingRule = null;
+  $('modalRuleTitle').textContent = '新建投放规则模板';
+  resetRuleForm();
+  openModal('modalRule');
+}
+function openEditModal(id){
+  const r = rules.find(x => x.id === id);
+  if (!r) return;
+  editingRule = r;
+  $('modalRuleTitle').textContent = '编辑投放规则模板';
+  $('ruleId').value = r.id;
+  $('ruleName').value = r.name;
+  $('ruleDesc').value = r.desc;
+  currentGoals = new Set(r.goals);
+  document.querySelectorAll('#goalBox .rm-checkbox').forEach(el => {
+    if (currentGoals.has(el.dataset.goal)) el.classList.add('checked'); else el.classList.remove('checked');
+  });
+  selectedGroups = [r.group];
+  renderRuleGroups();
+  onTriggerChange();
+  openModal('modalRule');
+}
+function saveRule(){
+  const name = $('ruleName').value.trim();
+  const desc = $('ruleDesc').value.trim();
+  if (!name || currentGoals.size === 0 || !desc || selectedGroups.length === 0) {
+    showToast('请填写完整的规则模板配置（包含规则基本属性、发放客群选择及触发/领取机制细节）！', 'error');
+    return;
+  }
+  if (editingRule) {
+    Object.assign(editingRule, { name, group: selectedGroups[0], goals: [...currentGoals], desc });
+    showToast('直投场景规则模板已保存并正式发布！', 'success');
+  } else {
+    const newId = 'RULE_' + String(rules.length + 1).padStart(3,'0');
+    rules.unshift({ id: newId, name, group: selectedGroups[0], goals: [...currentGoals], trigger:'无（批处理定时触发）', desc: desc, refs:0, status:'on' });
+    showToast('直投场景规则模板已保存并正式发布！', 'success');
+  }
+  closeModal('modalRule');
+  renderTable();
+}
+function deleteRule(id){
+  const r = rules.find(x => x.id === id);
+  if (r && r.refs > 0) { showToast('该规则已被 ' + r.refs + ' 个活动引用，无法删除！', 'error'); return; }
+  if (!confirm('确定要删除此规则模板吗？')) return;
+  const i = rules.findIndex(x => x.id === id);
+  if (i >= 0) rules.splice(i, 1);
+  showToast('规则模板已删除！', 'success');
+  renderTable();
+}
+
+/* ========== 客群弹窗 ========== */
+function openGroupModal(){
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客群') + ' (已选择 ' + selectedGroups.length + ' 个):';
+  renderGroupRows();
+  renderGroupPillsInModal();
+  openModal('modalGroup');
+}
+function switchGroupTab(btn, tab){
+  document.querySelectorAll('#modalGroup .rm-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGroupTab = tab;
+  renderGroupRows();
+  $('groupSummary').textContent = (tab==='tag'?'标签客群':'白名单客群') + ' (已选择 ' + selectedGroups.length + ' 个):';
+}
+function filterGroup(v){ renderGroupRows(v); }
+function renderGroupRows(kw){
+  kw = kw || '';
+  const filter = currentGroupTab === 'tag' ? g => g.type === '标签生成' : g => g.type === '白名单导入';
+  const list = groupPool.filter(filter).filter(g => !kw || g.name.includes(kw));
+  $('groupTbody').innerHTML = list.map(g => {
+    const checked = selectedGroups.includes(g.name) ? 'checked' : '';
+    return `<tr>
+      <td><input type="checkbox" ${checked} onclick="toggleGroup('${g.name}', this)" /></td>
+      <td>${g.name}</td>
+      <td><span class="rm-tag ${g.type==='标签生成'?'blue':'gray'}">${g.type}</span></td>
+      <td>${g.cnt}</td>
+      <td class="text-slate-500">${g.sync}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" class="text-center text-slate-400 py-6">无匹配数据</td></tr>';
+}
+function toggleGroup(name, cb){
+  if (cb.checked) { if (!selectedGroups.includes(name)) selectedGroups.push(name); }
+  else selectedGroups = selectedGroups.filter(x => x !== name);
+  renderGroupPillsInModal();
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客群') + ' (已选择 ' + selectedGroups.length + ' 个):';
+}
+function toggleAllGroups(cb){
+  const filter = currentGroupTab === 'tag' ? g => g.type === '标签生成' : g => g.type === '白名单导入';
+  const list = groupPool.filter(filter);
+  if (cb.checked) list.forEach(g => { if (!selectedGroups.includes(g.name)) selectedGroups.push(g); });
+  else list.forEach(g => { selectedGroups = selectedGroups.filter(x => x !== g.name); });
+  renderGroupRows();
+  renderGroupPillsInModal();
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客群') + ' (已选择 ' + selectedGroups.length + ' 个):';
+}
+function renderGroupPillsInModal(){
+  $('groupPills').innerHTML = selectedGroups.map(g => `<span class="rm-pill">${g}<span class="x" onclick="removeGroupPill('${g}')">×</span></span>`).join('');
+}
+function removeGroupPill(name){
+  selectedGroups = selectedGroups.filter(x => x !== name);
+  renderGroupRows();
+  renderGroupPillsInModal();
+  renderRuleGroups();
+  $('groupSummary').textContent = (currentGroupTab==='tag'?'标签客群':'白名单客群') + ' (已选择 ' + selectedGroups.length + ' 个):';
+}
+function confirmGroups(){
+  renderRuleGroups();
+  closeModal('modalGroup');
+}
+function clearGroups(){ selectedGroups = []; renderRuleGroups(); }
+function renderRuleGroups(){
+  $('ruleGroupList').innerHTML = selectedGroups.length
+    ? selectedGroups.map(g => `<span class="rm-pill">${g}<span class="x" onclick="removeGroup('${g}')">×</span></span>`).join('')
+    : '<span class="text-[12px] text-slate-400">暂未选择客群</span>';
+}
+function removeGroup(name){
+  selectedGroups = selectedGroups.filter(x => x !== name);
+  renderRuleGroups();
+}
+
+/* ========== 初始化 ========== */
+document.addEventListener('DOMContentLoaded', function(){
+  renderSidebar(); renderHeader(); syncCurrentTab(); renderPageTabs();
+  renderTable();
+});
+</script>
+<script src="js/nav.js"></script>
+
+</body>
+</html>
