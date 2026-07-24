@@ -159,9 +159,9 @@
                     <option>对账状态</option>
                   </select>
                 </div>
-                <div class="form-actions" style="align-items:end;">
-                  <button class="mk-btn mk-btn--primary">搜索</button>
+                <div class="form-actions">
                   <button class="mk-btn mk-btn--default">重置</button>
+                  <button class="mk-btn mk-btn--primary">查询</button>
                 </div>
               </div>
             </div>
@@ -277,7 +277,13 @@
               <div class="mk-search-form" style="grid-template-columns:320px 200px 240px; gap:16px;">
                 <div class="form-row">
                   <label class="form-label">用户ID</label>
-                  <input class="el-input__inner" placeholder="精准查询">
+                  <div class="mk-input-with-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="7"></circle>
+                      <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+                    </svg>
+                    <input class="el-input__inner" placeholder="精准查询">
+                  </div>
                 </div>
                 <div class="form-row">
                   <label class="form-label">操作类型</label>
@@ -293,12 +299,10 @@
                   <label class="form-label">结束时间</label>
                   <input class="el-input__inner" type="date">
                 </div>
-                <div class="form-row" style="grid-column:1/-1;">
-                  <span style="color:#1677ff; cursor:pointer;">∨ 高级查询</span>
-                  <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
-                    <button class="mk-btn mk-btn--default">重置</button>
-                    <button class="mk-btn mk-btn--primary">查询</button>
-                  </div>
+                <div class="form-actions">
+                  <span class="advanced-filter">∨ 高级查询</span>
+                  <button class="mk-btn mk-btn--default">重置</button>
+                  <button class="mk-btn mk-btn--primary">查询</button>
                 </div>
               </div>
             </div>
@@ -467,17 +471,23 @@
                 </div>
                 <div class="form-row">
                   <label class="form-label">用户ID</label>
-                  <input class="el-input__inner" placeholder="精准查询">
+                  <div class="mk-input-with-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="7"></circle>
+                      <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+                    </svg>
+                    <input class="el-input__inner" placeholder="精准查询">
+                  </div>
                 </div>
-                <div class="form-row" style="grid-column:1/-1;">
+                <div class="form-row">
                   <label class="form-label">商户</label>
                   <select class="el-input__inner">
                     <option>全部</option>
                   </select>
-                  <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:-32px;">
-                    <button class="mk-btn mk-btn--default">重置</button>
-                    <button class="mk-btn mk-btn--primary">查询</button>
-                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="mk-btn mk-btn--default">重置</button>
+                  <button class="mk-btn mk-btn--primary">查询</button>
                 </div>
               </div>
             </div>

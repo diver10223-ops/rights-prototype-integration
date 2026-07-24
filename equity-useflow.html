@@ -58,12 +58,13 @@
               </div>
               <div class="form-row">
                 <label class="form-label">用户号</label>
-                <input class="el-input__inner" placeholder="请输入用户号">
-              </div>
-              <div class="form-actions">
-                <button class="mk-btn mk-btn--primary">查询</button>
-                <button class="mk-btn mk-btn--default">重置</button>
-                <span style="color:#1677ff; cursor:pointer; font-size:13px;">高级筛选</span>
+                <div class="mk-input-with-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+                  </svg>
+                  <input class="el-input__inner" placeholder="请输入用户号">
+                </div>
               </div>
 
               <div class="form-row">
@@ -81,10 +82,16 @@
               <div class="form-row">
                 <label class="form-label">操作时间</label>
                 <div style="display:flex; gap:8px; align-items:center;">
-                  <input class="el-input__inner" value="2026-07-21">
+                  <input class="el-input__inner" type="date" value="2026-07-21">
                   <span>-</span>
-                  <input class="el-input__inner" value="2026-07-21">
+                  <input class="el-input__inner" type="date" value="2026-07-21">
                 </div>
+              </div>
+
+              <div class="form-actions">
+                <span class="advanced-filter">高级筛选</span>
+                <button class="mk-btn mk-btn--default">重置</button>
+                <button class="mk-btn mk-btn--primary">查询</button>
               </div>
             </div>
           </div>
