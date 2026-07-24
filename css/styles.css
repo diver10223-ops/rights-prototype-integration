@@ -2416,8 +2416,93 @@ body {
   padding-left: 32px !important;
 }
 
+/* 权益库存页保留原有筛选字段和快捷标签，仅统一筛选栅格与操作区。 */
+.mk-benefit-stock-filter {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: end !important;
+}
+
+.mk-benefit-stock-filter > .mk-benefit-filter-fields {
+  display: contents !important;
+}
+
+.mk-benefit-stock-filter .form-row {
+  width: auto !important;
+  min-width: 0;
+}
+
+.mk-benefit-stock-filter .el-input__inner {
+  width: 100% !important;
+}
+
+.mk-benefit-stock-filter > .flex:not(.mk-benefit-filter-fields) {
+  grid-column: 1 / -1;
+  margin: 0 !important;
+}
+
+.mk-benefit-stock-filter > .mk-benefit-filter-actions {
+  grid-column: 1 / -1;
+  margin: 0 !important;
+}
+
+/* 全站业务表格规范。保留页面已有的列宽、对齐和业务状态样式。 */
+.mk-standard-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  background: #ffffff !important;
+  color: #4a5568 !important;
+  font-size: 12px !important;
+}
+
+.mk-standard-table thead th {
+  height: 40px !important;
+  padding: 10px 12px !important;
+  border-bottom: 1px solid #e8ecf0 !important;
+  background: #fafbfc !important;
+  color: #8c95a6 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+  text-align: left;
+  vertical-align: middle !important;
+  white-space: nowrap;
+}
+
+.mk-standard-table tbody td {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  background: #ffffff;
+  color: #4a5568 !important;
+  font-size: 12px !important;
+  line-height: 20px !important;
+  vertical-align: middle !important;
+}
+
+.mk-standard-table tbody tr:hover > td {
+  background: #fafbfc !important;
+}
+
+.mk-standard-table tbody tr:last-child > td {
+  border-bottom: none !important;
+}
+
+.mk-standard-table .text-center {
+  text-align: center !important;
+}
+
+.mk-standard-table .text-right {
+  text-align: right !important;
+}
+
 @media (max-width: 980px) {
   .mk-search-panel .mk-search-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .mk-benefit-stock-filter {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }

@@ -127,9 +127,9 @@ const PAGE_META = {
   "benefit-stock.html": { title: "权益库存管理", desc: "查询权益库存、入库消耗、锁定数量及有效期情况" },
   "inventory-alert.html": { title: "库存预警", desc: "配置权益库存数量与到期预警，并管理通知联系人" },
   "activity-management.html": { title: "权益投放活动", desc: "创建、启动、编辑、监控和下架营销投放活动", aliases: ["权益直投活动"] },
-  "rule-management.html": { title: "投放规则设置", desc: "配置权益投放条件、客群范围、频次与生效规则" },
+  "rule-management.html": { title: "投放规则设置", desc: "配置权益投放条件、客群范围、频次与生效规则", aliases: ["投放规则管理"] },
   "cost-statistics.html": { title: "活动费用统计", desc: "统计活动预算、权益成本、执行消耗及费用趋势" },
-  "scene-management.html": { title: "活动场景管理", desc: "维护营销活动场景、目标配置及场景运行状态" },
+  "scene-management.html": { title: "活动场景管理", desc: "维护营销活动场景、目标配置及场景运行状态", aliases: ["直投场景管理"] },
   "equity-useflow.html": { title: "权益流水", desc: "查询权益发放、领取、使用、失效及回退流水" },
   "reconcile-internal.html": { title: "行内权益核销对账", desc: "查询并核对行内卡券权益的全生命周期流水记录" },
   "reconcile-thirdparty.html": { title: "第三方权益核销对账", desc: "查询并核对第三方权益发放、核销及结算流水" },
@@ -571,6 +571,16 @@ function hideLegacyPageIntro(pageRoot, meta) {
         break;
       }
     }
+    // 兼容标题和说明被同一容器包裹、标题节点内含装饰图标的旧页面。
+    if (!titleEl) {
+      var candidateText = (candidate.textContent || '').trim();
+      for (var ni = 0; ni < names.length; ni++) {
+        if (candidateText.indexOf(names[ni]) === 0) {
+          titleEl = candidate;
+          break;
+        }
+      }
+    }
     if (!titleEl) continue;
 
     var hasActions = !!candidate.querySelector('button, a');
@@ -597,6 +607,8 @@ function renderFunctionIntro() {
   // 分组选择器会优先返回文档中更靠前的 .content，因此按优先级逐一查询。
   var pageRoot =
     document.querySelector('.content > .am-page') ||
+    document.querySelector('.content > .rm-page') ||
+    document.querySelector('.content > .sm-page') ||
     document.querySelector('.content > .mk-page') ||
     document.querySelector('.content');
   if (!pageRoot || pageRoot.querySelector(':scope > .mk-function-intro')) return;
@@ -611,10 +623,56 @@ function renderFunctionIntro() {
   pageRoot.insertBefore(intro, pageRoot.firstChild);
 }
 
+function normalizeBenefitStockFilters() {
+  if (getCurrentPagePath() !== 'benefit-stock.html') return;
+
+  document.querySelectorAll('.mk-search-panel').forEach(function(panel) {
+    panel.classList.add('mk-benefit-stock-filter');
+
+    var actionButtons = [];
+    Array.prototype.slice.call(panel.children).forEach(function(row) {
+      if (!row.querySelector('input, select')) return;
+
+      row.classList.add('mk-benefit-filter-fields');
+      Array.prototype.slice.call(row.children).forEach(function(item) {
+        if (item.matches('button')) {
+          actionButtons.push(item);
+          return;
+        }
+        if (!item.querySelector('input, select')) return;
+
+        item.classList.add('form-row');
+        var label = item.querySelector('label');
+        if (label) label.classList.add('form-label');
+        item.querySelectorAll('input, select').forEach(function(control) {
+          control.classList.add('el-input__inner');
+        });
+      });
+    });
+
+    if (actionButtons.length) {
+      var actions = document.createElement('div');
+      actions.className = 'form-actions mk-benefit-filter-actions';
+      actionButtons.forEach(function(button) {
+        actions.appendChild(button);
+      });
+      panel.appendChild(actions);
+    }
+  });
+}
+
+function normalizeContentTables() {
+  document.querySelectorAll('.content table').forEach(function(table) {
+    table.classList.add('mk-standard-table');
+  });
+}
+
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
   normalizeLegacyLayout();
   renderFunctionIntro();
+  normalizeBenefitStockFilters();
+  normalizeContentTables();
   renderSidebar();
   renderHeader();
   syncCurrentTab();
