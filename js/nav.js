@@ -115,6 +115,42 @@ const BOTTOM_MENU_CONFIG = [
   }
 ];
 
+// ========== 页面功能名称与说明 ==========
+// 统一显示在右侧内容区顶部，文案不参与业务逻辑。
+const PAGE_META = {
+  "index.html": { title: "首页", desc: "汇总展示权益业务核心指标、趋势、库存预警与待办事项", aliases: ["权益中心概览"] },
+  "overview.html": { title: "概览", desc: "集中展示权益运营规模、发放转化、库存健康度与业务趋势", aliases: ["首页概览"] },
+  "workbench.html": { title: "审批", desc: "集中处理权益、活动及相关运营事项的待审批任务" },
+  "equity-list.html": { title: "权益管理", desc: "维护权益基础信息、上下架状态及可用范围" },
+  "equity-category.html": { title: "权益品类管理", desc: "维护权益品类、分类层级及关联规则" },
+  "supplier-list.html": { title: "供应商管理", desc: "维护权益供应商资料、授权信息与合作状态" },
+  "benefit-stock.html": { title: "权益库存管理", desc: "查询权益库存、入库消耗、锁定数量及有效期情况" },
+  "inventory-alert.html": { title: "库存预警", desc: "配置权益库存数量与到期预警，并管理通知联系人" },
+  "activity-management.html": { title: "权益投放活动", desc: "创建、启动、编辑、监控和下架营销投放活动", aliases: ["权益直投活动"] },
+  "rule-management.html": { title: "投放规则设置", desc: "配置权益投放条件、客群范围、频次与生效规则" },
+  "cost-statistics.html": { title: "活动费用统计", desc: "统计活动预算、权益成本、执行消耗及费用趋势" },
+  "scene-management.html": { title: "活动场景管理", desc: "维护营销活动场景、目标配置及场景运行状态" },
+  "equity-useflow.html": { title: "权益流水", desc: "查询权益发放、领取、使用、失效及回退流水" },
+  "reconcile-internal.html": { title: "行内权益核销对账", desc: "查询并核对行内卡券权益的全生命周期流水记录" },
+  "reconcile-thirdparty.html": { title: "第三方权益核销对账", desc: "查询并核对第三方权益发放、核销及结算流水" },
+  "reconcile-physical.html": { title: "实物奖品核销对账", desc: "查询并核对实物奖品领取、发货及签收记录" },
+  "reconcile-settlement.html": { title: "权益成本结算", desc: "汇总权益核销成本并管理供应商结算记录" },
+  "redemption.html": { title: "权益核销", desc: "查询权益核销记录、核销状态及相关业务明细" },
+  "redemptionnew.html": { title: "权益核销new", desc: "集中查询各类权益核销与总对账数据" },
+  "operation-customers.html": { title: "客户列表", desc: "查询客户基础信息、权益持有及运营触达情况" },
+  "operation-blacklist.html": { title: "权益黑名单", desc: "维护权益领取与使用限制名单及生效规则" },
+  "operation-recovery.html": { title: "权益回收", desc: "处理已发权益的回收申请、执行结果与记录" },
+  "operation-reissue.html": { title: "权益补发", desc: "处理权益补发申请、执行状态与补发结果" },
+  "analysis-direct.html": { title: "直投成效分析", desc: "分析权益投放任务的触达、领取、核销与转化成效" },
+  "analysis-overview.html": { title: "重要数据分析", desc: "汇总权益运营关键数据并展示多维分析结果" },
+  "analysis-report.html": { title: "权益报表", desc: "查询、汇总并导出权益业务统计报表" },
+  "grant-exception.html": { title: "权益发放异常监控", desc: "监控权益发放失败、延迟与异常处理状态" },
+  "component-health.html": { title: "组件异常监测", desc: "监测权益平台关键组件的运行状态与异常信息" },
+  "thirdparty-settlement.html": { title: "三方权益供应商核销结算", desc: "监控第三方权益供应商核销数据及结算进度" },
+  "channel-list.html": { title: "渠道管理", desc: "维护权益投放渠道、对接状态及启停配置" },
+  "event-list.html": { title: "事件管理", desc: "维护权益业务事件、触发条件及处理状态" }
+};
+
 // ========== 工具函数 ==========
 function getCurrentPagePath() {
   var path = window.location.pathname;
@@ -503,9 +539,72 @@ function normalizeLegacyLayout() {
   }
 }
 
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function hideLegacyPageIntro(pageRoot, meta) {
+  var names = [meta.title].concat(meta.aliases || []);
+  var candidates = Array.prototype.slice.call(pageRoot.children, 0, 3);
+
+  for (var ci = 0; ci < candidates.length; ci++) {
+    var candidate = candidates[ci];
+    if (candidate.classList.contains('mk-function-intro')) continue;
+
+    var elements = [candidate].concat(Array.prototype.slice.call(candidate.querySelectorAll('*')));
+    var titleEl = null;
+    for (var ei = 0; ei < elements.length; ei++) {
+      var text = (elements[ei].textContent || '').trim();
+      if (elements[ei].children.length === 0 && names.indexOf(text) !== -1) {
+        titleEl = elements[ei];
+        break;
+      }
+    }
+    if (!titleEl) continue;
+
+    var hasActions = !!candidate.querySelector('button, a');
+    if (!hasActions) {
+      candidate.hidden = true;
+      return;
+    }
+
+    var textBlock = titleEl;
+    while (textBlock.parentElement && textBlock.parentElement !== candidate &&
+           !textBlock.parentElement.querySelector('button, a')) {
+      textBlock = textBlock.parentElement;
+    }
+    textBlock.hidden = true;
+    candidate.classList.add('mk-page-header--actions-only');
+    return;
+  }
+}
+
+function renderFunctionIntro() {
+  var meta = PAGE_META[getCurrentPagePath()];
+  if (!meta) return;
+
+  var pageRoot = document.querySelector('.content > .am-page, .content > .mk-page, .content');
+  if (!pageRoot || pageRoot.querySelector(':scope > .mk-function-intro')) return;
+
+  hideLegacyPageIntro(pageRoot, meta);
+
+  var intro = document.createElement('div');
+  intro.className = 'mk-function-intro';
+  intro.innerHTML =
+    '<div class="mk-function-name">' + escapeHTML(meta.title) + '</div>' +
+    '<div class="mk-function-desc">' + escapeHTML(meta.desc) + '</div>';
+  pageRoot.insertBefore(intro, pageRoot.firstChild);
+}
+
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
   normalizeLegacyLayout();
+  renderFunctionIntro();
   renderSidebar();
   renderHeader();
   syncCurrentTab();

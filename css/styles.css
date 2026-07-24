@@ -2150,6 +2150,159 @@ body {
 }
 
 /* ======================================================
+   全站内容区视觉规范
+   基准：activity-management.html
+   ====================================================== */
+.mk-function-intro {
+  flex: 0 0 auto;
+  margin: 0 0 16px;
+}
+
+.mk-function-name {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.mk-function-desc {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.mk-page-header--actions-only {
+  justify-content: flex-end !important;
+  padding-bottom: 0 !important;
+}
+
+/* 指标、筛选、列表使用相同的白色面板、边框和圆角。 */
+.mk-kpi-card,
+.mk-stat-card,
+.mk-search-panel,
+.mk-list-panel,
+.dash-card,
+.dash-metric,
+.rm-card,
+.sm-card {
+  background: #ffffff !important;
+  border: 1px solid #e8ecf0 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.mk-kpi-card,
+.mk-stat-card,
+.dash-metric {
+  padding: 16px 20px !important;
+}
+
+.mk-stat-label,
+.mk-kpi-card .label,
+.dash-metric .l,
+.rm-metric .label,
+.sm-metric .label {
+  color: #8c95a6 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+
+.mk-stat-value,
+.mk-kpi-card .value,
+.dash-metric .v,
+.rm-metric .value,
+.sm-metric .value {
+  color: #1a1a2e !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+.mk-search-panel {
+  margin-bottom: 12px;
+  padding: 16px 20px 14px !important;
+}
+
+.mk-label,
+.mk-form-item label,
+.mk-search-panel label {
+  color: #4a5568 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+
+.mk-input,
+.mk-select,
+.mk-search-panel input,
+.mk-search-panel select {
+  min-height: 32px;
+  border-color: #e8ecf0 !important;
+  border-radius: 6px !important;
+  color: #4a5568 !important;
+  font-size: 13px !important;
+}
+
+.mk-input:focus,
+.mk-select:focus,
+.mk-search-panel input:focus,
+.mk-search-panel select:focus {
+  border-color: #1677ff !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.mk-list-panel {
+  overflow: hidden;
+}
+
+.mk-list-header,
+.mk-panel-header {
+  min-height: 44px;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid #e8ecf0 !important;
+  background: #ffffff !important;
+}
+
+.mk-list-title,
+.mk-panel-title {
+  color: #1a1a2e !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.mk-table,
+.mk-compact-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px !important;
+}
+
+.mk-table th,
+.mk-compact-table thead th {
+  height: 40px;
+  padding: 10px 12px !important;
+  background: #fafbfc !important;
+  border-bottom: 1px solid #e8ecf0 !important;
+  color: #8c95a6 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.mk-table td,
+.mk-compact-table tbody td {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #4a5568 !important;
+  font-size: 12px !important;
+}
+
+.mk-table tbody tr:hover td,
+.mk-compact-table tbody tr:hover td {
+  background: #fafbfc !important;
+}
+
+/* ======================================================
    时间快捷按钮
    ====================================================== */
 .mk-time-btn {
