@@ -258,7 +258,16 @@
             </div>
           </div>
           <div class="p-4">
-            <canvas id="settlementTrendChart" height="200"></canvas>
+            <div class="mk-monitor-line-chart">
+              <svg viewBox="0 0 600 190" preserveAspectRatio="none" aria-label="月度结算趋势">
+                <g class="mk-chart-grid"><path d="M38 25H585M38 70H585M38 115H585M38 160H585"/></g>
+                <path class="mk-chart-area" d="M38 137L147 118L256 126L365 86L474 70L585 44L585 160L38 160Z"/>
+                <polyline class="mk-chart-line mk-chart-line--blue" points="38,137 147,118 256,126 365,86 474,70 585,44"/>
+                <polyline class="mk-chart-line mk-chart-line--green" points="38,148 147,134 256,139 365,105 474,91 585,62"/>
+              </svg>
+              <div class="mk-chart-axis"><span>1月</span><span>2月</span><span>3月</span><span>4月</span><span>5月</span><span>6月</span></div>
+              <div class="mk-chart-legend-inline"><span><i style="background:#3b82f6"></i>采购金额</span><span><i style="background:#10b981"></i>结算金额</span></div>
+            </div>
           </div>
         </div>
         <div class="border border-slate-300 bg-white rounded-lg">
@@ -271,7 +280,18 @@
             </div>
           </div>
           <div class="p-4">
-            <canvas id="supplierPieChart" height="200"></canvas>
+            <div class="mk-monitor-chart-layout">
+              <div class="mk-monitor-donut mk-monitor-donut--supplier" aria-label="供应商结算占比">
+                <div class="mk-monitor-donut-center"><strong>¥48.6万</strong><span>结算金额</span></div>
+              </div>
+              <div class="mk-monitor-legend">
+                <div><i style="background:#3b82f6"></i><span>腾讯权益</span><b>38%</b></div>
+                <div><i style="background:#10b981"></i><span>美团权益</span><b>15%</b></div>
+                <div><i style="background:#8b5cf6"></i><span>京东权益</span><b>20%</b></div>
+                <div><i style="background:#f59e0b"></i><span>滴滴权益</span><b>15%</b></div>
+                <div><i style="background:#94a3b8"></i><span>其他供应商</span><b>12%</b></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

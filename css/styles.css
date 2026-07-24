@@ -2200,6 +2200,153 @@ body {
   margin: 16px 0 8px;
 }
 
+/* 监控中心与结算页面的轻量图表，不依赖外部图表库。 */
+.mk-monitor-chart-layout {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.mk-monitor-donut {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex: 0 0 150px;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
+}
+
+.mk-monitor-donut--exception {
+  background: conic-gradient(#ef4444 0 31%, #f59e0b 31% 54%, #8b5cf6 54% 72%, #3b82f6 72% 88%, #94a3b8 88% 100%);
+}
+
+.mk-monitor-donut--supplier {
+  background: conic-gradient(#3b82f6 0 38%, #10b981 38% 53%, #8b5cf6 53% 73%, #f59e0b 73% 88%, #94a3b8 88% 100%);
+}
+
+.mk-monitor-donut::after {
+  content: "";
+  position: absolute;
+  inset: 34px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.mk-monitor-donut-center {
+  position: absolute;
+  inset: 34px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.mk-monitor-donut-center strong {
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.mk-monitor-donut-center span {
+  margin-top: 2px;
+  color: #8c95a6;
+  font-size: 10px;
+}
+
+.mk-monitor-legend {
+  width: min(240px, 46%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mk-monitor-legend > div {
+  display: grid;
+  grid-template-columns: 8px minmax(76px, 1fr) auto auto;
+  align-items: center;
+  gap: 7px;
+  color: #64748b;
+  font-size: 11px;
+}
+
+.mk-monitor-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.mk-monitor-legend b {
+  color: #334155;
+  font-weight: 600;
+}
+
+.mk-monitor-legend em {
+  color: #94a3b8;
+  font-style: normal;
+}
+
+.mk-monitor-line-chart {
+  min-height: 200px;
+  padding: 6px 8px 4px;
+  overflow: hidden;
+  border: 1px solid #e8ecf0;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+}
+
+.mk-monitor-line-chart svg {
+  display: block;
+  width: 100%;
+  height: 152px;
+}
+
+.mk-chart-grid {
+  fill: none;
+  stroke: #e8ecf0;
+  stroke-width: 1;
+}
+
+.mk-chart-area {
+  fill: rgba(59, 130, 246, 0.10);
+}
+
+.mk-chart-line {
+  fill: none;
+  stroke-width: 3;
+}
+
+.mk-chart-line--blue { stroke: #3b82f6; }
+.mk-chart-line--green { stroke: #10b981; }
+
+.mk-chart-axis {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  color: #94a3b8;
+  font-size: 9px;
+}
+
+.mk-chart-legend-inline {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 10px;
+}
+
+.mk-chart-legend-inline i {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  margin-right: 5px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
 .mk-page-header--actions-only {
   justify-content: flex-end !important;
   padding-bottom: 0 !important;

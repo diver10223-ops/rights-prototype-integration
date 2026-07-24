@@ -83,7 +83,18 @@
             </div>
           </div>
           <div class="p-4">
-            <canvas id="exceptionTypeChart" height="200"></canvas>
+            <div class="mk-monitor-chart-layout">
+              <div class="mk-monitor-donut mk-monitor-donut--exception" aria-label="异常类型分布">
+                <div class="mk-monitor-donut-center"><strong>410</strong><span>异常总数</span></div>
+              </div>
+              <div class="mk-monitor-legend">
+                <div><i style="background:#ef4444"></i><span>发放失败</span><b>128</b><em>31%</em></div>
+                <div><i style="background:#f59e0b"></i><span>风控拦截</span><b>96</b><em>23%</em></div>
+                <div><i style="background:#8b5cf6"></i><span>重复发放</span><b>72</b><em>18%</em></div>
+                <div><i style="background:#3b82f6"></i><span>库存不足</span><b>65</b><em>16%</em></div>
+                <div><i style="background:#94a3b8"></i><span>其他异常</span><b>49</b><em>12%</em></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="border border-slate-300 bg-white rounded-lg">

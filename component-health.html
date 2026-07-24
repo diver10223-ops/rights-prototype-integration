@@ -203,7 +203,16 @@
             </div>
           </div>
           <div class="p-4">
-            <canvas id="responseTimeChart" height="200"></canvas>
+            <div class="mk-monitor-line-chart">
+              <svg viewBox="0 0 600 190" preserveAspectRatio="none" aria-label="组件响应时间趋势">
+                <g class="mk-chart-grid"><path d="M38 25H585M38 70H585M38 115H585M38 160H585"/></g>
+                <path class="mk-chart-area" d="M38 142L87 135L136 138L185 119L234 127L283 93L332 105L381 72L430 88L479 54L528 69L585 43L585 160L38 160Z"/>
+                <polyline class="mk-chart-line mk-chart-line--blue" points="38,142 87,135 136,138 185,119 234,127 283,93 332,105 381,72 430,88 479,54 528,69 585,43"/>
+                <polyline class="mk-chart-line mk-chart-line--green" points="38,150 87,146 136,148 185,139 234,143 283,128 332,134 381,117 430,125 479,104 528,112 585,96"/>
+              </svg>
+              <div class="mk-chart-axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+              <div class="mk-chart-legend-inline"><span><i style="background:#3b82f6"></i>P95 响应时间</span><span><i style="background:#10b981"></i>平均响应时间</span></div>
+            </div>
           </div>
         </div>
         <div class="border border-slate-300 bg-white rounded-lg">
@@ -216,7 +225,15 @@
             </div>
           </div>
           <div class="p-4">
-            <canvas id="errorRateChart" height="200"></canvas>
+            <div class="mk-monitor-line-chart">
+              <svg viewBox="0 0 600 190" preserveAspectRatio="none" aria-label="组件错误率趋势">
+                <g class="mk-chart-grid"><path d="M38 25H585M38 70H585M38 115H585M38 160H585"/></g>
+                <path d="M38 150L87 146L136 149L185 141L234 145L283 122L332 139L381 88L430 132L479 64L528 118L585 101" fill="none" stroke="#ef4444" stroke-width="3"/>
+                <path d="M38 118H585" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 5"/>
+              </svg>
+              <div class="mk-chart-axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+              <div class="mk-chart-legend-inline"><span><i style="background:#ef4444"></i>实际错误率</span><span><i style="background:#f59e0b"></i>预警阈值 0.5%</span></div>
+            </div>
           </div>
         </div>
       </div>
